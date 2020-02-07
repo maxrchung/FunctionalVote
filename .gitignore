@@ -1,0 +1,25 @@
+
+# Created by https://www.gitignore.io/api/elm,elixir
+# Edit at https://www.gitignore.io/?templates=elm,elixir
+
+### Elixir ###
+/_build
+/cover
+/deps
+/doc
+/.fetch
+erl_crash.dump
+*.ez
+*.beam
+/config/*.secret.exs
+.elixir_ls/
+
+### Elixir Patch ###
+
+### Elm ###
+# elm-package generated files
+elm-stuff
+# elm-repl generated files
+repl-temp-*
+
+# End of https://www.gitignore.io/api/elm,elixir
