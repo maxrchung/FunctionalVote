@@ -1,4 +1,4 @@
-defmodule FunctionalvoteWeb.ConnCase do
+defmodule FunctionalVoteWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule FunctionalvoteWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use FunctionalvoteWeb.ConnCase, async: true`, although
+  by setting `use FunctionalVoteWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -21,18 +21,18 @@ defmodule FunctionalvoteWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      alias FunctionalvoteWeb.Router.Helpers, as: Routes
+      alias FunctionalVoteWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint FunctionalvoteWeb.Endpoint
+      @endpoint FunctionalVoteWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Functionalvote.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(FunctionalVote.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Functionalvote.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(FunctionalVote.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

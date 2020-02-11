@@ -1,6 +1,6 @@
-defmodule Functionalvote do
+defmodule FunctionalVote do
   @moduledoc """
-  Functionalvote keeps the contexts that define your domain
+  FunctionalVote keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

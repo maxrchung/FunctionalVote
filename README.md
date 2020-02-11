@@ -1,4 +1,4 @@
-# Functionalvote
+# FunctionalVote
 
 To start your Phoenix server:
 

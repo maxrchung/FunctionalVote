@@ -1,9 +1,9 @@
-defmodule Functionalvote.MixProject do
+defmodule FunctionalVote.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :functionalvote,
+      app: :functional_vote,
       version: "0.1.0",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule Functionalvote.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Functionalvote.Application, []},
+      mod: {FunctionalVote.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

@@ -1,4 +1,4 @@
-defmodule FunctionalvoteWeb.ChannelCase do
+defmodule FunctionalVoteWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -11,7 +11,7 @@ defmodule FunctionalvoteWeb.ChannelCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use FunctionalvoteWeb.ChannelCase, async: true`, although
+  by setting `use FunctionalVoteWeb.ChannelCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -23,15 +23,15 @@ defmodule FunctionalvoteWeb.ChannelCase do
       use Phoenix.ChannelTest
 
       # The default endpoint for testing
-      @endpoint FunctionalvoteWeb.Endpoint
+      @endpoint FunctionalVoteWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Functionalvote.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(FunctionalVote.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Functionalvote.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(FunctionalVote.Repo, {:shared, self()})
     end
 
     :ok

@@ -1,5 +1,5 @@
-defmodule FunctionalvoteWeb.PageControllerTest do
-  use FunctionalvoteWeb.ConnCase
+defmodule FunctionalVoteWeb.PageControllerTest do
+  use FunctionalVoteWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")

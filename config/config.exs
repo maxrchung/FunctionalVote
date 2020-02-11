@@ -7,15 +7,15 @@
 # General application configuration
 use Mix.Config
 
-config :functionalvote,
-  ecto_repos: [Functionalvote.Repo]
+config :functional_vote,
+  ecto_repos: [FunctionalVote.Repo]
 
 # Configures the endpoint
-config :functionalvote, FunctionalvoteWeb.Endpoint,
+config :functional_vote, FunctionalVoteWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "eiiJ8WxV0g4kydcNx7QUjpE6XxVpAgehbo5Qam4Dzrz9nnI41p0VLZtUY/ENGpqK",
-  render_errors: [view: FunctionalvoteWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Functionalvote.PubSub, adapter: Phoenix.PubSub.PG2]
+  secret_key_base: "ioowjAWwecCZhkFS18Yem6paec+6AvYSDi8oqSAhdeZ8zN5abJYTU5NsdNrAZBkh",
+  render_errors: [view: FunctionalVoteWeb.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: FunctionalVote.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,

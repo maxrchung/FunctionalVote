@@ -1,10 +1,10 @@
 use Mix.Config
 
 # Configure your database
-config :functionalvote, Functionalvote.Repo,
+config :functional_vote, FunctionalVote.Repo,
   username: "postgres",
   password: "postgres",
-  database: "functionalvote_dev",
+  database: "functional_vote_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -15,7 +15,7 @@ config :functionalvote, Functionalvote.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :functionalvote, FunctionalvoteWeb.Endpoint,
+config :functional_vote, FunctionalVoteWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -55,13 +55,13 @@ config :functionalvote, FunctionalvoteWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :functionalvote, FunctionalvoteWeb.Endpoint,
+config :functional_vote, FunctionalVoteWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/functionalvote_web/(live|views)/.*(ex)$",
-      ~r"lib/functionalvote_web/templates/.*(eex)$"
+      ~r"lib/functional_vote_web/(live|views)/.*(ex)$",
+      ~r"lib/functional_vote_web/templates/.*(eex)$"
     ]
   ]
 

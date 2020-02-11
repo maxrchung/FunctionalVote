@@ -1,4 +1,4 @@
-defmodule Functionalvote.Application do
+defmodule FunctionalVote.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -9,23 +9,23 @@ defmodule Functionalvote.Application do
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
-      Functionalvote.Repo,
+      FunctionalVote.Repo,
       # Start the endpoint when the application starts
-      FunctionalvoteWeb.Endpoint
-      # Starts a worker by calling: Functionalvote.Worker.start_link(arg)
-      # {Functionalvote.Worker, arg},
+      FunctionalVoteWeb.Endpoint
+      # Starts a worker by calling: FunctionalVote.Worker.start_link(arg)
+      # {FunctionalVote.Worker, arg},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Functionalvote.Supervisor]
+    opts = [strategy: :one_for_one, name: FunctionalVote.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
-    FunctionalvoteWeb.Endpoint.config_change(changed, removed)
+    FunctionalVoteWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

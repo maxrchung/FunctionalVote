@@ -1,4 +1,4 @@
-defmodule Functionalvote.DataCase do
+defmodule FunctionalVote.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule Functionalvote.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use Functionalvote.DataCase, async: true`, although
+  by setting `use FunctionalVote.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,20 +18,20 @@ defmodule Functionalvote.DataCase do
 
   using do
     quote do
-      alias Functionalvote.Repo
+      alias FunctionalVote.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Functionalvote.DataCase
+      import FunctionalVote.DataCase
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Functionalvote.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(FunctionalVote.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Functionalvote.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(FunctionalVote.Repo, {:shared, self()})
     end
 
     :ok

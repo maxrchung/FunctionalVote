@@ -1,5 +1,5 @@
-defmodule FunctionalvoteWeb.ErrorView do
-  use FunctionalvoteWeb, :view
+defmodule FunctionalVoteWeb.ErrorView do
+  use FunctionalVoteWeb, :view
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.

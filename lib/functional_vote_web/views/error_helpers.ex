@@ -1,4 +1,4 @@
-defmodule FunctionalvoteWeb.ErrorHelpers do
+defmodule FunctionalVoteWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -36,9 +36,9 @@ defmodule FunctionalvoteWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(FunctionalvoteWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(FunctionalVoteWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(FunctionalvoteWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(FunctionalVoteWeb.Gettext, "errors", msg, opts)
     end
   end
 end
