@@ -5,12 +5,12 @@ defmodule FunctionalVoteWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
-    # todo
     # plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
   pipeline :api do
+    plug CORSPlug, origin: "http://localhost:3000"
     plug :accepts, ["json"]
   end
 
