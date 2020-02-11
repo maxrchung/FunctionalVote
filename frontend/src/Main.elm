@@ -75,7 +75,7 @@ renderChoice index choice =
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
     Http.post
-        { url = "/poll/"
+        { url = "http://localhost:4000/poll/"
         , body = Http.jsonBody (makePollJSON model)
         , expect = Http.expectJson MakePollResponse makePollDecoder
         }
