@@ -13,6 +13,8 @@ defmodule FunctionalVoteWeb.PollView do
   def render("poll.json", %{poll: poll}) do
     %{id: poll.id,
       title: poll.title,
-      choices: poll.choices}
+      choices: poll.choices,
+      tallies: poll.tallies,
+      winner: poll.winner}
   end
 end

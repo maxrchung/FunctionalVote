@@ -8,17 +8,12 @@ defmodule FunctionalVote.Polls do
 
   alias FunctionalVote.Polls.Poll
 
-  @doc """
-  Returns the list of polls.
+  alias FunctionalVote.Votes
 
-  ## Examples
-
-      iex> list_polls()
-      [%Poll{}, ...]
-
-  """
-  def list_polls do
-    Repo.all(Poll)
+  def poll_exists?(id) do
+    query = from p in Poll,
+              where: p.id == ^id
+    Repo.exists?(query)
   end
 
   @doc """
@@ -38,6 +33,29 @@ defmodule FunctionalVote.Polls do
   def get_poll!(id), do: Repo.get!(Poll, id)
 
   @doc """
+  Gets poll data.
+
+  Raises `Ecto.NoResultsError` if the Poll does not exist.
+
+  ## Examples
+
+      iex> get_poll!(123)
+      %Poll{}
+
+      iex> get_poll!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_poll_data!(id) do
+    # todo: finish
+    IO.puts("[PollCtx] Get poll data")
+    poll = Repo.get!(Poll, id)
+    votes = Votes.get_votes(id)
+    calculated = %{:tallies => [], :winner => ""}
+    Map.merge(poll, calculated)
+  end
+
+  @doc """
   Creates a poll.
 
   ## Examples
@@ -50,6 +68,7 @@ defmodule FunctionalVote.Polls do
 
   """
   def create_poll(attrs \\ %{}) do
+    IO.puts("[PollCtx] Create poll")
     %Poll{}
     |> Poll.changeset(attrs)
     |> Repo.insert()

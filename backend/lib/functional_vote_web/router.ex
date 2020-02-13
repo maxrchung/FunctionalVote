@@ -17,8 +17,10 @@ defmodule FunctionalVoteWeb.Router do
   scope "/", FunctionalVoteWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    post "/poll", PageController, :create
+    post "/poll", PollController, :create
+    get "/poll/:id", PollController, :show
+    post "/vote", VoteController, :create
+
   end
 
   # Other scopes may use custom stacks.

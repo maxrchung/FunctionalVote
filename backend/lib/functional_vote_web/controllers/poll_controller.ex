@@ -6,22 +6,33 @@ defmodule FunctionalVoteWeb.PollController do
 
   action_fallback FunctionalVoteWeb.FallbackController
 
-  def index(conn, _params) do
-    polls = Polls.list_polls()
-    render(conn, "index.json", polls: polls)
-  end
+  @doc """
+  Creates a new poll
 
-  def create(conn, %{"poll" => poll_params}) do
+  POST /poll
+  @param: poll_params - contains "title", and "choices"
+  @return: Poll information as JSON
+  """
+  def create(conn, poll_params) do
+    IO.puts("[PollCtrl] Create poll")
     with {:ok, %Poll{} = poll} <- Polls.create_poll(poll_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.poll_path(conn, :show, poll))
-      |> render("show.json", poll: poll)
+      |> show(%{"id" => poll.id})
     end
   end
 
+  @doc """
+  Gets all information about a poll
+
+  GET /poll/:id
+  @param: id - poll id
+  @return: Poll information as JSON
+  """
   def show(conn, %{"id" => id}) do
-    poll = Polls.get_poll!(id)
+    IO.puts("[PollCtrl] Get poll data")
+    poll = Polls.get_poll_data!(id)
     render(conn, "show.json", poll: poll)
   end
 

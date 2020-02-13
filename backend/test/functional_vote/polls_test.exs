@@ -19,11 +19,6 @@ defmodule FunctionalVote.PollsTest do
       poll
     end
 
-    test "list_polls/0 returns all polls" do
-      poll = poll_fixture()
-      assert Polls.list_polls() == [poll]
-    end
-
     test "get_poll!/1 returns the poll with given id" do
       poll = poll_fixture()
       assert Polls.get_poll!(poll.id) == poll
