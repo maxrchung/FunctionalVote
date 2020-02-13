@@ -10,7 +10,7 @@ import Browser.Navigation as Navigation
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Url
-import Url.Parser as Parser
+import Url.Parser as Parser exposing ((</>))
 import Url.Parser.Query as Query
 
 -- MAIN
@@ -27,12 +27,26 @@ main =
 -- MODEL
 type alias Model = 
   { key: Navigation.Key
+  , route : Maybe Route
   , title : String
   , choices : Array String }
 
 init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init flags url key
-  = (Model key "" (Array.fromList ["", "", ""]), Cmd.none)
+init flags url key = 
+  ( Model key (Parser.parse routeParser url) "" (Array.fromList ["", "", ""]), Cmd.none )
+
+type Route 
+  = Home
+  | Vote Int
+  | Poll Int
+
+routeParser : Parser.Parser (Route -> a) a
+routeParser =
+  Parser.oneOf
+    [ Parser.map Home Parser.top
+    , Parser.map Vote (Parser.s "vote" </> Parser.int)
+    , Parser.map Poll (Parser.s "poll" </> Parser.int)
+    ]
 
 -- UPDATE
 type Msg 
@@ -71,7 +85,7 @@ update msg model =
           ( model, Navigation.load href )
 
     UrlChanged url ->
-      ( model, Cmd.none )
+      ( { model | route = Parser.parse routeParser url }, Cmd.none )
       
 
 -- SUBSCRIPTIONS
@@ -84,11 +98,24 @@ view : Model -> Browser.Document Msg
 view model =
   { title = "Functional Vote" 
   , body = 
-    [ div []
-        ([ input [ placeholder "Title", value model.title, onInput ChangeTitle ] [] ] ++
-        Array.toList (Array.indexedMap renderChoice model.choices) ++
-        [ button [onClick MakePollRequest] [ text "Create Poll" ] ])
-    ]
+    case model.route of 
+      Just route ->
+        case route of
+          Home ->
+            [ div []
+              ([ input [ placeholder "Title", value model.title, onInput ChangeTitle ] [] ] ++
+              Array.toList (Array.indexedMap renderChoice model.choices) ++
+              [ button [onClick MakePollRequest] [ text "Create Poll" ] ])
+            ]
+          Poll id->
+            [ text "Poll"
+            ]
+          Vote id ->
+            [ text "Vote"
+            ]
+      Nothing ->
+        [ text "Invalid URL!!!!"
+        ]
   }
 
 renderChoice : Int -> String -> Html Msg
