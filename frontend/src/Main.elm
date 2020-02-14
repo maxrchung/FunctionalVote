@@ -2,16 +2,15 @@ module Main exposing (..)
 
 import Browser
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
 import Array exposing (..)
 import Browser.Navigation as Navigation
 import Url
 import Url.Parser as Parser exposing ((</>))
-import Url.Parser.Query as Query
 import Page.Home as Home
 import Page.Vote as Vote
 import Page.Poll as Poll
+
+
 
 -- MAIN
 main = 
@@ -24,6 +23,8 @@ main =
     , onUrlChange = UrlChanged
     }
 
+
+
 -- MODEL
 type alias Model = 
   { key: Navigation.Key
@@ -33,7 +34,6 @@ type alias Model =
 init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
 init _ url key = 
   ( Model key (initPage url), Cmd.none )
-
 
 type Page
   = HomePage Home.Model
@@ -70,6 +70,8 @@ routeParser =
     , Parser.map VoteRoute (Parser.s "vote" </> Parser.string)
     , Parser.map PollRoute (Parser.s "poll" </> Parser.string)
     ]
+
+
 
 -- UPDATE
 type Msg 
@@ -125,12 +127,15 @@ update msg model =
             , Cmd.map PollMsg cmds
             )
         _ -> ( model, Cmd.none )
-      
+
+
 
 -- SUBSCRIPTIONS
 subscriptions : Model -> Sub Msg
 subscriptions _ =
   Sub.none
+
+
 
 -- VIEW
 view : Model -> Browser.Document Msg
