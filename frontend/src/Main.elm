@@ -31,10 +31,6 @@ type alias Model =
   , page : Page
   }
 
-init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init _ url key = 
-  ( Model key (initPage url), Cmd.none )
-
 type Page
   = HomePage Home.Model
   | VotePage Vote.Model
@@ -45,6 +41,10 @@ type Route
   = HomeRoute
   | VoteRoute String
   | PollRoute String
+
+init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init _ url key = 
+  ( Model key (initPage url), Cmd.none )
 
 initPage : Url.Url -> Page
 initPage url =
@@ -101,9 +101,9 @@ update msg model =
           let 
             (newModel, cmds) = Home.update homeMsg oldModel
           in
-            ( { model | page = HomePage newModel }
-            , Cmd.map HomeMsg cmds
-            )
+          ( { model | page = HomePage newModel }
+          , Cmd.map HomeMsg cmds
+          )
         _ -> ( model, Cmd.none )
       
     VoteMsg voteMsg ->
@@ -112,9 +112,9 @@ update msg model =
           let 
             (newModel, cmds) = Vote.update voteMsg oldModel
           in
-            ( { model | page = VotePage newModel }
-            , Cmd.map VoteMsg cmds
-            )
+          ( { model | page = VotePage newModel }
+          , Cmd.map VoteMsg cmds
+          )
         _ -> ( model, Cmd.none )
 
     PollMsg pollMsg ->
@@ -123,9 +123,9 @@ update msg model =
           let 
             (newModel, cmds) = Poll.update pollMsg oldModel
           in
-            ( { model | page = PollPage newModel }
-            , Cmd.map PollMsg cmds
-            )
+          ( { model | page = PollPage newModel }
+          , Cmd.map PollMsg cmds
+          )
         _ -> ( model, Cmd.none )
 
 
