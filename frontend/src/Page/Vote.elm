@@ -23,33 +23,34 @@ type alias Poll =
 
 init : Int -> ( Model, Cmd Msg )
 init id = 
-  ( Model id (Poll "" (Array.fromList [])), Cmd.none )
+  let model = Model id (Poll "" (Array.fromList []))
+  in ( model, getPollRequest model )
 
 
 
 -- UPDATE
 type Msg 
-  = GetVoteResponse (Result Http.Error Poll)
+  = GetPollResponse (Result Http.Error Poll)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    GetVoteResponse result ->
+    GetPollResponse result ->
       case result of
         Ok newPoll ->
           ( { model | poll = newPoll }, Cmd.none )
         Err _ ->
           (model, Cmd.none)
 
-getVoteRequest : Model -> Cmd Msg
-getVoteRequest model =
+getPollRequest : Model -> Cmd Msg
+getPollRequest model =
   Http.get
-    { url = "http://localhost:4000/vote/" ++ String.fromInt(model.id)
-    , expect = Http.expectJson GetVoteResponse getVoteDecoder
+    { url = "http://localhost:4000/poll/" ++ String.fromInt model.id
+    , expect = Http.expectJson GetPollResponse getPollDecoder
     }
 
-getVoteDecoder : Decode.Decoder Poll
-getVoteDecoder =
+getPollDecoder : Decode.Decoder Poll
+getPollDecoder =
   Decode.map2 Poll
     (Decode.field "data" (Decode.field "title" Decode.string))
     (Decode.field "data" (Decode.field "choices" (Decode.array Decode.string)))
@@ -66,4 +67,7 @@ view model =
 
 renderChoice : Int -> String -> Html Msg
 renderChoice index choice =
-  h2 [] [ text choice ]
+  div []
+    [ h2 [ style "display" "inline" ] [ text choice ]
+    , input [ placeholder "Enter rank bro" ] []
+    ]
