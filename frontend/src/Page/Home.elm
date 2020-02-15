@@ -44,7 +44,7 @@ update msg model =
     MakePollResponse result ->
       case result of
         Ok pollId ->
-          (model, Navigation.load ("/poll/" ++ String.fromInt pollId) )
+          (model, Navigation.load ("/vote/" ++ String.fromInt pollId) )
         Err _ ->
           (model, Cmd.none)
 
