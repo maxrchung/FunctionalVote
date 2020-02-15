@@ -10,7 +10,11 @@ import Array exposing (..)
 
 -- MODEL
 type alias Model = 
-  { id: String }
+  { id: Int }
+
+init : Int -> ( Model, Cmd Msg )
+init id = 
+  ( Model id, Cmd.none )
 
 
 
@@ -29,4 +33,4 @@ update msg model =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div [] [ text ("I am poll " ++ model.id) ]
+  div [] [ text ("I am poll " ++ String.fromInt model.id) ]

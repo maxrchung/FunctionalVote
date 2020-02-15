@@ -16,8 +16,8 @@ type alias Model =
   { title : String
   , choices : Array String }
 
-init : () -> ( Model, Cmd Msg )
-init _ = 
+init : ( Model, Cmd Msg )
+init = 
   ( Model "" (Array.fromList ["", "", ""]), Cmd.none )
 
 
