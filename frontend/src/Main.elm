@@ -141,13 +141,13 @@ view model =
         ]
       }
     VotePage voteModel ->
-      { title = "Functional Vote - Create a Poll"
+      { title = "Functional Vote - Vote in a Poll"
       , body = [
           Html.map VoteMsg (Vote.view voteModel)
         ]
       }
     PollPage pollModel ->
-      { title = "Functional Vote - Create a Poll"
+      { title = "Functional Vote - View a Poll"
       , body = [
           Html.map PollMsg (Poll.view pollModel)
         ]
