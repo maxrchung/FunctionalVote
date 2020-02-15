@@ -20,10 +20,7 @@ update msg model =
     VoteTest ->
       (model, Cmd.none)
 
--- SUBSCRIPTIONS
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-  Sub.none
+
 
 -- VIEW
 view : Model -> Html Msg

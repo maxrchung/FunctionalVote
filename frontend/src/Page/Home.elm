@@ -10,6 +10,8 @@ import Browser.Navigation as Navigation
 import Json.Decode as Decode
 import Json.Encode as Encode
 
+
+
 -- MODEL
 type alias Model = 
   { title : String
@@ -18,6 +20,8 @@ type alias Model =
 init : () -> ( Model, Cmd Msg )
 init _ = 
   ( Model "" (Array.fromList ["", "", ""]), Cmd.none )
+
+
 
 -- UPDATE
 type Msg 
@@ -45,23 +49,6 @@ update msg model =
         Err _ ->
           (model, Cmd.none)
 
--- SUBSCRIPTIONS
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-  Sub.none
-
--- VIEW
-view : Model -> Html Msg
-view model =
-  div []
-    ([ input [ placeholder "Title", value model.title, onInput ChangeTitle ] [] ] ++
-    Array.toList (Array.indexedMap renderChoice model.choices) ++
-    [ button [onClick MakePollRequest] [ text "Create Poll" ] ])
-
-renderChoice : Int -> String -> Html Msg
-renderChoice index choice =
-  input [ placeholder "Choice", value choice, onInput (ChangeChoice index) ] []
-
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
   Http.post
@@ -80,3 +67,17 @@ makePollJSON model =
 makePollDecoder : Decode.Decoder String
 makePollDecoder =
   Decode.field "id" (Decode.field "id" Decode.string)
+
+
+
+-- VIEW
+view : Model -> Html Msg
+view model =
+  div []
+    ([ input [ placeholder "Title", value model.title, onInput ChangeTitle ] [] ] ++
+    Array.toList (Array.indexedMap renderChoice model.choices) ++
+    [ button [onClick MakePollRequest] [ text "Create Poll" ] ])
+
+renderChoice : Int -> String -> Html Msg
+renderChoice index choice =
+  input [ placeholder "Choice", value choice, onInput (ChangeChoice index) ] []

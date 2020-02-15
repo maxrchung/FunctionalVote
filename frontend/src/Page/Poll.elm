@@ -6,9 +6,13 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Array exposing (..)
 
+
+
 -- MODEL
 type alias Model = 
   { id: String }
+
+
 
 -- UPDATE
 type Msg 
@@ -20,10 +24,7 @@ update msg model =
     PollTest ->
       (model, Cmd.none)
 
--- SUBSCRIPTIONS
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-  Sub.none
+
 
 -- VIEW
 view : Model -> Html Msg
