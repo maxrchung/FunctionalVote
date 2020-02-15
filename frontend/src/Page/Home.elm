@@ -27,7 +27,7 @@ type Msg
   = ChangeTitle String
   | ChangeChoice Int String
   | MakePollRequest
-  | MakePollResponse (Result Http.Error String)
+  | MakePollResponse (Result Http.Error Int)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -44,7 +44,7 @@ update msg model =
     MakePollResponse result ->
       case result of
         Ok pollId ->
-          (model, Navigation.load ("/poll/" ++ pollId) )
+          (model, Navigation.load ("/poll/" ++ String.fromInt pollId) )
         Err _ ->
           (model, Cmd.none)
 
@@ -63,9 +63,9 @@ makePollJSON model =
     , ( "choices", Encode.array Encode.string model.choices )
     ]
 
-makePollDecoder : Decode.Decoder String
+makePollDecoder : Decode.Decoder Int
 makePollDecoder =
-  Decode.field "id" (Decode.field "id" Decode.string)
+  Decode.field "data" (Decode.field "id" Decode.int)
 
 
 
