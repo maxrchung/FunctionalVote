@@ -2,91 +2,143 @@ module Main exposing (..)
 
 import Browser
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import Array exposing (..)
-import Http
 import Browser.Navigation as Navigation
-import Json.Decode as Decode
-import Json.Encode as Encode
+import Url
+import Url.Parser as Parser exposing ((</>))
+import Page.Home as Home
+import Page.Vote as Vote
+import Page.Poll as Poll
+
+
 
 -- MAIN
 main = 
-    Browser.element 
-        { init = init
-        , update = update
-        , subscriptions = subscriptions
-        , view = view 
-        }
+  Browser.application 
+    { init = init
+    , update = update
+    , subscriptions = \_ -> Sub.none
+    , view = view
+    , onUrlRequest = UrlRequested
+    , onUrlChange = UrlChanged
+    }
+
+
 
 -- MODEL
 type alias Model = 
-    { title : String
-    , choices : Array String }
+  { key: Navigation.Key
+  , page : Page
+  }
 
-init : () -> (Model, Cmd Msg)
-init _ = (Model "" (Array.fromList ["", "", ""]), Cmd.none)
+type Page
+  = HomePage Home.Model
+  | VotePage Vote.Model
+  | PollPage Poll.Model
+  | BadPage
+
+type Route 
+  = HomeRoute
+  | VoteRoute Int
+  | PollRoute Int
+
+init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init _ url key = 
+  let ( page, cmd ) = initPage url
+  in ( Model key page, cmd)
+
+initPage : Url.Url -> ( Page, Cmd Msg )
+initPage url =
+  case Parser.parse routeParser url of
+    Just route ->
+      case route of
+        HomeRoute ->
+          let ( model, cmd ) = Home.init
+          in ( HomePage model , Cmd.map HomeMsg cmd )
+
+        VoteRoute pollId ->
+          let ( model, cmd ) = Vote.init pollId
+          in ( VotePage model, Cmd.map VoteMsg cmd )
+
+        PollRoute pollId ->
+          let ( model, cmd ) = Poll.init pollId
+          in ( PollPage model, Cmd.map PollMsg cmd )
+    
+    Nothing ->
+      ( BadPage, Cmd.none )
+
+routeParser : Parser.Parser (Route -> a) a
+routeParser =
+  Parser.oneOf
+    [ Parser.map HomeRoute Parser.top
+    , Parser.map VoteRoute (Parser.s "vote" </> Parser.int)
+    , Parser.map PollRoute (Parser.s "poll" </> Parser.int)
+    ]
+
+
 
 -- UPDATE
 type Msg 
-    = ChangeTitle String
-    | ChangeChoice Int String
-    | MakePollRequest
-    | MakePollResponse (Result Http.Error String)
+  = UrlRequested Browser.UrlRequest
+  | UrlChanged Url.Url
+  | HomeMsg Home.Msg
+  | VoteMsg Vote.Msg
+  | PollMsg Poll.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    ChangeTitle newTitle ->
-        ({ model | title = newTitle }, Cmd.none)
-        
-    ChangeChoice index newChoice ->
-        ({ model | choices = Array.set index newChoice model.choices }, Cmd.none)
+    UrlRequested urlRequest ->
+      case urlRequest of
+        Browser.Internal url ->
+          ( model, Navigation.pushUrl model.key (Url.toString url) )
 
-    MakePollRequest ->
-        (model, makePollRequest model)
+        Browser.External href ->
+          ( model, Navigation.load href )
 
-    MakePollResponse result ->
-        case result of
-            Ok pollID ->
-                (model, Navigation.load ("/poll/" ++ pollID) )
-            Err _ ->
-                (model, Cmd.none)
-            
+    UrlChanged url -> 
+      let ( page, cmd ) = initPage url
+      in ( { model | page = page }, cmd)
 
--- SUBSCRIPTIONS
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+    HomeMsg homeMsg ->
+      case model.page of
+        HomePage oldModel -> 
+          let ( newModel, cmd ) = Home.update homeMsg oldModel
+          in ( { model | page = HomePage newModel }, Cmd.map HomeMsg cmd )
+        _ -> ( model, Cmd.none )
+      
+    VoteMsg voteMsg ->
+      case model.page of
+        VotePage oldModel -> 
+          let ( newModel, cmd ) = Vote.update voteMsg oldModel
+          in ( { model | page = VotePage newModel }, Cmd.map VoteMsg cmd )
+        _ -> ( model, Cmd.none )
+
+    PollMsg pollMsg ->
+      case model.page of
+        PollPage oldModel -> 
+          let ( newModel, cmd ) = Poll.update pollMsg oldModel
+          in ( { model | page = PollPage newModel }, Cmd.map PollMsg cmd )
+        _ -> ( model, Cmd.none )
+
+
 
 -- VIEW
-view : Model -> Html Msg
+view : Model -> Browser.Document Msg
 view model =
-    div []
-        ([ input [ placeholder "Title", value model.title, onInput ChangeTitle ] [] ] ++
-        Array.toList (Array.indexedMap renderChoice model.choices) ++
-        [ button [onClick MakePollRequest] [ text "Create Poll" ] ])
-
-
-renderChoice : Int -> String -> Html Msg
-renderChoice index choice =
-    input [ placeholder "Choice", value choice, onInput (ChangeChoice index) ] []
-
-makePollRequest : Model -> Cmd Msg
-makePollRequest model =
-    Http.post
-        { url = "http://localhost:4000/poll/"
-        , body = Http.jsonBody (makePollJSON model)
-        , expect = Http.expectJson MakePollResponse makePollDecoder
-        }
-
-makePollJSON : Model -> Encode.Value
-makePollJSON model =
-    Encode.object
-        [ ( "title", Encode.string model.title )
-        , ( "choices", Encode.array Encode.string model.choices )
-        ]
-
-makePollDecoder : Decode.Decoder String
-makePollDecoder =
-    Decode.field "data" (Decode.field "image_url" Decode.string)
+  case model.page of
+    HomePage homeModel -> 
+      { title = "Functional Vote - Create a Poll"
+      , body = [ Html.map HomeMsg (Home.view homeModel) ]
+      }
+    VotePage voteModel ->
+      { title = "Functional Vote - Vote in a Poll"
+      , body = [ Html.map VoteMsg (Vote.view voteModel) ]
+      }
+    PollPage pollModel ->
+      { title = "Functional Vote - View a Poll"
+      , body = [ Html.map PollMsg (Poll.view pollModel) ]
+      }
+    BadPage ->
+      { title = "Functional Vote - Error" 
+      , body = [ text "Invalid URL!!!" ]
+      }
