@@ -51,7 +51,16 @@ defmodule FunctionalVote.Polls do
     IO.puts("[PollCtx] Get poll data")
     poll = Repo.get!(Poll, id)
     votes = Votes.get_votes(id)
-    calculated = %{:tallies => [], :winner => ""}
+    IO.puts("[PollCtx] Got votes by user:")
+    IO.inspect(votes)
+    tallies_by_choice = Map.values(votes)
+              |> List.zip()
+              |> List.first()
+              |> Tuple.to_list()
+              |> Enum.frequencies()
+    tallies_by_count = Enum.group_by(tallies_by_choice, fn {_, value} -> value end, fn {key, _} -> key end)
+    IO.inspect(tallies_by_count)
+    calculated = %{tallies: tallies_by_choice, winner: ""}
     Map.merge(poll, calculated)
   end
 

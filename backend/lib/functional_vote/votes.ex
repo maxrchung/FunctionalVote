@@ -10,64 +10,33 @@ defmodule FunctionalVote.Votes do
   alias FunctionalVote.Polls.Votes
 
   @doc """
-  Gets all votes for a specified Poll.
+  Gets all votes for a specified Poll, grouped by user
+
+  @param poll_id
+  @return Map of lists, ex: %{0 => ["a", "b", "c"], 1 => ["c", "b", "a"]}
   """
   def get_votes(poll_id) do
-    # todo: finish
     query = from v in Votes,
             where: v.poll_id == ^poll_id,
             select: {v.user_id, v.rank, v.choice}
-    # List of tuples sorted descending (highest user_id, highest rank / last choice first)
-    # ex: [{1, 1, "a"}, {1, 0, "b"}, {0, 1, "b"}, {0, 0, "a"}]
+    # List of tuples sorted ascending (lowest user_id, lowest rank / first choice first)
+    # Ex: [{0, 0, "a"}, {0, 1, "b"}, {0, 2, "c"}, {1, 2, "a"}, {1, 1, "b"}, {1, 0, "c"}]
     votes_list = Repo.all(query)
+                 |> Enum.sort()
     # Get number of voters
     query = from v in Votes,
             where: v.poll_id == ^poll_id,
             select: max(v.user_id)
     max_user_id = Repo.one(query) || -1  # -1 indicates no voters
     IO.puts("[VotesCtx] Got #{length(votes_list)} votes from #{max_user_id + 1} voters")
-    IO.inspect(votes_list)
-    # Convert into list of %{:applied => 0, :ranks => %{0 => "a", ...}, :choices => %{"a" => 0, ...}}
+    # IO.inspect(votes_list)
+    # Convert into list of %{0 => ["a", "b", "c"], 1 => ["c", "b", "a"]}
     if (max_user_id !== -1) do
-      IO.puts("TEST")
-      a = Enum.group_by(votes_list, &elem(&1, 0), &Tuple.delete_at(&1, 0) |> Tuple.to_list())
-      IO.inspect(a)
-    #   cur_user = List.first(votes_list)
-    #              |> Tuple.to_list()
-    #              |> List.first()
-    #   votes_list_to_return = []
-    #   votes_list_by_user = [cur_user]
-    #   Enum.each votes_list, fn {user_id, rank, choice} ->
-    #       if (user_id != cur_user) do
-    #         # New user_id detected, add votes_list_by_user to votes_list and reset
-    #         IO.puts("[VotesCtx] Finished constructing list for user")
-    #         IO.inspect(votes_list_by_user)
-    #         List.insert_at(votes_list_to_return, -1, votes_list_by_user)
-    #         votes_list_by_user = [user_id]
-    #         cur_user = user_id
-    #       end
-    #       IO.puts("[VotesCtx] Added #{choice} for user #{cur_user}")
-    #       List.insert_at(votes_list_by_user, -1, choice)
-    #   end
-    #   IO.inspect(votes_list_by_user)
-    #   List.insert_at(votes_list_to_return, -1, votes_list_by_user)
-    #   IO.puts("[VotesCtx] Finished votes_list")
-    #   IO.inspect(votes_list_to_return)
-    #   votes_list_to_return
+      votes_by_user = Enum.group_by(votes_list, &elem(&1, 0), &Tuple.to_list(&1) |> List.last())
     else
       []
     end
   end
-
-  defp recurse_prepend_to_list([head | tail]) do
-    recurse_prepend_to_list([head], [tail])
-  end
-
-  defp recurse_prepend_to_list(result, [head | tail]) do
-    recurse_prepend_to_list([head | result], [tail])
-  end
-
-  defp recurse_prepend_to_list(result, []), do: result
 
   @doc """
   Creates a vote.
@@ -78,7 +47,7 @@ defmodule FunctionalVote.Votes do
       {:ok}
 
       iex> create_vote(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+      {:id_error}
 
   """
   def create_vote(attrs \\ %{}) do
