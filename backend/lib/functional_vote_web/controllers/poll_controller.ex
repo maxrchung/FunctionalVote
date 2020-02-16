@@ -36,19 +36,4 @@ defmodule FunctionalVoteWeb.PollController do
     render(conn, "show.json", poll: poll)
   end
 
-  def update(conn, %{"id" => id, "poll" => poll_params}) do
-    poll = Polls.get_poll!(id)
-
-    with {:ok, %Poll{} = poll} <- Polls.update_poll(poll, poll_params) do
-      render(conn, "show.json", poll: poll)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    poll = Polls.get_poll!(id)
-
-    with {:ok, %Poll{}} <- Polls.delete_poll(poll) do
-      send_resp(conn, :no_content, "")
-    end
-  end
 end

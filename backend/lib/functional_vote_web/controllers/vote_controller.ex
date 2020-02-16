@@ -16,6 +16,7 @@ defmodule FunctionalVoteWeb.VoteController do
     IO.puts("[VoteCtrl] Submit vote")
     case Votes.create_vote(vote_params) do
       :ok -> send_resp(conn, :created, "")
+      :id_error -> send_resp(conn, :internal_server_error, "Invalid poll ID")
       _ -> send_resp(conn, :internal_server_error, "")
     end
   end
