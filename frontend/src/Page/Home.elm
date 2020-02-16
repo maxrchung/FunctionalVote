@@ -3,7 +3,7 @@ module Page.Home exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Array exposing (..)
+import Array
 import Http
 import Browser.Navigation as Navigation
 import Json.Decode as Decode
@@ -14,7 +14,7 @@ import Json.Encode as Encode
 -- MODEL
 type alias Model = 
   { title : String
-  , choices : Array String }
+  , choices : Array.Array String }
 
 init : ( Model, Cmd Msg )
 init = 
@@ -52,12 +52,12 @@ makePollRequest : Model -> Cmd Msg
 makePollRequest model =
   Http.post
     { url = "http://localhost:4000/poll/"
-    , body = Http.jsonBody (makePollJSON model)
+    , body = Http.jsonBody (makePollJson model)
     , expect = Http.expectJson MakePollResponse makePollDecoder
     }
 
-makePollJSON : Model -> Encode.Value
-makePollJSON model = 
+makePollJson : Model -> Encode.Value
+makePollJson model = 
   Encode.object
     [ ( "title", Encode.string model.title )
     , ( "choices", Encode.array Encode.string model.choices )
@@ -73,10 +73,19 @@ makePollDecoder =
 view : Model -> Html Msg
 view model =
   div []
-    ([ input [ placeholder "Title", value model.title, onInput ChangeTitle ] [] ] ++
-    Array.toList (Array.indexedMap renderChoice model.choices) ++
-    [ button [onClick MakePollRequest] [ text "Create Poll" ] ])
+    ( [ input [ placeholder "Title"
+              , value model.title
+              , onInput ChangeTitle 
+              ] [] ] ++
+
+      Array.toList (Array.indexedMap renderChoice model.choices) ++
+
+      [ button [onClick MakePollRequest] [ text "Create Poll" ] ]
+    )
 
 renderChoice : Int -> String -> Html Msg
 renderChoice index choice =
-  input [ placeholder "Choice", value choice, onInput (ChangeChoice index) ] []
+  input [ placeholder "Choice"
+        , value choice
+        , onInput (ChangeChoice index) 
+        ] []

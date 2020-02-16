@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Browser
 import Html exposing (..)
-import Array exposing (..)
 import Browser.Navigation as Navigation
 import Url
 import Url.Parser as Parser exposing ((</>))
