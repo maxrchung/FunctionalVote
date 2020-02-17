@@ -29,6 +29,8 @@ const env = getClientEnvironment(publicUrl);
 
 const useDebugger = process.env.ELM_DEBUGGER === 'true';
 
+const purgecss = require('@fullhuman/postcss-purgecss')
+
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
@@ -259,9 +261,14 @@ module.exports = {
               // https://github.com/facebook/create-react-app/issues/2677
               ident: 'postcss',
               plugins: () => [
+                require('tailwindcss'),
                 require('postcss-flexbugs-fixes'),
                 autoprefixer({
                   flexbox: 'no-2009'
+                }),
+                purgecss({
+                  content: ['./src/**/*.elm'],
+                  defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || []
                 })
               ]
             }
