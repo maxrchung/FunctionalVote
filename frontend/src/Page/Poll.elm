@@ -74,5 +74,5 @@ renderChoice winner choice =
   if winner == choice then
     h2 [] [ text <| "Winner: " ++ choice ]
   else
-    div [] [ text <| "Not winner: " ++ choice]
+    div [] [ text choice]
     
