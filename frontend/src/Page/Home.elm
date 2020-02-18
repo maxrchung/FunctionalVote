@@ -72,7 +72,7 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div []
+  div [ class "font-mono" ]
     ( [ input [ placeholder "Title"
               , value model.title
               , onInput ChangeTitle 
