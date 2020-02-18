@@ -15,3 +15,8 @@
 [data-elm-hot="true"] {
   height: inherit;
 }
+
+/* body classes are not read properly when using dev server */
+body {
+  @apply bg-black;
+}

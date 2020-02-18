@@ -72,16 +72,17 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div [ class "font-mono" ]
-    ( [ input [ placeholder "Title"
-              , value model.title
-              , onInput ChangeTitle 
-              ] [] ] ++
-
-      Array.toList (Array.indexedMap renderChoice model.choices) ++
-
-      [ button [onClick MakePollRequest] [ text "Create Poll" ] ]
-    )
+  div [ class "container mx-auto flex flex-col font-mono text-6xl text-white text-center" ]
+    (List.concat
+      [ [ h2 [] [text "title"]
+        , input [ placeholder "Title"
+                , value model.title
+                , onInput ChangeTitle 
+                ] [] 
+        ]
+      , Array.toList (Array.indexedMap renderChoice model.choices)
+      , [ button [ onClick MakePollRequest ] [ text "Create Poll" ] ]
+      ])
 
 renderChoice : Int -> String -> Html Msg
 renderChoice index choice =
