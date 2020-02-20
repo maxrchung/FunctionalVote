@@ -32,9 +32,9 @@ defmodule FunctionalVote.Votes do
     # IO.inspect(votes_list)
     # Convert into list of %{0 => ["a", "b", "c"], 1 => ["c", "b", "a"]}
     if (max_user_id !== -1) do
-      votes_by_user = Enum.group_by(votes_list, &elem(&1, 0), &Tuple.to_list(&1) |> List.last())
+      _votes_by_user = Enum.group_by(votes_list, &elem(&1, 0), &Tuple.to_list(&1) |> List.last()) # RETURN ENDPOINT
     else
-      []
+      %{} # RETURN ENDPOINT
     end
   end
 
@@ -70,12 +70,12 @@ defmodule FunctionalVote.Votes do
                       "rank"    => String.to_integer(v)}
         %Votes{}
           |> Votes.changeset(choice_map)
-          |> Repo.insert()
+          |> Repo.insert() # RETURN ENDPOINT
       end
     else
       # Poll we are voting for does not exist
       IO.puts("[VoteCtx] poll_id #{poll_id} does not exist!")
-      :id_error
+      :id_error # RETURN ENDPOINT
     end
   end
 

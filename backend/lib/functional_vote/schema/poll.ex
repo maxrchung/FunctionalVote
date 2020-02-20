@@ -5,6 +5,7 @@ defmodule FunctionalVote.Polls.Poll do
   schema "polls" do
     field :choices, {:array, :string}
     field :title, :string
+    field :winner, :string
 
     timestamps()
   end

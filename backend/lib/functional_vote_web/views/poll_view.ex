@@ -14,6 +14,7 @@ defmodule FunctionalVoteWeb.PollView do
     %{id: poll.id,
       title: poll.title,
       choices: poll.choices,
+      raw_tallies: poll.raw_tallies,
       tallies: poll.tallies,
       winner: poll.winner}
   end
