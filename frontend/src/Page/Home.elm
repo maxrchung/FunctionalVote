@@ -18,7 +18,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init = 
-  ( Model "" (Array.fromList ["", "", ""]), Cmd.none )
+  ( Model "" (Array.fromList ["", ""]), Cmd.none )
 
 
 
@@ -72,28 +72,40 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div [ class "container mx-auto flex flex-col font-mono text-6xl text-white" ]
+  div [ class "container font-mono grid grids-cols-12 gap-4 mx-auto text-center text-2xl text-orange-500" ]
     ( List.concat
-      [ [ h1 [] [ text "poll = {" ]
-        , h2 [] [ text "title = " ]
-        , div [ class "flex" ]
-          [ text "\""
-          , input [ class "text-black"
-                  , placeholder "-- Enter a title"
-                  , value model.title
-                  , onInput ChangeTitle 
-                  ] [] 
-          , text "\""
-          ]
-        , h2 [] [text "choices = [" ]
+      [ [ h1 [ class "col-span-1 m-auto" ] [ text "poll" ]
+        , div [ class "col-span-10" ] []
+        , h3 [ class "col-span-1 col-end-13 m-auto w-16" ] [ text "= {" ]
+
+        , h2 [ class "col-span-10 col-start-2 text-6xl text-blue-500" ] [ text "title" ]
+        , h3 [ class "col-span-1 col-end-13 m-auto" ] [ text "=" ]
+
+        , h3 [ class "col-span-1 m-auto w-16"] [ text "\"" ]
+        , input [ class "col-span-10 text-black w-full text-4xl"
+                , placeholder "-- Enter a title"
+                , value model.title
+                , onInput ChangeTitle 
+                ] [] 
+        , h3 [class "col-span-1 m-auto w-16" ] [ text "\"" ]
+        , h3 [class "col-span-1 text-left m-auto" ] [ text "," ]
+        , div [class "col-span-11" ] []
+
+        , h2 [ class "col-span-10 col-start-2 text-6xl text-blue-500" ] [text "choices" ]
+        , h3 [ class "col-span-1 col-end-13 m-auto" ] [text "= [" ]
         ] 
-      , Array.toList (Array.indexedMap renderChoice model.choices)
-      , [ h2 [] [text "]" ]
-        , h2 [] [text "}" ]
-        , button [ onClick MakePollRequest ] [ text "make poll" ] ]
+
+      , List.concat <| Array.toList <| Array.indexedMap renderChoice model.choices
+
+      , [ h3 [ class "col-span-1 text-left m-auto" ] [ text "]}" ]
+        , div [ class "col-span-11" ] []
+
+        , button [ class "col-span-12 text-6xl bg-orange-500 text-white" 
+                 , onClick MakePollRequest 
+                 ] [ text "create poll" ] ]
       ] )
 
-renderChoice : Int -> String -> Html Msg
+renderChoice : Int -> String -> List (Html Msg)
 renderChoice index choice =
   let 
     placeholderValue = 
@@ -102,8 +114,12 @@ renderChoice index choice =
       else
         "-- Enter another choice"
   in
-  input [ class "text-black"
-        , placeholder placeholderValue
-        , value choice
-        , onInput (ChangeChoice index) 
-        ] []
+  [ h3 [ class "col-span-1 m-auto"] [ text "\"" ]
+  , input [ class "col-span-10 text-black text-4xl"
+      , placeholder placeholderValue
+      , value choice
+      , onInput (ChangeChoice index) 
+      ] []
+  , h3 [ class "col-span-1 m-auto"] [ text "\"" ]
+  ]
+  

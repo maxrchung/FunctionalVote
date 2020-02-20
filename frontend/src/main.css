@@ -18,5 +18,10 @@
 
 /* body classes are not read properly when using dev server */
 body {
-  @apply bg-black;
+  @apply bg-gray-900;
+}
+
+.btn-test {
+  border: 1px solid black;
+  background-color: white;
 }
