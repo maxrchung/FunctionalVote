@@ -72,60 +72,85 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  let
-    titleQuotation = 
-      if model.title == "" then
-        ""
-      else
-        "\""
-  in
-  div [ class "container p-4 font-mono mx-auto text-sm text-orange-500" ]
-    ( List.concat
-      [ [ div [ class "flex justify-between" ]
-            [ h1 [ class "" ] [ text "poll" ]
-            , h3 [ class "" ] [ text "= {" ]
+  div [ class "container font-mono mx-auto text-sm text-orange-700" ]
+    [ div [ class "flex justify-between items-center h-16 bg-blue-900 px-4 shadow-lg" ]
+        [ h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center" 
+              , class "hover:bg-blue-700"
+              ]
+            [ text "v" 
+            , span [ class "text-orange-700"] [ text ":" ]
             ]
-        
-        , div [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
-            , h2 [ class "text-4xl text-blue-500" ] [ text "title" ]
-            , h3 [ class "w-8 text-right" ] [ text "=" ]
+        , div [ class "flex flex-row items-center justify-center" ]
+            [ h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center" 
+                  , class "hover:bg-blue-700"
+                  ]
+                [ i [ class "fas fa-question" ] [] ]
+            , h3 [ class "h-6 w-6 rounded-full flex items-center justify-center"]
+              [ text "->" ]
+
+            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center" 
+                  , class "hover:bg-blue-700"
+                  ]
+                [ i [ class "fab fa-github" ] [] ]
+
+            , h3 [ class "h-6 w-6 rounded-full flex items-center justify-center"]
+              [ text "->" ]
+
+            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center" 
+                  , class "hover:bg-blue-700"
+                  ]
+                [ i [ class "fab fa-twitter" ] [] ]
             ]
+        ]
+      
+    , div [ class "p-4" ]
+      ( List.concat
+        [ [ div [ class "flex justify-between" ]
+              [ h1 [ class "" ] [ text "poll" ]
+              , h3 [ class "" ] [ text "={" ]
+              ]
+          
+          , div [ class "flex justify-between items-center" ]
+              [ div [ class "w-8" ] []
+              , h2 [ class "text-4xl text-blue-500 font-bold" ] [ text "title" ]
+              , h3 [ class "w-8 text-right" ] [ text "=" ]
+              ]
 
-        , div [ class "flex justify-between items-center" ]
-            [ h3 [ class "w-8"] [ text titleQuotation ]
-            , input [ class "w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 rounded p-2 outline-none"
-                    , class "hover:bg-blue-700"
-                    , class "focus:bg-blue-700"
-                    , placeholder "-- Enter a poll title"
-                    , value model.title
-                    , onInput ChangeTitle 
-                    ] [] 
-            , h3 [class "w-8 text-right" ] [ text titleQuotation ]
-            ] 
-        
-        
-        , h3 [class "text-left pb-6" ] [ text "," ]
+          , div [ class "flex justify-between items-center" ]
+              [ h3 [ class "w-8"] [ text "\"" ]
+              , input [ class "w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 rounded p-2 outline-none"
+                      , class "hover:bg-blue-700"
+                      , class "focus:bg-blue-700"
+                      , placeholder "-- Enter a poll title"
+                      , value model.title
+                      , onInput ChangeTitle 
+                      ] [] 
+              , h3 [class "w-8 text-right" ] [ text "\"" ]
+              ] 
+          
+          
+          , h3 [class "text-left pb-6" ] [ text "," ]
 
-        , div [class "flex justify-between items-center" ]
-          [ div [ class "w-8" ] [ text "" ]
-          , h2 [ class "text-4xl text-blue-500" ] [text "choices" ]
-          , h3 [ class "w-8 text-right" ] [text "= [" ]
+          , div [class "flex justify-between items-center" ]
+            [ div [ class "w-8" ] [ text "" ]
+            , h2 [ class "text-4xl text-blue-500 font-bold" ] [text "choices" ]
+            , h3 [ class "w-8 text-right" ] [text "=[" ]
+            ]
           ]
-        ]
 
-      , Array.toList <| Array.indexedMap renderChoice model.choices
+        , Array.toList <| Array.indexedMap renderChoice model.choices
 
-      , [ h3 [ class "text-left m-auto pb-6" ] [ text "] }" ]
-        , button 
-          [ class "text-4xl w-full bg-orange-500 text-orange-100 shadow-lg rounded py-2" 
-          , class "hover:bg-orange-700"
-          , class "focus:outline-none"
-          , onClick MakePollRequest 
-          ] [ text "create poll" ] 
-        ]
-      ] 
-    )
+        , [ h3 [ class "text-left m-auto pb-6" ] [ text "]}" ]
+          , button 
+            [ class "text-4xl w-full bg-blue-500 text-orange-100 shadow-lg rounded py-2 font-bold" 
+            , class "hover:bg-blue-700"
+            , class "focus:outline-none"
+            , onClick MakePollRequest 
+            ] [ text "create poll" ] 
+          ]
+        ] 
+      )
+    ]
     
     
 
@@ -139,18 +164,10 @@ renderChoice index choice =
         "-- Enter another choice"
     
     startQuotation = 
-      if choice == "" then
-        ""
-      else if index == 0 then
+      if index == 0 then
         "\""
       else
-        ", \""
-
-    endQuotation =
-      if choice == "" then
-        ""
-      else
-        "\""
+        ",\""
 
   in
   div [ class "flex justify-between items-center pb-2" ] 
@@ -162,6 +179,6 @@ renderChoice index choice =
             , value choice
             , onInput ( ChangeChoice index ) 
             ] []
-    , h3 [ class "w-8 text-right"] [ text endQuotation ]
+    , h3 [ class "w-8 text-right"] [ text "\"" ]
     ]
   
