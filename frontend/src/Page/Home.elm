@@ -72,38 +72,38 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div [ class "container font-mono mx-auto text-sm text-orange-700" ]
+  div [ class "font-mono mx-auto text-sm text-orange-500" ]
     [ div [ class "flex justify-between items-center h-16 bg-blue-900 px-4 shadow-lg" ]
-        [ h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center" 
-              , class "hover:bg-blue-700"
+        [ h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
+              , class "hover:bg-blue-700 hover:shadow-md"
               ]
             [ text "v" 
-            , span [ class "text-orange-700"] [ text ":" ]
+            , span [ class "text-orange-500"] [ text ":" ]
             ]
         , div [ class "flex flex-row items-center justify-center" ]
-            [ h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center" 
-                  , class "hover:bg-blue-700"
+            [ h2 [ class "font-bold bg-blue-800 text-blue-500 text-lg h-10 w-10 rounded-full flex items-center justify-center shadow" 
+                  , class "hover:bg-blue-700 hover:shadow-md"
                   ]
                 [ i [ class "fas fa-question" ] [] ]
             , h3 [ class "h-6 w-6 rounded-full flex items-center justify-center"]
               [ text "->" ]
 
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center" 
-                  , class "hover:bg-blue-700"
+            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
+                  , class "hover:bg-blue-700 hover:shadow-md"
                   ]
                 [ i [ class "fab fa-github" ] [] ]
 
             , h3 [ class "h-6 w-6 rounded-full flex items-center justify-center"]
               [ text "->" ]
 
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center" 
-                  , class "hover:bg-blue-700"
+            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
+                  , class "hover:bg-blue-700 hover:shadow-md"
                   ]
                 [ i [ class "fab fa-twitter" ] [] ]
             ]
         ]
       
-    , div [ class "p-4" ]
+    , div [ class "container mx-auto p-4" ]
       ( List.concat
         [ [ div [ class "flex justify-between" ]
               [ h1 [ class "" ] [ text "poll" ]
@@ -142,8 +142,8 @@ view model =
 
         , [ h3 [ class "text-left m-auto pb-6" ] [ text "]}" ]
           , button 
-            [ class "text-4xl w-full bg-blue-500 text-orange-100 shadow-lg rounded py-2 font-bold" 
-            , class "hover:bg-blue-700"
+            [ class "text-4xl w-full bg-orange-500 text-orange-100 shadow-lg rounded py-2 font-bold" 
+            , class "hover:bg-orange-700"
             , class "focus:outline-none"
             , onClick MakePollRequest 
             ] [ text "create poll" ] 
