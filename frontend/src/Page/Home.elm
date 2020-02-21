@@ -118,7 +118,7 @@ view model =
 
           , div [ class "flex justify-between items-center" ]
               [ h3 [ class "w-8"] [ text "\"" ]
-              , input [ class "w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 rounded p-2 outline-none"
+              , input [ class "w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 p-2 outline-none"
                       , class "hover:bg-blue-700"
                       , class "focus:bg-blue-700"
                       , placeholder "-- Enter a poll title"
@@ -142,7 +142,7 @@ view model =
 
         , [ h3 [ class "text-left m-auto pb-8" ] [ text "]}" ]
           , button 
-            [ class "text-4xl w-full bg-orange-500 text-orange-100 shadow-lg rounded py-2 font-bold" 
+            [ class "text-4xl w-full bg-orange-500 text-orange-100 shadow-lg py-2 font-bold" 
             , class "hover:bg-orange-700"
             , class "focus:outline-none"
             , onClick MakePollRequest 
@@ -172,7 +172,7 @@ renderChoice index choice =
   in
   div [ class "flex justify-between items-center pb-2" ] 
     [ h3 [ class "w-8"] [ text startQuotation ]
-    , input [ class "w-full bg-blue-900 text-blue-100 text-md placeholder-blue-100 rounded p-2 outline-none"
+    , input [ class "w-full bg-blue-900 text-blue-100 text-md placeholder-blue-100 p-2 outline-none"
             , class "hover:bg-blue-700"
             , class "focus:bg-blue-700"
             , placeholder placeholderValue
