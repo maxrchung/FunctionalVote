@@ -72,54 +72,95 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div [ class "container font-mono grid grids-cols-12 gap-4 mx-auto text-center text-2xl text-orange-500" ]
+  let
+    titleQuotation = 
+      if model.title == "" then
+        ""
+      else
+        "\""
+  in
+  div [ class "container p-4 font-mono mx-auto text-sm text-orange-500" ]
     ( List.concat
-      [ [ h1 [ class "col-span-1 m-auto" ] [ text "poll" ]
-        , div [ class "col-span-10" ] []
-        , h3 [ class "col-span-1 col-end-13 m-auto w-16" ] [ text "= {" ]
+      [ [ div [ class "flex justify-between" ]
+            [ h1 [ class "" ] [ text "poll" ]
+            , h3 [ class "" ] [ text "= {" ]
+            ]
+        
+        , div [ class "flex justify-between items-center" ]
+            [ div [ class "w-8" ] []
+            , h2 [ class "text-4xl text-blue-500" ] [ text "title" ]
+            , h3 [ class "w-8 text-right" ] [ text "=" ]
+            ]
 
-        , h2 [ class "col-span-10 col-start-2 text-6xl text-blue-500" ] [ text "title" ]
-        , h3 [ class "col-span-1 col-end-13 m-auto" ] [ text "=" ]
+        , div [ class "flex justify-between items-center" ]
+            [ h3 [ class "w-8"] [ text titleQuotation ]
+            , input [ class "w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 rounded p-2"
+                    , class "hover:bg-blue-700"
+                    , class "focus:bg-blue-700"
+                    , placeholder "-- Enter a poll title"
+                    , value model.title
+                    , onInput ChangeTitle 
+                    ] [] 
+            , h3 [class "w-8 text-right" ] [ text titleQuotation ]
+            ] 
+        
+        
+        , h3 [class "text-left pb-6" ] [ text "," ]
 
-        , h3 [ class "col-span-1 m-auto w-16"] [ text "\"" ]
-        , input [ class "col-span-10 text-black w-full text-4xl"
-                , placeholder "-- Enter a title"
-                , value model.title
-                , onInput ChangeTitle 
-                ] [] 
-        , h3 [class "col-span-1 m-auto w-16" ] [ text "\"" ]
-        , h3 [class "col-span-1 text-left m-auto" ] [ text "," ]
-        , div [class "col-span-11" ] []
+        , div [class "flex justify-between items-center" ]
+          [ div [ class "w-8" ] [ text "" ]
+          , h2 [ class "text-4xl text-blue-500" ] [text "choices" ]
+          , h3 [ class "w-8 text-right" ] [text "= [" ]
+          ]
+        ]
 
-        , h2 [ class "col-span-10 col-start-2 text-6xl text-blue-500" ] [text "choices" ]
-        , h3 [ class "col-span-1 col-end-13 m-auto" ] [text "= [" ]
-        ] 
+      , Array.toList <| Array.indexedMap renderChoice model.choices
 
-      , List.concat <| Array.toList <| Array.indexedMap renderChoice model.choices
+      , [ h3 [ class "text-left m-auto pb-6" ] [ text "] }" ]
+        , button 
+          [ class "text-4xl w-full bg-orange-500 text-orange-100 shadow-lg rounded py-2" 
+          , class "hover:bg-orange-700"
+          , onClick MakePollRequest 
+          ] [ text "create poll" ] 
+        ]
+      ] 
+    )
+    
+    
 
-      , [ h3 [ class "col-span-1 text-left m-auto" ] [ text "]}" ]
-        , div [ class "col-span-11" ] []
-
-        , button [ class "col-span-12 text-6xl bg-orange-500 text-white" 
-                 , onClick MakePollRequest 
-                 ] [ text "create poll" ] ]
-      ] )
-
-renderChoice : Int -> String -> List (Html Msg)
+renderChoice : Int -> String -> Html Msg
 renderChoice index choice =
   let 
     placeholderValue = 
       if index == 0 then
-        "-- Enter a choice"
+        "-- Enter a poll choice"
       else
         "-- Enter another choice"
+    
+    startQuotation = 
+      if choice == "" then
+        ""
+      else if index == 0 then
+        "\""
+      else
+        ", \""
+
+    endQuotation =
+      if choice == "" then
+        ""
+      else
+        "\""
+
   in
-  [ h3 [ class "col-span-1 m-auto"] [ text "\"" ]
-  , input [ class "col-span-10 text-black text-4xl"
-      , placeholder placeholderValue
-      , value choice
-      , onInput (ChangeChoice index) 
-      ] []
-  , h3 [ class "col-span-1 m-auto"] [ text "\"" ]
-  ]
+  div [ class "flex justify-between items-center pb-2" ] 
+    [ h3 [ class "w-8"] [ text startQuotation ]
+    , input [ class "w-full bg-blue-900 text-blue-100 text-md placeholder-blue-100 rounded p-2"
+            , class "hover:bg-blue-700"
+            , class "focus:bg-blue-700"
+            , placeholder placeholderValue
+            , value choice
+            , onInput ( ChangeChoice index ) 
+            ] []
+    , h3 [ class "w-8 text-right"] [ text endQuotation ]
+    ]
   
