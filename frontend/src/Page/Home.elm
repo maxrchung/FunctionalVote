@@ -140,7 +140,7 @@ view model =
 
         , Array.toList <| Array.indexedMap renderChoice model.choices
 
-        , [ h3 [ class "text-left m-auto pb-6" ] [ text "]}" ]
+        , [ h3 [ class "text-left m-auto pb-8" ] [ text "]}" ]
           , button 
             [ class "text-4xl w-full bg-orange-500 text-orange-100 shadow-lg rounded py-2 font-bold" 
             , class "hover:bg-orange-700"
