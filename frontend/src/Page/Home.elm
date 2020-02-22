@@ -130,7 +130,7 @@ view model =
               , input [ class "font-sans rounded-full w-full bg-gray-900 border-2 border-blue-700 text-md text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
                       , class "hover:bg-blue-900 hover:shadow-lg"
                       , class "focus:bg-blue-900"
-                      , placeholder "-- Enter a poll title"
+                      , placeholder "-- Enter poll title"
                       , value model.title
                       , onInput ChangeTitle 
                       ] [] 
@@ -171,7 +171,7 @@ renderChoice index choice =
   let 
     placeholderValue = 
       if index == 0 then
-        "-- Enter a poll choice"
+        "-- Enter poll choice"
       else
         "-- Enter another choice"
     
