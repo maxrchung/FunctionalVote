@@ -112,7 +112,7 @@ view model =
     , div [ class "container mx-auto p-4" ]
       ( List.concat
         [ [ h2 [ class "font-sans text-orange-500 text-md" ]
-              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter poll question and choices below." ]
+              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter poll title and choices below." ]
           
           , div [ class "flex justify-between" ]
               [ h1 [ class "" ] [ text "poll" ]
@@ -121,7 +121,7 @@ view model =
           
           , div [ class "flex justify-between items-center" ]
               [ div [ class "w-8" ] []
-              , h2 [ class "font-sans text-2xl text-blue-500 font-bold " ] [ text "Question" ]
+              , h2 [ class "font-sans text-2xl text-blue-500 font-bold " ] [ text "Title" ]
               , h3 [ class "w-8 text-right" ] [ text "=" ]
               ]
 
@@ -130,7 +130,7 @@ view model =
               , input [ class "font-sans rounded-full w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
                       , class "hover:bg-blue-700 hover:shadow-lg"
                       , class "focus:bg-blue-700"
-                      , placeholder "-- Enter a question"
+                      , placeholder "-- Enter a poll title"
                       , value model.title
                       , onInput ChangeTitle 
                       ] [] 
@@ -173,7 +173,7 @@ renderChoice index choice =
   let 
     placeholderValue = 
       if index == 0 then
-        "-- Enter a choice"
+        "-- Enter a poll choice"
       else
         "-- Enter another choice"
     
