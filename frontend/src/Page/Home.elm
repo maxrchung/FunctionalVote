@@ -127,9 +127,9 @@ view model =
 
           , div [ class "flex justify-between items-center" ]
               [ h3 [ class "w-8"] [ text "\"" ]
-              , input [ class "font-sans rounded-full w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
-                      , class "hover:bg-blue-700 hover:shadow-lg"
-                      , class "focus:bg-blue-700"
+              , input [ class "font-sans rounded-full w-full bg-gray-900 border-2 border-blue-700 text-md text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
+                      , class "hover:bg-blue-900 hover:shadow-lg"
+                      , class "focus:bg-blue-900"
                       , placeholder "-- Enter a poll title"
                       , value model.title
                       , onInput ChangeTitle 
@@ -165,8 +165,6 @@ view model =
         ] 
       )
     ]
-    
-    
 
 renderChoice : Int -> String -> Html Msg
 renderChoice index choice =
@@ -186,9 +184,9 @@ renderChoice index choice =
   in
   div [ class "flex justify-between items-center pb-2" ] 
     [ h3 [ class "w-8"] [ text startQuotation ]
-    , input [ class "font-sans rounded-full w-full bg-blue-900 text-blue-100 text-md placeholder-blue-100 py-2 px-4 outline-none"
-            , class "hover:bg-blue-700"
-            , class "focus:bg-blue-700"
+    , input [ class "font-sans rounded-full w-full bg-gray-900 border-2 border-blue-700 text-blue-100 text-md placeholder-blue-100 py-2 px-4 outline-none shadow-md"
+            , class "hover:bg-blue-900 hover:shadow-lg"
+            , class "focus:bg-blue-900"
             , placeholder placeholderValue
             , value choice
             , onInput ( ChangeChoice index ) 
