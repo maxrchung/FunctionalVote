@@ -127,7 +127,7 @@ view model =
 
           , div [ class "flex justify-between items-center" ]
               [ h3 [ class "w-8"] [ text "\"" ]
-              , input [ class "font-sans rounded-full w-full bg-gray-900 border-2 border-blue-700 text-md text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
+              , input [ class "font-sans rounded w-full bg-gray-900 border-2 border-blue-700 text-md text-blue-100 placeholder-blue-100 p-2 outline-none shadow-md"
                       , class "hover:bg-blue-900 hover:shadow-lg"
                       , class "focus:bg-blue-900"
                       , placeholder "-- Enter a question"
@@ -184,7 +184,7 @@ renderChoice index choice =
   in
   div [ class "flex justify-between items-center pb-2" ] 
     [ h3 [ class "w-8"] [ text startQuotation ]
-    , input [ class "font-sans rounded-full w-full bg-gray-900 border-2 border-blue-700 text-blue-100 text-md placeholder-blue-100 py-2 px-4 outline-none shadow-md"
+    , input [ class "font-sans rounded w-full bg-gray-900 border-2 border-blue-700 text-blue-100 text-md placeholder-blue-100 p-2 outline-none shadow-md"
             , class "hover:bg-blue-900 hover:shadow-lg"
             , class "focus:bg-blue-900"
             , placeholder placeholderValue
