@@ -81,14 +81,14 @@ view model =
             , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
             ]
         , div [ class "flex flex-row items-center justify-center" ]
-            [ h3 [ class "h-6 w-5 text-orange-500 rounded-full flex items-center justify-start"]
+            [ h3 [ class "h-6 w-5 text-orange-700 rounded-full flex items-center justify-start"]
                 [ text "[" ]
               
             , h2 [ class "font-bold bg-blue-800 text-blue-500 text-lg h-10 w-10 rounded-full flex items-center justify-center shadow" 
                   , class "hover:bg-blue-700 hover:shadow-md"
                   ]
                 [ i [ class "fas fa-question" ] [] ]
-            , h3 [ class "h-6 w-6 text-orange-500 rounded-full flex items-center justify-center"]
+            , h3 [ class "h-6 w-6 text-orange-700 rounded-full flex items-center justify-center"]
               [ text "," ]
 
             , h2 [ class "font-bold bg-blue-800 text-blue-500 text-2xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
@@ -96,7 +96,7 @@ view model =
                   ]
                 [ i [ class "fab fa-github" ] [] ]
 
-            , h3 [ class "h-6 w-6 text-orange-500 rounded-full flex items-center justify-center"]
+            , h3 [ class "h-6 w-6 text-orange-700 rounded-full flex items-center justify-center"]
               [ text "," ]
 
             , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
@@ -104,7 +104,7 @@ view model =
                   ]
                 [ i [ class "fab fa-twitter" ] [] ]
 
-            , h3 [ class "h-6 w-5 text-orange-500 rounded-full flex items-center justify-end"]
+            , h3 [ class "h-6 w-5 text-orange-700 rounded-full flex items-center justify-end"]
               [ text "]" ]
             ]
         ]
@@ -112,7 +112,7 @@ view model =
     , div [ class "container mx-auto p-4" ]
       ( List.concat
         [ [ h2 [ class "font-sans text-orange-500 text-md" ]
-              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter poll title and choices below." ]
+              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter question and choices below." ]
           
           , div [ class "flex justify-between" ]
               [ h1 [ class "" ] [ text "poll" ]
@@ -121,7 +121,7 @@ view model =
           
           , div [ class "flex justify-between items-center" ]
               [ div [ class "w-8" ] []
-              , h2 [ class "font-sans text-2xl text-blue-500 font-bold " ] [ text "Title" ]
+              , h2 [ class "font-sans text-2xl text-blue-500 font-bold " ] [ text "Question" ]
               , h3 [ class "w-8 text-right" ] [ text "=" ]
               ]
 
@@ -130,7 +130,7 @@ view model =
               , input [ class "font-sans rounded-full w-full bg-gray-900 border-2 border-blue-700 text-md text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
                       , class "hover:bg-blue-900 hover:shadow-lg"
                       , class "focus:bg-blue-900"
-                      , placeholder "-- Enter a poll title"
+                      , placeholder "-- Enter a question"
                       , value model.title
                       , onInput ChangeTitle 
                       ] [] 
@@ -171,7 +171,7 @@ renderChoice index choice =
   let 
     placeholderValue = 
       if index == 0 then
-        "-- Enter a poll choice"
+        "-- Enter a choice"
       else
         "-- Enter another choice"
     
