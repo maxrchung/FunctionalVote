@@ -74,11 +74,11 @@ view : Model -> Html Msg
 view model =
   div [ class "font-mono mx-auto text-sm text-orange-900" ]
     [ div [ class "flex justify-between items-center h-16 bg-blue-900 px-4 shadow-lg" ]
-        [ h2 [ class "font-bold bg-blue-800 font-sans text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
+        [ h2 [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
               , class "hover:bg-blue-700 hover:shadow-md"
               ]
             [ text "v" 
-            , span [ class "text-orange-500  text-sm pl-1"] [ text "=" ]
+            , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
             ]
         , div [ class "flex flex-row items-center justify-center" ]
             [ h3 [ class "h-6 w-5 text-orange-500 rounded-full flex items-center justify-start"]
@@ -111,8 +111,8 @@ view model =
       
     , div [ class "container mx-auto p-4" ]
       ( List.concat
-        [ [ h2 [ class "font-sans text-orange-500 text-lg" ]
-              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter question and choices below." ]
+        [ [ h2 [ class "font-sans text-orange-500 text-md" ]
+              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter poll question and choices below." ]
           
           , div [ class "flex justify-between" ]
               [ h1 [ class "" ] [ text "poll" ]
@@ -121,13 +121,13 @@ view model =
           
           , div [ class "flex justify-between items-center" ]
               [ div [ class "w-8" ] []
-              , h2 [ class "font-sans text-4xl text-blue-500 font-bold " ] [ text "Question" ]
+              , h2 [ class "font-sans text-2xl text-blue-500 font-bold " ] [ text "Question" ]
               , h3 [ class "w-8 text-right" ] [ text "=" ]
               ]
 
           , div [ class "flex justify-between items-center" ]
               [ h3 [ class "w-8"] [ text "\"" ]
-              , input [ class "rounded-full w-full bg-blue-900 font-sans text-lg text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
+              , input [ class "font-sans rounded-full w-full bg-blue-900 text-md text-blue-100 placeholder-blue-100 py-2 px-4 outline-none shadow-md"
                       , class "hover:bg-blue-700 hover:shadow-lg"
                       , class "focus:bg-blue-700"
                       , placeholder "-- Enter a question"
@@ -142,7 +142,7 @@ view model =
 
           , div [class "flex justify-between items-center" ]
               [ div [ class "w-8" ] [ text "" ]
-              , h2 [ class "font-sans text-4xl text-blue-500 font-bold" ] [text "Choices" ]
+              , h2 [ class "font-sans text-2xl text-blue-500 font-bold" ] [ text "Choices" ]
               , h3 [ class "w-8 text-right" ] [text "=[" ]
               ]
           ]
@@ -154,7 +154,7 @@ view model =
           , div [class "flex justify-between items-center" ]
               [ div [ class "w-8" ] [ text "" ]
               , button 
-                  [ class "appearance-none rounded-full font-sans text-4xl w-full bg-orange-500 text-orange-100 shadow-lg py-2 font-bold shadow-md" 
+                  [ class "font-sans appearance-none rounded-full text-2xl w-full bg-orange-500 text-orange-100 shadow-lg py-2 font-bold shadow-md" 
                   , class "hover:bg-orange-700 hover:shadow-lg"
                   , class "focus:outline-none"
                   , onClick MakePollRequest 
@@ -186,7 +186,7 @@ renderChoice index choice =
   in
   div [ class "flex justify-between items-center pb-2" ] 
     [ h3 [ class "w-8"] [ text startQuotation ]
-    , input [ class "rounded-full w-full bg-blue-900 font-sans text-blue-100 text-lg placeholder-blue-100 py-2 px-4 outline-none"
+    , input [ class "font-sans rounded-full w-full bg-blue-900 text-blue-100 text-md placeholder-blue-100 py-2 px-4 outline-none"
             , class "hover:bg-blue-700"
             , class "focus:bg-blue-700"
             , placeholder placeholderValue
