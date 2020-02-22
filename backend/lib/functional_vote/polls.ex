@@ -78,6 +78,17 @@ defmodule FunctionalVote.Polls do
   end
 
   @doc """
+  @param id, choice
+  @return choices of the given poll id
+  """
+  def get_poll_choices(id) do
+    query = from p in Poll,
+              where: p.id == ^id,
+              select: p.choices
+    Repo.one(query)
+  end
+
+  @doc """
   Gets a single poll.
   Raises `Ecto.NoResultsError` if the Poll does not exist.
   """

@@ -41,18 +41,15 @@ defmodule FunctionalVote.Votes do
   @doc """
   Creates a vote.
 
-  ## Examples
-
-      iex> create_vote(%{field: value})
-      {:ok}
-
-      iex> create_vote(%{field: bad_value})
-      {:id_error}
-
+  @param attrs : contains "poll_id" and "choices" (map of choices and ranks)
+  @return {:ok}
+  @return {:choices_error} Invalid choices provided (does not match choices of poll)
+  @return {:id_error} Invalid poll ID provided
   """
   def create_vote(attrs \\ %{}) do
     poll_id = String.to_integer(attrs["poll_id"])
     if Polls.poll_exists?(poll_id) do
+      available_choices = Polls.get_poll_choices(poll_id)
       IO.puts("[VoteCtx] Create vote in poll_id: #{poll_id}")
       # Determine user_id to use: max(user_id) + 1 in the table for this this poll_id
       query = from v in "votes",
@@ -62,15 +59,22 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Determined user_id: #{user_id}")
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
-      IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
-      Enum.each choices, fn {k, v} ->
-        choice_map = %{"poll_id" => poll_id,
-                      "user_id" => user_id,
-                      "choice"  => k,
-                      "rank"    => String.to_integer(v)}
-        %Votes{}
-          |> Votes.changeset(choice_map)
-          |> Repo.insert() # RETURN ENDPOINT
+      if (available_choices === Map.keys(choices)) do
+        IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
+        Enum.each choices, fn {k, v} ->
+          choice_map = %{"poll_id" => poll_id,
+                        "user_id" => user_id,
+                        "choice"  => k,
+                        "rank"    => String.to_integer(v)}
+          %Votes{}
+            |> Votes.changeset(choice_map)
+            |> Repo.insert() # RETURN ENDPOINT
+        end
+      else
+        # Invalid choice(s) received
+        IO.puts("[VoteCtx] Received invalid choices:")
+        IO.inspect(Map.keys(choices))
+        :choices_error # RETURN ENDPOINT
       end
     else
       # Poll we are voting for does not exist

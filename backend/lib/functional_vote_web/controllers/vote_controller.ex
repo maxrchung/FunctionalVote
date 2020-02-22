@@ -28,6 +28,8 @@ defmodule FunctionalVoteWeb.VoteController do
         end
       :id_error ->
         send_resp(conn, :internal_server_error, "Invalid poll ID")
+      :choices_error ->
+        send_resp(conn, :internal_server_error, "Invalid choices provided")
       _ ->
         send_resp(conn, :internal_server_error, "")
     end
