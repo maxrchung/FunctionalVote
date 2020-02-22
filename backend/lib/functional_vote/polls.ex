@@ -11,59 +11,116 @@ defmodule FunctionalVote.Polls do
   alias FunctionalVote.Votes
 
   @doc """
-  Instant-runoff voting (IRV) algorithm
-  @param votes - votes data from DB
+  Save the winner to the database
   @param poll_id - poll_id
-  @param write_winner - write the calculated winner to DB with the provided poll (false => don't write)
+  @param winner - winner to write
   @return {raw_tallies, irv_tallies} - raw_tallies before IRV, tallies after IRV
   """
-  def instant_runoff!(votes, poll_id, write_winner \\ false) do
-    num_users = map_size(votes)
-    IO.puts("[PollCtx] Starting IRV algorithm with following votes by #{num_users} users:")
-    IO.inspect(votes)
+  def write_winner(poll_id, winner) do
+    poll = get_poll!(poll_id)
+    cs = Ecto.Changeset.change poll, winner: winner
+    case Repo.update cs do
+      {:ok, _cs} ->
+        IO.puts("[PollCtx] Writing winner to DB")
+      {:error, changeset} -> 
+        IO.puts("[PollCtx] Unable to write winner to DB:")
+        IO.inspect(changeset)
+    end
+  end
+
+  @doc """
+  Retrieve the winner from the database
+  @param poll_id - poll_id
+  @return winner
+  """
+  def read_winner(poll_id) do
+    IO.puts("[PollCtx] Reading winner from DB")
+    query = from p in Poll,
+            where: p.id == ^poll_id,
+            select: p.winner
+    _winner = Repo.one(query)
+  end
+
+  def instant_runoff_recurse(votes, poll_id) do
     tallies_by_choice = Map.values(votes)
                         |> List.zip()
                         |> List.first()
                         |> Tuple.to_list()
                         |> Enum.frequencies()
     tallies_by_count = Enum.group_by(tallies_by_choice, fn {_, value} -> value end, fn {key, _} -> key end)
-    IO.puts("[PollCtx] Raw tallies by count:")
-    IO.inspect(tallies_by_count)
-    initial_max_count = Map.keys(tallies_by_count)
-                        |> Enum.max()
-    IO.puts("initial_max_count: #{initial_max_count}")
-    winner = tallies_by_count[initial_max_count]
-    if (initial_max_count <= num_users / 2) do
-      IO.puts("[PollCtx] No simple majority, continuing IRV algorithm")
-      # {tallies_by_choice, tallies_by_count} = instant_runoff_recurse(tallies_by_choice, tallies_by_count)
-      if (length(winner) > 1) do
-        if (write_winner) do
-          IO.puts("[PollCtx] Result is a tie, randomizing winner and saving to database")
+    num_users = Map.values(tallies_by_choice) |> Enum.sum()
+    num_choices = Kernel.map_size(tallies_by_choice)
+    max_count = Map.keys(tallies_by_count)
+                |> Enum.max()
+    winner = tallies_by_count[max_count]
+    # IO.puts("DEBUG: max_count: #{max_count}, num_users/2: #{num_users/2}")
+    if (max_count <= num_users / 2) do
+      IO.puts("[PollCtx] No simple majority")
+      if (num_choices == 2) do
+        IO.puts("[PollCtx] Only 2 choices left, select winner")
+        if (length(winner) > 1) do
+          IO.puts("[PollCtx] Result is a tie, randomizing winner")
           winner = tallies_by_count[Map.keys(tallies_by_count) |> Enum.max()] |> Enum.random()
-          poll = get_poll!(poll_id)
-          cs = Ecto.Changeset.change poll, winner: winner
-          case Repo.update cs do
-          {:ok, cs} ->
-              IO.puts("[PollCtx] Saved winner to DB")
-            {:error, changeset} -> 
-              IO.puts("[PollCtx] Unable to save winner to DB:")
-              IO.inspect(changeset)
-          end
-          {tallies_by_choice, tallies_by_choice, winner} # RETURN ENDPOINT
+          write_winner(poll_id, winner)
+          {tallies_by_choice, winner} # BASE CASE ENDPOINT
         else
-          IO.puts("[PollCtx] Result is a tie, getting previously-randomized winner from database")
-          query = from p in Poll,
-                  where: p.id == ^poll_id,
-                  select: p.winner
-          winner = Repo.one(query)
-          {tallies_by_choice, tallies_by_choice, winner} # RETURN ENDPOINT
+          winner = List.first(winner)
+          write_winner(poll_id, winner)
+          {tallies_by_choice, winner} # BASE CASE ENDPOINT
         end
       else
-        {tallies_by_choice, tallies_by_choice, winner} # RETURN ENDPOINT
+        # Eliminate loser (if there is a tie for last, randomly choose one)
+        loser = tallies_by_count[Map.keys(tallies_by_count) |> Enum.min()] |> Enum.random()
+        IO.puts("[PollCtx] Eliminated #{loser}")
+        votes = for {k, v} <- votes,
+                into: %{},
+                do: {k, 
+                    if (List.first(v) == loser) do
+                      [_head | tail] = v
+                      tail
+                    else
+                      v
+                    end
+                }
+        {tallies_by_choice, winner} = instant_runoff_recurse(votes, poll_id)
+        # At this point, we will have already hit a base case and wrote the winner to DB
+        # IO.puts("DEBUG: Final Tallies:")
+        IO.inspect(tallies_by_choice)
+        {tallies_by_choice, winner} # RETURN ENDPOINT
       end
     else
       IO.puts("[PollCtx] Simple majority reached, ending IRV algorithm")
-      {tallies_by_choice, tallies_by_choice, winner} # RETURN ENDPOINT
+      winner = List.first(winner)
+      write_winner(poll_id, winner)
+      {tallies_by_choice, winner} # BASE CASE ENDPOINT
+    end
+  end
+
+  @doc """
+  Instant-runoff voting (IRV) algorithm
+  @param votes - votes data from DB
+  @param poll_id - poll_id
+  @param write_winner - write the calculated winner to DB with the provided poll (false => just read the winner)
+  @return {raw_tallies, irv_tallies} - raw_tallies before IRV, tallies after IRV
+  """
+  def instant_runoff(votes, poll_id, write_winner \\ false) do
+    IO.puts("[PollCtx] Starting IRV algorithm with the following votes:")
+    IO.inspect(votes)
+    raw_tallies = Map.values(votes)
+                  |> List.zip()
+                  |> List.first()
+                  |> Tuple.to_list()
+                  |> Enum.frequencies()
+    tallies_by_count = Enum.group_by(raw_tallies, fn {_, value} -> value end, fn {key, _} -> key end)
+    IO.puts("[PollCtx] Raw tallies by count:")
+    IO.inspect(tallies_by_count)
+    unless (write_winner) do
+      # Just read the winner and return raw_tallies and winner
+      winner = read_winner(poll_id)
+      {raw_tallies, nil, winner} # RETURN ENDPOINT
+    else
+      {irv_tallies, winner} = instant_runoff_recurse(votes, poll_id)
+      {raw_tallies, irv_tallies, winner} # RETURN ENDPOINT
     end
   end
 
@@ -118,7 +175,7 @@ defmodule FunctionalVote.Polls do
       calculated = %{raw_tallies: nil, tallies: nil, winner: nil}
       Map.merge(poll, calculated) # RETURN ENDPOINT
     else
-      {raw_tallies, irv_tallies, winner} = instant_runoff!(votes, String.to_integer(id))
+      {raw_tallies, irv_tallies, winner} = instant_runoff(votes, String.to_integer(id), true)
       calculated = %{raw_tallies: raw_tallies, tallies: irv_tallies, winner: winner}
       Map.merge(poll, calculated) # RETURN ENDPOINT
     end

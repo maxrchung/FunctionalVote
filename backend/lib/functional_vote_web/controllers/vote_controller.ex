@@ -20,7 +20,7 @@ defmodule FunctionalVoteWeb.VoteController do
         {_, _, winner} = vote_params["poll_id"]
                          |> String.to_integer()
                          |> Votes.get_votes()
-                         |> Polls.instant_runoff!(vote_params["poll_id"], true)
+                         |> Polls.instant_runoff(vote_params["poll_id"], true)
         if (winner === :error) do
           send_resp(conn, :created, "Created poll but was unable to save winner to DB")
         else
