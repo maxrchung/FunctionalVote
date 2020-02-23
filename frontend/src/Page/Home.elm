@@ -28,6 +28,8 @@ type Msg
   | ChangeChoice Int String
   | MakePollRequest
   | MakePollResponse (Result Http.Error Int)
+  | GoToGithub
+  | GoToTwitter
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -44,9 +46,17 @@ update msg model =
     MakePollResponse result ->
       case result of
         Ok pollId ->
-          (model, Navigation.load ("/vote/" ++ String.fromInt pollId) )
+          ( model, Navigation.load ( "/vote/" ++ String.fromInt pollId ) )
         Err _ ->
-          (model, Cmd.none)
+          ( model, Cmd.none )
+
+    GoToGithub ->
+      ( model, Navigation.load "https://github.com/maxrchung/FunctionalVote" )
+
+    GoToTwitter ->
+      ( model, Navigation.load "https://twitter.com/FunctionalVote" )
+
+
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -95,6 +105,7 @@ view model =
 
             , h2 [ class "font-bold bg-blue-800 text-blue-500 text-2xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
                   , class "hover:bg-blue-700 hover:shadow-md"
+                  , onClick GoToGithub
                   ]
                 [ i [ class "fab fa-github" ] [] ]
 
@@ -103,6 +114,7 @@ view model =
 
             , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
                   , class "hover:bg-blue-700 hover:shadow-md"
+                  , onClick GoToTwitter
                   ]
                 [ i [ class "fab fa-twitter" ] [] ]
 
@@ -115,7 +127,7 @@ view model =
     , div [ class "container max-w-screen-sm mx-auto p-4" ]
       ( List.concat
         [ [ h2 [ class "font-sans text-orange-500 text-md" ]
-              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter a question and choices below." ]
+              [ text "-- Welcome to Functional Vote! To create a new ranked choice poll, enter a question and choices below." ]
           
           , div [ class "flex justify-between" ]
               [ h1 [ class "opacity-25" ] [ text "poll" ]
