@@ -73,14 +73,16 @@ makePollDecoder =
 view : Model -> Html Msg
 view model =
   div [ class "font-mono mx-auto text-sm text-orange-500" ]
-    [ div [ class "flex justify-between items-center h-16 bg-blue-900 px-4 shadow-lg" ]
-        [ h2 [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
+    [ div [ class "bg-blue-900 shadow-lg" ]
+        [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
+          [ h2 
+              [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
               , class "hover:bg-blue-700 hover:shadow-md"
               ]
-            [ text "v" 
-            , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
-            ]
-        , div [ class "flex flex-row items-center justify-center" ]
+              [ text "v" 
+              , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
+              ]
+          , div [ class "flex flex-row items-center justify-center" ]
             [ h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-start"]
                 [ text "[" ]
               
@@ -107,12 +109,13 @@ view model =
             , h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-end"]
               [ text "]" ]
             ]
+          ]
         ]
       
-    , div [ class "container mx-auto p-4" ]
+    , div [ class "container max-w-screen-sm mx-auto p-4" ]
       ( List.concat
         [ [ h2 [ class "font-sans text-orange-500 text-md" ]
-              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter question and choices below." ]
+              [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter a question and choices below." ]
           
           , div [ class "flex justify-between" ]
               [ h1 [ class "opacity-25" ] [ text "poll" ]
