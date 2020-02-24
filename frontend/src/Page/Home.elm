@@ -35,13 +35,18 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     ChangeTitle newTitle ->
-      ({ model | title = newTitle }, Cmd.none)
+      ( { model | title = newTitle }, Cmd.none )
       
     ChangeChoice index newChoice ->
-      ({ model | choices = Array.set index newChoice model.choices }, Cmd.none)
+      let updatedChoices = Array.set index newChoice model.choices
+      in
+      if index == Array.length model.choices - 1  then
+        ( { model | choices = Array.push "" updatedChoices }, Cmd.none )
+      else
+        ( { model | choices = updatedChoices }, Cmd.none )
 
     MakePollRequest ->
-      (model, makePollRequest model)
+      ( model, makePollRequest model )
 
     MakePollResponse result ->
       case result of
@@ -55,8 +60,6 @@ update msg model =
 
     GoToTwitter ->
       ( model, Navigation.load "https://twitter.com/FunctionalVote" )
-
-
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
