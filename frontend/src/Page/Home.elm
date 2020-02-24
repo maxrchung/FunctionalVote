@@ -127,7 +127,9 @@ view model =
           ]
         ]
       
-    , div [ class "container max-w-screen-sm mx-auto p-4" ]
+    , Html.form [ class "container max-w-screen-sm mx-auto p-4" 
+                , onSubmit MakePollRequest
+                ]
       ( List.concat
         [ [ h2 [ class "font-sans text-orange-500 text-md" ]
               [ text "-- Welcome to Functional Vote! To create a new ranked choice poll, enter a question and choices below." ]
@@ -175,7 +177,7 @@ view model =
                   [ class "font-sans appearance-none rounded-full text-2xl w-full bg-orange-500 text-orange-100 shadow-lg py-2 font-bold shadow-md" 
                   , class "hover:bg-orange-700 hover:shadow-lg"
                   , class "focus:outline-none"
-                  , onClick MakePollRequest 
+                  , type_ "submit"
                   ] [ text "Create Poll" ] 
               , h3 [ class "w-8 text-right" ] [text "" ]
               ]
