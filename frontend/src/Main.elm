@@ -96,6 +96,7 @@ type Msg
   | GoToGithub
   | GoToTwitter
   | GoToAbout
+  | GoToHome
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -140,7 +141,10 @@ update msg model =
       ( model, Navigation.load "https://twitter.com/FunctionalVote" )
 
     GoToAbout ->
-      ( model, Navigation.load "http://localhost:3000/about" )
+      ( model, Navigation.pushUrl model.key "/about" )
+      
+    GoToHome ->
+      ( model, Navigation.pushUrl model.key "/" )
 
 
 
@@ -187,6 +191,7 @@ renderBody model =
           [ h2 
               [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
               , class "hover:bg-blue-700 hover:shadow-md"
+              , onClick GoToHome
               ]
               [ text "v" 
               , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
