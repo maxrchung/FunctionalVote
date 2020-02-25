@@ -28,9 +28,6 @@ type Msg
   | ChangeChoice Int String
   | MakePollRequest
   | MakePollResponse (Result Http.Error Int)
-  | GoToGithub
-  | GoToTwitter
-  | GoToAbout
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -55,15 +52,6 @@ update msg model =
           ( model, Navigation.load ( "/vote/" ++ String.fromInt pollId ) )
         Err _ ->
           ( model, Cmd.none )
-
-    GoToGithub ->
-      ( model, Navigation.load "https://github.com/maxrchung/FunctionalVote" )
-
-    GoToTwitter ->
-      ( model, Navigation.load "https://twitter.com/FunctionalVote" )
-
-    GoToAbout ->
-      ( model, Navigation.load "http://localhost:3000/about" )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -90,49 +78,7 @@ makePollDecoder =
 view : Model -> Html Msg
 view model =
   div [ class "font-mono mx-auto text-sm text-orange-500" ]
-    [ div [ class "bg-blue-900 shadow-lg" ]
-        [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
-          [ h2 
-              [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
-              , class "hover:bg-blue-700 hover:shadow-md"
-              ]
-              [ text "v" 
-              , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
-              ]
-          , div [ class "flex flex-row items-center justify-center" ]
-            [ h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-start" ]
-                [ text "[" ]
-              
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-lg h-10 w-10 rounded-full flex items-center justify-center shadow" 
-                  , class "hover:bg-blue-700 hover:shadow-md"
-                  , onClick GoToAbout
-                  ]
-                [ i [ class "fas fa-question" ] [] ]
-            , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
-              [ text "," ]
-
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-2xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
-                  , class "hover:bg-blue-700 hover:shadow-md"
-                  , onClick GoToGithub
-                  ]
-                [ i [ class "fab fa-github" ] [] ]
-
-            , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
-              [ text "," ]
-
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
-                  , class "hover:bg-blue-700 hover:shadow-md"
-                  , onClick GoToTwitter
-                  ]
-                [ i [ class "fab fa-twitter" ] [] ]
-
-            , h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-end" ]
-              [ text "]" ]
-            ]
-          ]
-        ]
-      
-    , Html.form [ class "container max-w-screen-sm mx-auto p-4" 
+    [ Html.form [ class "container max-w-screen-sm mx-auto p-4" 
                 , onSubmit MakePollRequest
                 ]
       ( List.concat

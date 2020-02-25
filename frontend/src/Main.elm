@@ -3,6 +3,9 @@ module Main exposing (..)
 import Browser
 import Html exposing (..)
 import Browser.Navigation as Navigation
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Url
 import Url.Parser as Parser exposing ((</>))
 import Page.Home as Home
@@ -90,6 +93,9 @@ type Msg
   | HomeMsg Home.Msg
   | VoteMsg Vote.Msg
   | PollMsg Poll.Msg
+  | GoToGithub
+  | GoToTwitter
+  | GoToAbout
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -127,6 +133,15 @@ update msg model =
           in ( { model | page = PollPage newModel }, Cmd.map PollMsg cmd )
         _ -> ( model, Cmd.none )
 
+    GoToGithub ->
+      ( model, Navigation.load "https://github.com/maxrchung/FunctionalVote" )
+
+    GoToTwitter ->
+      ( model, Navigation.load "https://twitter.com/FunctionalVote" )
+
+    GoToAbout ->
+      ( model, Navigation.load "http://localhost:3000/about" )
+
 
 
 -- VIEW
@@ -152,14 +167,62 @@ view model =
       
 renderBody : Model -> List (Html Msg)
 renderBody model =
-  case model.page of
-    HomePage homeModel -> 
-      [ Html.map HomeMsg ( Home.view homeModel ) ]
-    VotePage voteModel ->
-      [ Html.map VoteMsg ( Vote.view voteModel ) ]
-    PollPage pollModel ->
-      [ Html.map PollMsg ( Poll.view pollModel ) ]
-    AboutPage ->
-      [ About.view ]
-    BadPage ->
-      [ text "Invalid URL!!!" ]
+  let 
+    content =
+      case model.page of
+        HomePage homeModel -> 
+          [ Html.map HomeMsg ( Home.view homeModel ) ]
+        VotePage voteModel ->
+          [ Html.map VoteMsg ( Vote.view voteModel ) ]
+        PollPage pollModel ->
+          [ Html.map PollMsg ( Poll.view pollModel ) ]
+        AboutPage ->
+          [ About.view ]
+        BadPage ->
+          [ text "Invalid URL!!!" ]
+  in
+  List.concat
+    [ [ div [ class "bg-blue-900 shadow-lg" ]
+        [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
+          [ h2 
+              [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
+              , class "hover:bg-blue-700 hover:shadow-md"
+              ]
+              [ text "v" 
+              , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
+              ]
+          , div [ class "flex flex-row items-center justify-center" ]
+            [ h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-start" ]
+                [ text "[" ]
+              
+            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-lg h-10 w-10 rounded-full flex items-center justify-center shadow" 
+                  , class "hover:bg-blue-700 hover:shadow-md"
+                  , onClick GoToAbout
+                  ]
+                [ i [ class "fas fa-question" ] [] ]
+            , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
+              [ text "," ]
+
+            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-2xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
+                  , class "hover:bg-blue-700 hover:shadow-md"
+                  , onClick GoToGithub
+                  ]
+                [ i [ class "fab fa-github" ] [] ]
+
+            , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
+              [ text "," ]
+
+            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
+                  , class "hover:bg-blue-700 hover:shadow-md"
+                  , onClick GoToTwitter
+                  ]
+                [ i [ class "fab fa-twitter" ] [] ]
+
+            , h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-end" ]
+              [ text "]" ]
+            ]
+          ]
+        ]
+      ]
+    , content
+    ]
