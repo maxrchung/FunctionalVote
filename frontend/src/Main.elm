@@ -141,10 +141,16 @@ update msg model =
       ( model, Navigation.load "https://twitter.com/FunctionalVote" )
 
     GoToAbout ->
-      ( model, Navigation.pushUrl model.key "/about" )
+      case model.page of
+        AboutPage ->
+          (model, Cmd.none)
+        _ -> ( model, Navigation.pushUrl model.key "/about" )
       
     GoToHome ->
-      ( model, Navigation.pushUrl model.key "/" )
+      case model.page of
+        HomePage _ ->
+          (model, Cmd.none)
+        _ -> ( model, Navigation.pushUrl model.key "/" )
 
 
 
@@ -185,8 +191,7 @@ renderBody model =
         BadPage ->
           [ text "Invalid URL!!!" ]
   in
-  List.concat
-    [ [ div [ class "bg-blue-900 shadow-lg" ]
+  [ div [ class "bg-blue-900 shadow-lg" ]
         [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
           [ h2 
               [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
@@ -228,6 +233,5 @@ renderBody model =
             ]
           ]
         ]
-      ]
-    , content
-    ]
+  , div [ class "container max-w-screen-sm mx-auto p-4" ] content
+  ]
