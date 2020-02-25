@@ -132,24 +132,34 @@ update msg model =
 -- VIEW
 view : Model -> Browser.Document Msg
 view model =
+  let 
+    pageTitle =
+      case model.page of
+        HomePage _ -> 
+          "Functional Vote - Create a Poll"
+        VotePage _ ->
+          "Functional Vote - Vote in a Poll"
+        PollPage _ ->
+          "Functional Vote - View a Poll"
+        AboutPage ->
+          "Functional Vote - About"
+        BadPage ->
+          "Functional Vote - Error" 
+  in
+  { title = pageTitle
+  , body = renderBody model
+  }
+      
+renderBody : Model -> List (Html Msg)
+renderBody model =
   case model.page of
     HomePage homeModel -> 
-      { title = "Functional Vote - Create a Poll"
-      , body = [ Html.map HomeMsg ( Home.view homeModel ) ]
-      }
+      [ Html.map HomeMsg ( Home.view homeModel ) ]
     VotePage voteModel ->
-      { title = "Functional Vote - Vote in a Poll"
-      , body = [ Html.map VoteMsg ( Vote.view voteModel ) ]
-      }
+      [ Html.map VoteMsg ( Vote.view voteModel ) ]
     PollPage pollModel ->
-      { title = "Functional Vote - View a Poll"
-      , body = [ Html.map PollMsg ( Poll.view pollModel ) ]
-      }
+      [ Html.map PollMsg ( Poll.view pollModel ) ]
     AboutPage ->
-      { title = "Functional Vote - About"
-      , body = [ About.view ]
-      }
+      [ About.view ]
     BadPage ->
-      { title = "Functional Vote - Error" 
-      , body = [ text "Invalid URL!!!" ]
-      }
+      [ text "Invalid URL!!!" ]
