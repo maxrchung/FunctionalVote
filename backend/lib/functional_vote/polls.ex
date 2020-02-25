@@ -80,11 +80,11 @@ defmodule FunctionalVote.Polls do
             where: r.poll_id == ^poll_id,
             select: {r.round, r.choice, r.votes}
     data = Repo.all(query)
-    tallies_by_count = Enum.group_by(data,
+    _tallies_by_count = Enum.group_by(data,
                                      fn {round, _, _} -> round end,
                                      fn {_, choice, votes} -> {choice, votes} end)
-                       |> Enum.map(fn {k, v} -> {k, Map.new(v)} end)
-                       |> Map.new()
+                        |> Enum.map(fn {k, v} -> {k, Map.new(v)} end)
+                        |> Map.new()
   end
 
   @doc """
@@ -248,6 +248,8 @@ defmodule FunctionalVote.Polls do
   """
   def create_poll(attrs \\ %{}) do
     IO.puts("[PollCtx] Create poll")
+    attrs = Map.update!(attrs, "choices",
+              &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
     %Poll{}
     |> Poll.changeset(attrs)
     |> Repo.insert()
