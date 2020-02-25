@@ -13,12 +13,13 @@ import Json.Encode as Encode
 
 -- MODEL
 type alias Model = 
-  { title : String
+  { key : Navigation.Key
+  , title : String
   , choices : Array.Array String }
 
-init : ( Model, Cmd Msg )
-init = 
-  ( Model "" (Array.fromList ["", ""]), Cmd.none )
+init : Navigation.Key -> ( Model, Cmd Msg )
+init key = 
+  ( Model key "" (Array.fromList ["", ""]), Cmd.none )
 
 
 
@@ -49,7 +50,7 @@ update msg model =
     MakePollResponse result ->
       case result of
         Ok pollId ->
-          ( model, Navigation.load ( "/vote/" ++ String.fromInt pollId ) )
+          ( model, Navigation.pushUrl model.key ( "/vote/" ++ String.fromInt pollId ) )
         Err _ ->
           ( model, Cmd.none )
 

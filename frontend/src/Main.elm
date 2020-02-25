@@ -49,16 +49,16 @@ type Route
 
 init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
 init _ url key = 
-  let ( page, cmd ) = initPage url
+  let ( page, cmd ) = initPage url key
   in ( Model key page, cmd)
 
-initPage : Url.Url -> ( Page, Cmd Msg )
-initPage url =
+initPage : Url.Url -> Navigation.Key -> ( Page, Cmd Msg )
+initPage url key =
   case Parser.parse routeParser url of
     Just route ->
       case route of
         HomeRoute ->
-          let ( model, cmd ) = Home.init
+          let ( model, cmd ) = Home.init key
           in ( HomePage model , Cmd.map HomeMsg cmd )
 
         VoteRoute pollId ->
@@ -109,8 +109,8 @@ update msg model =
         Browser.External href ->
           ( model, Navigation.load href )
 
-    UrlChanged url -> 
-      let ( page, cmd ) = initPage url
+    UrlChanged url ->
+      let ( page, cmd ) = initPage url model.key
       in ( { model | page = page }, cmd)
 
     HomeMsg homeMsg ->
@@ -192,46 +192,51 @@ renderBody model =
           [ text "Invalid URL!!!" ]
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
-        [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
-          [ h2 
-              [ class "font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
-              , class "hover:bg-blue-700 hover:shadow-md"
-              , onClick GoToHome
-              ]
-              [ text "v" 
-              , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
-              ]
-          , div [ class "flex flex-row items-center justify-center" ]
-            [ h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-start" ]
-                [ text "[" ]
-              
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-lg h-10 w-10 rounded-full flex items-center justify-center shadow" 
-                  , class "hover:bg-blue-700 hover:shadow-md"
-                  , onClick GoToAbout
-                  ]
-                [ i [ class "fas fa-question" ] [] ]
-            , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
-              [ text "," ]
-
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-2xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
-                  , class "hover:bg-blue-700 hover:shadow-md"
-                  , onClick GoToGithub
-                  ]
-                [ i [ class "fab fa-github" ] [] ]
-
-            , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
-              [ text "," ]
-
-            , h2 [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
-                  , class "hover:bg-blue-700 hover:shadow-md"
-                  , onClick GoToTwitter
-                  ]
-                [ i [ class "fab fa-twitter" ] [] ]
-
-            , h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-end" ]
-              [ text "]" ]
+      [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
+        [ button
+            [ class "focus:outline-none font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
+            , class "hover:bg-blue-700 hover:shadow-md"
+            , onClick GoToHome
             ]
+            [ text "v" 
+            , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
+            ]
+
+        , div [ class "flex flex-row items-center justify-center" ]
+          [ h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-start" ]
+              [ text "[" ]
+            
+          , button 
+              [ class "font-bold bg-blue-800 text-blue-500 text-lg h-10 w-10 rounded-full flex items-center justify-center shadow" 
+              , class "hover:bg-blue-700 hover:shadow-md"
+              , onClick GoToAbout
+              ]
+              [ i [ class "fas fa-question" ] [] ]
+
+          , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
+            [ text "," ]
+
+          , button 
+              [ class "font-bold bg-blue-800 text-blue-500 text-2xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
+              , class "hover:bg-blue-700 hover:shadow-md"
+              , onClick GoToGithub
+              ]
+              [ i [ class "fab fa-github" ] [] ]
+
+          , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
+            [ text "," ]
+
+          , button 
+              [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
+              , class "hover:bg-blue-700 hover:shadow-md"
+              , onClick GoToTwitter
+              ]
+              [ i [ class "fab fa-twitter" ] [] ]
+
+          , h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-end" ]
+            [ text "]" ]
           ]
         ]
+      ]
   , div [ class "container max-w-screen-sm mx-auto p-4" ] content
   ]
