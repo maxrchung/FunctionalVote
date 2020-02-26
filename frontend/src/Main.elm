@@ -39,7 +39,7 @@ type Page
   | VotePage Vote.Model
   | PollPage Poll.Model
   | AboutPage
-  | BadPage
+  | ErrorPage
 
 type Route 
   = HomeRoute
@@ -73,7 +73,7 @@ initPage url key =
           ( AboutPage, Cmd.none )
     
     Nothing ->
-      ( BadPage, Cmd.none )
+      ( ErrorPage, Cmd.none )
 
 routeParser : Parser.Parser ( Route -> a ) a
 routeParser =
@@ -168,7 +168,7 @@ view model =
           "Functional Vote - View a Poll"
         AboutPage ->
           "Functional Vote - About"
-        BadPage ->
+        ErrorPage ->
           "Functional Vote - Error" 
   in
   { title = pageTitle
@@ -188,7 +188,7 @@ renderBody model =
           [ Html.map PollMsg ( Poll.view pollModel ) ]
         AboutPage ->
           [ About.view ]
-        BadPage ->
+        ErrorPage ->
           [ text "Invalid URL!!!" ]
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
