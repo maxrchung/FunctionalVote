@@ -90,7 +90,7 @@ view model =
         
         , div [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
-            , div [ class "fv-main-header" ] [ text "Question" ]
+            , h2 [ class "fv-main-header" ] [ text "Question" ]
             , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
             ]
 
@@ -104,11 +104,11 @@ view model =
             , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
             ] 
         
-        , h3 [class "fv-main-code text-left" ] [ text "," ]
+        , div [class "fv-main-code text-left" ] [ text "," ]
 
         , div [class "flex justify-between items-center" ]
             [ div [ class "w-8" ] [ text "" ]
-            , div [ class "fv-main-header" ] [ text "Choices" ]
+            , h2 [ class "fv-main-header" ] [ text "Choices" ]
             , div [ class "fv-main-code w-8 text-right" ] [text "=[" ]
             ]
         ]

@@ -30,7 +30,7 @@ body {
 }
 
 .fv-main-header {
-  @apply font-sans font-bold text-2xl text-blue-500;
+  @apply font-sans font-bold text-2xl text-blue-500 text-center;
 }
 
 .fv-main-text {
