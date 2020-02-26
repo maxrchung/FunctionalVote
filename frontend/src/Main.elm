@@ -12,6 +12,7 @@ import Page.Home as Home
 import Page.Vote as Vote
 import Page.Poll as Poll
 import Page.About as About
+import Page.Error as Error
 
 
 
@@ -189,7 +190,7 @@ renderBody model =
         AboutPage ->
           [ About.view ]
         ErrorPage ->
-          [ text "Invalid URL!!!" ]
+          [ Error.view ]
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
       [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
