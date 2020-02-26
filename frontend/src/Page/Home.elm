@@ -81,7 +81,7 @@ view model =
   Html.form [ class "font-mono mx-auto text-sm text-orange-500" , onSubmit MakePollRequest ]
     ( List.concat
       [ [ h2 [ class "font-sans text-orange-500 text-md" ]
-            [ text "-- Welcome to Functional Vote! To create a new ranked choice poll, enter a question and choices below." ]
+            [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter a question and choices below." ]
         
         , div [ class "flex justify-between" ]
             [ h1 [ class "opacity-25" ] [ text "poll" ]
