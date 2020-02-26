@@ -203,7 +203,7 @@ renderBody model =
             ]
 
         , div [ class "flex flex-row items-center justify-center" ]
-          [ div [ class "fv-nav-code justify-start w-5 " ]
+          [ div [ class "fv-nav-code justify-start w-5" ]
               [ text "[" ]
             
           , button 
