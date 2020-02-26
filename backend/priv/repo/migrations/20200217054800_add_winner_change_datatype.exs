@@ -1,4 +1,4 @@
-defmodule FunctionalVote.Repo.Migrations.CreateVotes do
+defmodule FunctionalVote.Repo.Migrations.AddWinnerChangeDatatype do
   use Ecto.Migration
 
   def change do

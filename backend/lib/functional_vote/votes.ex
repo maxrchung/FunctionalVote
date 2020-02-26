@@ -59,7 +59,8 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Determined user_id: #{user_id}")
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
-      if (available_choices === Map.keys(choices)) do
+      if (available_choices === Map.keys(choices) and
+          Map.values(choices) === Enum.uniq(Map.values(choices))) do
         IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
         Enum.each choices, fn {k, v} ->
           choice_map = %{"poll_id" => poll_id,
