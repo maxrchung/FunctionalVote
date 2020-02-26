@@ -1,10 +1,8 @@
 module Page.Poll exposing (..)
 
-import Browser.Navigation as Navigation
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Dict
 import Http
 import Json.Decode as Decode
 
@@ -75,4 +73,3 @@ renderChoice winner choice =
     h2 [] [ text <| "Winner: " ++ choice ]
   else
     div [] [ text choice]
-    
