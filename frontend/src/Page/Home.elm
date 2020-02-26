@@ -120,9 +120,7 @@ view model =
         , div [class "flex justify-between items-center" ]
             [ div [ class "w-8" ] [ text "" ]
             , button 
-                [ class "font-sans appearance-none rounded-full text-2xl w-full bg-orange-500 text-orange-100 shadow-lg py-2 font-bold shadow-md" 
-                , class "hover:bg-orange-700 hover:shadow-lg"
-                , class "focus:outline-none"
+                [ class "fv-main-btn"
                 , type_ "submit"
                 ] [ text "Create Poll" ] 
             , div [ class "w-8 text-right" ] [ text "" ]
