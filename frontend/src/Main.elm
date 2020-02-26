@@ -193,7 +193,7 @@ renderBody model =
           [ Error.view ]
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
-      [ div [ class "h-16 flex justify-between items-center  max-w-screen-sm mx-auto px-4 " ]
+      [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]
         [ button
             [ class "focus:outline-none font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
             , class "hover:bg-blue-700 hover:shadow-md"

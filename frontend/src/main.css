@@ -3,6 +3,33 @@
 @tailwind components;
 /* purgecss end ignore */
 
+/* body classes are not read properly when using dev server */
+body {
+  @apply bg-gray-900;
+}
+
+.fv-nav-btn {
+  @apply flex items-center justify-center h-10 w-10 bg-blue-800 rounded-full shadow text-blue-500 text-xl font-sans font-bold;
+}
+.fv-nav-btn:focus {
+  @apply outline-none;
+}
+.fv-nav-btn:hover {
+  @apply bg-blue-700 shadow-md;
+}
+
+.fv-main-text {
+  
+}
+
+.fv-main-btn {
+
+}
+
+.fv-main-code {
+
+}
+
 @tailwind utilities;
 
 /*
@@ -14,14 +41,4 @@
 */
 [data-elm-hot="true"] {
   height: inherit;
-}
-
-/* body classes are not read properly when using dev server */
-body {
-  @apply bg-gray-900;
-}
-
-.btn-test {
-  border: 1px solid black;
-  background-color: white;
 }
