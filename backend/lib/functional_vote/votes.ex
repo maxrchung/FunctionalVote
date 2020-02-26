@@ -59,7 +59,7 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Determined user_id: #{user_id}")
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
-      if (available_choices === Map.keys(choices) and
+      if (Enum.sort(available_choices) === Enum.sort(Map.keys(choices)) and
           Map.values(choices) === Enum.uniq(Map.values(choices))) do
         IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
         Enum.each choices, fn {k, v} ->
@@ -75,6 +75,8 @@ defmodule FunctionalVote.Votes do
         # Invalid choice(s) received
         IO.puts("[VoteCtx] Received invalid choices:")
         IO.inspect(Map.keys(choices))
+        IO.puts("[VoteCtx] Expected choices:")
+        IO.inspect(available_choices)
         :choices_error # RETURN ENDPOINT
       end
     else

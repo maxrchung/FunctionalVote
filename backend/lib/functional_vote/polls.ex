@@ -47,15 +47,17 @@ defmodule FunctionalVote.Polls do
   @param talles_by_count
   """
   def write_round(poll_id, tallies_by_choice, round) do
-    IO.puts("[PollCtx] Writing round #{round} results to DB")
-    Enum.each tallies_by_choice, fn {k, v} ->
-      choice_map = %{poll_id: poll_id,
-                     round: round,
-                     choice: k, 
-                     votes: v}
-      %Results{}
-        |> Results.changeset(choice_map)
-        |> Repo.insert() # RETURN ENDPOINT
+    if (round != 0) do # Round 0 is just raw_tallies, no need to write it in DB
+      IO.puts("[PollCtx] Writing round #{round} results to DB")
+      Enum.each tallies_by_choice, fn {k, v} ->
+        choice_map = %{poll_id: poll_id,
+                      round: round,
+                      choice: k, 
+                      votes: v}
+        %Results{}
+          |> Results.changeset(choice_map)
+          |> Repo.insert() # RETURN ENDPOINT
+      end
     end
   end
 
@@ -248,11 +250,15 @@ defmodule FunctionalVote.Polls do
   """
   def create_poll(attrs \\ %{}) do
     IO.puts("[PollCtx] Create poll")
-    attrs = Map.update!(attrs, "choices",
-              &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
-    %Poll{}
-    |> Poll.changeset(attrs)
-    |> Repo.insert()
+    if (attrs["choices"] === Enum.uniq(attrs["choices"])) do
+      attrs = Map.update!(attrs, "choices",
+                &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
+      %Poll{}
+      |> Poll.changeset(attrs)
+      |> Repo.insert()
+    else
+      :choices_error
+    end
   end
 
   @doc """

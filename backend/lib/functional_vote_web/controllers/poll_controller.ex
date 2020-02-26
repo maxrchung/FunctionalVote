@@ -15,11 +15,16 @@ defmodule FunctionalVoteWeb.PollController do
   """
   def create(conn, poll_params) do
     IO.puts("[PollCtrl] Create poll")
-    with {:ok, %Poll{} = poll} <- Polls.create_poll(poll_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.poll_path(conn, :show, poll))
-      |> show(%{"id" => poll.id})
+    case Polls.create_poll(poll_params) do
+      {:ok, %Poll{} = poll} ->
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", Routes.poll_path(conn, :show, poll))
+        |> show(%{"id" => poll.id})
+      :choices_error ->
+        send_resp(conn, :unprocessable_entity, "Invalid choices provided")
+      _ ->
+        send_resp(conn, :internal_server_error, "")
     end
   end
 
