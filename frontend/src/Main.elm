@@ -195,46 +195,42 @@ renderBody model =
   [ div [ class "bg-blue-900 shadow-lg" ]
       [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]
         [ button
-            [ class "focus:outline-none font-sans font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 bg-black rounded-full flex items-center justify-center shadow" 
-            , class "hover:bg-blue-700 hover:shadow-md"
+            [ class "fv-nav-btn"
             , onClick GoToHome
             ]
             [ text "v" 
-            , span [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
+            , div [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
             ]
 
         , div [ class "flex flex-row items-center justify-center" ]
-          [ h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-start" ]
+          [ div [ class "fv-nav-code justify-start w-5 " ]
               [ text "[" ]
             
           , button 
-              [ class "font-bold bg-blue-800 text-blue-500 text-lg h-10 w-10 rounded-full flex items-center justify-center shadow" 
-              , class "hover:bg-blue-700 hover:shadow-md"
+              [ class "fv-nav-btn"
               , onClick GoToAbout
               ]
               [ i [ class "fas fa-question" ] [] ]
 
-          , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
+          , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
 
           , button 
-              [ class "font-bold bg-blue-800 text-blue-500 text-2xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
-              , class "hover:bg-blue-700 hover:shadow-md"
+              [ class "fv-nav-btn"
               , onClick GoToGithub
               ]
               [ i [ class "fab fa-github" ] [] ]
 
-          , h3 [ class "h-6 w-6 opacity-25 text-orange-500 rounded-full flex items-center justify-center" ]
+          , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
 
           , button 
-              [ class "font-bold bg-blue-800 text-blue-500 text-xl h-10 w-10 rounded-full flex items-center justify-center shadow" 
-              , class "hover:bg-blue-700 hover:shadow-md"
+              [ class "fv-nav-btn"
               , onClick GoToTwitter
               ]
               [ i [ class "fab fa-twitter" ] [] ]
 
-          , h3 [ class "h-6 w-5 opacity-25 text-orange-500 rounded-full flex items-center justify-end" ]
+          , div [ class "fv-nav-code justify-end w-5" ]
             [ text "]" ]
           ]
         ]

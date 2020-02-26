@@ -10,6 +10,13 @@ body {
 
 .fv-nav-btn {
   @apply flex items-center justify-center h-10 w-10 bg-blue-800 rounded-full shadow text-blue-500 text-xl font-sans font-bold;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .fv-nav-btn:focus {
   @apply outline-none;
@@ -18,16 +25,31 @@ body {
   @apply bg-blue-700 shadow-md;
 }
 
+.fv-nav-code {
+  @apply h-6 opacity-25 text-orange-500 flex items-center;
+}
+
+.fv-main-header {
+  
+}
+
 .fv-main-text {
   
 }
 
-.fv-main-btn {
+.fv-main-code {
 
 }
 
-.fv-main-code {
+.fv-main-btn {
 
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 @tailwind utilities;
