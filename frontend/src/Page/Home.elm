@@ -1,11 +1,11 @@
 module Page.Home exposing (..)
 
+import Browser.Navigation as Navigation
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Array
 import Http
-import Browser.Navigation as Navigation
+import Array
 import Json.Decode as Decode
 import Json.Encode as Encode
 

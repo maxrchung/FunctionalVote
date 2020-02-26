@@ -39,7 +39,7 @@ type Page
   | VotePage Vote.Model
   | PollPage Poll.Model
   | AboutPage
-  | ErrorPage
+  | ErrorPage Error.Model
 
 type Route 
   = HomeRoute
@@ -73,7 +73,8 @@ initPage url key =
           ( AboutPage, Cmd.none )
     
     Nothing ->
-      ( ErrorPage, Cmd.none )
+      let ( model, cmd ) = Error.init key
+      in ( ErrorPage model, Cmd.map ErrorMsg cmd )
 
 routeParser : Parser.Parser ( Route -> a ) a
 routeParser =
@@ -93,6 +94,7 @@ type Msg
   | HomeMsg Home.Msg
   | VoteMsg Vote.Msg
   | PollMsg Poll.Msg
+  | ErrorMsg Error.Msg
   | GoToGithub
   | GoToTwitter
   | GoToAbout
@@ -134,6 +136,14 @@ update msg model =
           in ( { model | page = PollPage newModel }, Cmd.map PollMsg cmd )
         _ -> ( model, Cmd.none )
 
+    ErrorMsg errorMsg ->
+      case model.page of
+        ErrorPage oldModel -> 
+          let ( newModel, cmd ) = Error.update errorMsg oldModel
+          in ( { model | page = ErrorPage newModel }, Cmd.map ErrorMsg cmd )
+        _ -> ( model, Cmd.none )
+
+
     GoToGithub ->
       ( model, Navigation.load "https://github.com/maxrchung/FunctionalVote" )
 
@@ -168,7 +178,7 @@ view model =
           "Functional Vote - View a Poll"
         AboutPage ->
           "Functional Vote - About"
-        ErrorPage ->
+        ErrorPage _ ->
           "Functional Vote - Error" 
   in
   { title = pageTitle
@@ -188,8 +198,8 @@ renderBody model =
           [ Html.map PollMsg ( Poll.view pollModel ) ]
         AboutPage ->
           [ About.view ]
-        ErrorPage ->
-          [ Error.view ]
+        ErrorPage errorModel ->
+          [ Html.map ErrorMsg ( Error.view errorModel ) ]
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
       [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]

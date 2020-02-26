@@ -1,14 +1,32 @@
 module Page.Error exposing (..)
 
+import Browser.Navigation as Navigation
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 
 
+type alias Model = { key : Navigation.Key }
+
+init : Navigation.Key -> ( Model, Cmd Msg )
+init key = ( Model key, Cmd.none )
+
+
+
+-- UPDATE
+type Msg 
+  = GoToHome
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
+    GoToHome ->
+      ( model, Navigation.pushUrl model.key "/" )
+
 -- VIEW
-view : Html a
-view =
+view : Model -> Html Msg
+view _ =
   div [] 
     [ h1 [ class "fv-main-header" ]
       [ text "Error" ]
@@ -18,6 +36,7 @@ view =
       , text " if you’re experiencing any issues." ]
     , button 
         [ class "fv-main-btn"
+        , onClick GoToHome
         ]
         [ text "Go Home" ] 
     ]
