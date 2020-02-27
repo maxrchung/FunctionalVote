@@ -15,11 +15,12 @@ import Json.Encode as Encode
 type alias Model = 
   { key : Navigation.Key
   , title : String
+  , titleError : String
   , choices : Array.Array String }
 
 init : Navigation.Key -> ( Model, Cmd Msg )
 init key = 
-  ( Model key "" (Array.fromList ["", ""]), Cmd.none )
+  ( Model key "" "" (Array.fromList ["", ""]), Cmd.none )
 
 
 
@@ -34,7 +35,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     ChangeTitle newTitle ->
-      ( { model | title = newTitle }, Cmd.none )
+      ( { model | title = newTitle, titleError = validateTitle newTitle }, Cmd.none )
       
     ChangeChoice index newChoice ->
       let updatedChoices = Array.set index newChoice model.choices
@@ -73,6 +74,13 @@ makePollDecoder : Decode.Decoder Int
 makePollDecoder =
   Decode.field "data" (Decode.field "id" Decode.int)
 
+validateTitle : String -> String
+validateTitle title =
+  if String.isEmpty title then
+    "Title cannot be empty."
+  else
+    ""
+
 
 
 -- VIEW
@@ -97,6 +105,7 @@ view model =
         , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-main-code w-8"] [ text "\"" ]
             , input [ class "fv-main-input"
+                    , titleErrorClass model.titleError
                     , placeholder "-- Enter a question"
                     , value model.title
                     , onInput ChangeTitle 
@@ -155,3 +164,9 @@ renderChoice index choice =
     , div [ class "fv-main-code w-8 text-right"] [ text "\"" ]
     ]
   
+titleErrorClass : String -> Attribute a
+titleErrorClass titleError =
+  if String.isEmpty titleError then
+    class ""
+  else
+    class "fv-main-input-error"

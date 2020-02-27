@@ -55,6 +55,18 @@ body {
 .fv-main-input::placeholder {
   @apply text-blue-100;
 }
+.fv-main-input-error {
+  @apply border-red-700;
+}
+.fv-main-input-error:focus {
+  @apply bg-red-900;
+}
+.fv-main-input-error:hover {
+  @apply bg-red-900;
+}
+.fv-main-input-error::placeholder {
+  @apply text-red-100;
+}
 
 .fv-main-btn {
   @apply w-full py-2 bg-orange-500 rounded-full shadow-lg font-sans font-bold text-2xl text-orange-100;
