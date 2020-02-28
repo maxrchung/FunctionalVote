@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
+import Http.Detailed
 import Array
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -30,7 +31,7 @@ type Msg
   = ChangeTitle String
   | ChangeChoice Int String
   | MakePollRequest
-  | MakePollResponse (Result Http.Error Int)
+  | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, Int ) )
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -54,17 +55,25 @@ update msg model =
 
     MakePollResponse result ->
       case result of
-        Ok pollId ->
+        Ok ( _, pollId ) ->
           ( model, Navigation.pushUrl model.key ( "/vote/" ++ String.fromInt pollId ) )
-        Err _ ->
-          ( { model | showError = True, error = "Unable to create poll. The website may be down for maintenace. Please try again later." }, Cmd.none )
+        Err error ->
+          let 
+            newError =
+              case error of
+                Http.Detailed.BadStatus _ body ->
+                  body
+                _ ->
+                  "Unable to create poll. The website may be down for maintenace. Please try again later."
+          in
+          ( { model | showError = True, error = newError }, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
   Http.post
     { url = "http://localhost:4000/poll/"
     , body = Http.jsonBody (makePollJson model)
-    , expect = Http.expectJson MakePollResponse makePollDecoder
+    , expect = Http.Detailed.expectJson MakePollResponse makePollDecoder
     }
 
 makePollJson : Model -> Encode.Value
