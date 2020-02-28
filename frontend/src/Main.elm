@@ -95,8 +95,6 @@ type Msg
   | VoteMsg Vote.Msg
   | PollMsg Poll.Msg
   | ErrorMsg Error.Msg
-  | GoToGithub
-  | GoToTwitter
   | GoToAbout
   | GoToHome
 
@@ -142,13 +140,6 @@ update msg model =
           let ( newModel, cmd ) = Error.update errorMsg oldModel
           in ( { model | page = ErrorPage newModel }, Cmd.map ErrorMsg cmd )
         _ -> ( model, Cmd.none )
-
-
-    GoToGithub ->
-      ( model, Navigation.load "https://github.com/maxrchung/FunctionalVote" )
-
-    GoToTwitter ->
-      ( model, Navigation.load "https://twitter.com/FunctionalVote" )
 
     GoToAbout ->
       case model.page of
@@ -224,18 +215,20 @@ renderBody model =
           , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
 
-          , button 
+          , a
               [ class "fv-nav-btn"
-              , onClick GoToGithub
+              , href "https://github.com/maxrchung/FunctionalVote"
+              , target "_blank"
               ]
               [ i [ class "fab fa-github" ] [] ]
 
           , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
 
-          , button 
+          , a
               [ class "fv-nav-btn"
-              , onClick GoToTwitter
+              , href "https://twitter.com/FunctionalVote"
+              , target "_blank"
               ]
               [ i [ class "fab fa-twitter" ] [] ]
 
