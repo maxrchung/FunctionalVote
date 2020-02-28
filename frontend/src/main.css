@@ -36,7 +36,10 @@ body {
 }
 
 .fv-main-text {
-  @apply font-sans text-sm text-orange-500 leading-relaxed;
+  @apply font-sans text-orange-500 leading-relaxed;
+}
+.fv-main-text-error {
+  @apply text-red-500;
 }
 
 .fv-main-code {
@@ -87,9 +90,6 @@ body {
 
 a {
   @apply text-blue-500;
-}
-a:visited {
-  @apply text-blue-700;
 }
 a:hover {
   @apply text-blue-100;
