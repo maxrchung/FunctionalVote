@@ -250,14 +250,18 @@ defmodule FunctionalVote.Polls do
   """
   def create_poll(attrs \\ %{}) do
     IO.puts("[PollCtx] Create poll")
-    if (attrs["choices"] === Enum.uniq(attrs["choices"])) do
-      attrs = Map.update!(attrs, "choices",
-                &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
-      %Poll{}
-      |> Poll.changeset(attrs)
-      |> Repo.insert()
+    if (String.trim(attrs["title"]) !== "") do
+      if (attrs["choices"] === Enum.uniq(attrs["choices"])) do
+        attrs = Map.update!(attrs, "choices",
+                  &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
+        %Poll{}
+        |> Poll.changeset(attrs)
+        |> Repo.insert()
+      else
+        :choices_error
+      end
     else
-      :choices_error
+      :title_error
     end
   end
 
