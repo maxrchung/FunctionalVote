@@ -15,12 +15,13 @@ import Json.Encode as Encode
 type alias Model = 
   { key : Navigation.Key
   , title : String
-  , titleError : String
+  , titleError: String
+  , submitError : String
   , choices : Array.Array String }
 
 init : Navigation.Key -> ( Model, Cmd Msg )
 init key = 
-  ( Model key "" "" (Array.fromList ["", ""]), Cmd.none )
+  ( Model key "" "" "" (Array.fromList ["", ""]), Cmd.none )
 
 
 
@@ -35,7 +36,8 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     ChangeTitle newTitle ->
-      ( { model | title = newTitle, titleError = validateTitle newTitle }, Cmd.none )
+      let newTitleError = validateTitle newTitle
+      in ( { model | title = newTitle, titleError = newTitleError }, Cmd.none )
       
     ChangeChoice index newChoice ->
       let updatedChoices = Array.set index newChoice model.choices
@@ -77,7 +79,7 @@ makePollDecoder =
 validateTitle : String -> String
 validateTitle title =
   if String.isEmpty title then
-    "Title cannot be empty."
+    "Question cannot be empty."
   else
     ""
 
@@ -89,7 +91,7 @@ view model =
   Html.form [ onSubmit MakePollRequest ]
     ( List.concat
       [ [ div [ class "fv-main-text" ]
-            [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter a question and choices below." ]
+            [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter question and choices below." ]
         
         , div [ class "flex justify-between" ]
             [ h1 [ class "fv-main-code" ] [ text "poll" ]
@@ -102,7 +104,7 @@ view model =
             , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center pb-1" ]
             [ div [ class "fv-main-code w-8"] [ text "\"" ]
             , input [ class "fv-main-input"
                     , titleErrorClass model.titleError
@@ -111,9 +113,15 @@ view model =
                     , onInput ChangeTitle 
                     ] [] 
             , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
-            ] 
+            ]
+
+        , div [class "flex justify-between" ]
+            [ div [ class "w-8" ] [ text "" ]
+            , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.titleError ] 
+            , div [ class "w-8 text-right" ] [ text "" ]
+            ]
         
-        , div [class "fv-main-code text-left" ] [ text "," ]
+        , div [class "fv-main-code" ] [ text "," ]
 
         , div [class "flex justify-between items-center" ]
             [ div [ class "w-8" ] [ text "" ]
@@ -124,14 +132,20 @@ view model =
 
       , Array.toList <| Array.indexedMap renderChoice model.choices
 
-      , [ div [ class "fv-main-code pb-2 text-left" ] [ text "]}" ]
+      , [ div [ class "fv-main-code pb-2" ] [ text "]}" ]
         
-        , div [class "flex justify-between items-center" ]
+        , div [class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] [ text "" ]
             , button 
                 [ class "fv-main-btn"
                 , type_ "submit"
                 ] [ text "Create Poll" ] 
+            , div [ class "w-8 text-right" ] [ text "" ]
+            ]
+
+        , div [class "flex justify-between" ]
+            [ div [ class "w-8" ] [ text "" ]
+            , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.submitError ] 
             , div [ class "w-8 text-right" ] [ text "" ]
             ]
         ]
@@ -165,8 +179,15 @@ renderChoice index choice =
     ]
   
 titleErrorClass : String -> Attribute a
-titleErrorClass titleError =
-  if String.isEmpty titleError then
+titleErrorClass error =
+  if String.isEmpty error then
     class ""
   else
     class "fv-main-input-error"
+
+errorText : String -> Html a
+errorText error =
+  if String.isEmpty error then
+    text ""
+  else
+    text <| "-- " ++ error
