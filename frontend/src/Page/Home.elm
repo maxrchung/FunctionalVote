@@ -15,13 +15,13 @@ import Json.Encode as Encode
 type alias Model = 
   { key : Navigation.Key
   , title : String
-  , titleError: String
-  , submitError : String
+  , showError: Bool
+  , error : String
   , choices : Array.Array String }
 
 init : Navigation.Key -> ( Model, Cmd Msg )
 init key = 
-  ( Model key "" "" "" (Array.fromList ["", ""]), Cmd.none )
+  ( Model key "" False "" (Array.fromList ["", ""]), Cmd.none )
 
 
 
@@ -36,16 +36,18 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     ChangeTitle newTitle ->
-      let newTitleError = validateTitle newTitle
-      in ( { model | title = newTitle, titleError = newTitleError }, Cmd.none )
+      ( { model | title = newTitle, showError = False }, Cmd.none )
       
     ChangeChoice index newChoice ->
-      let updatedChoices = Array.set index newChoice model.choices
+      let 
+        updatedChoices = Array.set index newChoice model.choices
+        newChoices = 
+          if index == Array.length model.choices - 1  then
+            Array.push "" updatedChoices
+          else
+            updatedChoices
       in
-      if index == Array.length model.choices - 1  then
-        ( { model | choices = Array.push "" updatedChoices }, Cmd.none )
-      else
-        ( { model | choices = updatedChoices }, Cmd.none )
+      ( { model | choices = newChoices, showError = False }, Cmd.none )
 
     MakePollRequest ->
       ( model, makePollRequest model )
@@ -55,7 +57,7 @@ update msg model =
         Ok pollId ->
           ( model, Navigation.pushUrl model.key ( "/vote/" ++ String.fromInt pollId ) )
         Err _ ->
-          ( model, Cmd.none )
+          ( { model | showError = True, error = "Unable to create poll. The website may be down for maintenace. Please try again later." }, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -74,14 +76,7 @@ makePollJson model =
 
 makePollDecoder : Decode.Decoder Int
 makePollDecoder =
-  Decode.field "data" (Decode.field "id" Decode.int)
-
-validateTitle : String -> String
-validateTitle title =
-  if String.isEmpty title then
-    "Question cannot be empty."
-  else
-    ""
+  Decode.field "data" (Decode.field "id" Decode.int )
 
 
 
@@ -107,7 +102,7 @@ view model =
         , div [ class "flex justify-between items-center pb-1" ]
             [ div [ class "fv-main-code w-8"] [ text "\"" ]
             , input [ class "fv-main-input"
-                    , titleErrorClass model.titleError
+                    , errorClass model.showError
                     , placeholder "-- Enter a question"
                     , value model.title
                     , onInput ChangeTitle 
@@ -115,12 +110,6 @@ view model =
             , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
             ]
 
-        , div [class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
-            , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.titleError ] 
-            , div [ class "w-8 text-right" ] [ text "" ]
-            ]
-        
         , div [class "fv-main-code" ] [ text "," ]
 
         , div [class "flex justify-between items-center" ]
@@ -130,7 +119,7 @@ view model =
             ]
         ]
 
-      , Array.toList <| Array.indexedMap renderChoice model.choices
+      , Array.toList <| Array.indexedMap ( renderChoice model.showError ) model.choices
 
       , [ div [ class "fv-main-code pb-2" ] [ text "]}" ]
         
@@ -145,15 +134,15 @@ view model =
 
         , div [class "flex justify-between" ]
             [ div [ class "w-8" ] [ text "" ]
-            , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.submitError ] 
+            , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.error ] 
             , div [ class "w-8 text-right" ] [ text "" ]
             ]
         ]
       ] 
     )
 
-renderChoice : Int -> String -> Html Msg
-renderChoice index choice =
+renderChoice : Bool -> Int -> String -> Html Msg
+renderChoice showError index choice =
   let 
     placeholderValue = 
       if index == 0 then
@@ -171,6 +160,7 @@ renderChoice index choice =
   div [ class "flex justify-between items-center pb-2" ] 
     [ div [ class "fv-main-code w-8"] [ text startQuotation ]
     , input [ class "fv-main-input"
+            , errorClass showError
             , placeholder placeholderValue
             , value choice
             , onInput ( ChangeChoice index ) 
@@ -178,12 +168,12 @@ renderChoice index choice =
     , div [ class "fv-main-code w-8 text-right"] [ text "\"" ]
     ]
   
-titleErrorClass : String -> Attribute a
-titleErrorClass error =
-  if String.isEmpty error then
-    class ""
-  else
+errorClass : Bool -> Attribute a
+errorClass showError =
+  if showError then
     class "fv-main-input-error"
+  else
+    class ""
 
 errorText : String -> Html a
 errorText error =
