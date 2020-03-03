@@ -115,11 +115,16 @@ submitVoteJson model =
 view : Model -> Html Msg
 view model =
   div []
-    ( [ h1 [ placeholder "Title" ] [ text model.poll.title ] ] ++
+    ( List.concat 
+      [ [ div [ class "fv-main-text" ]
+            [ text "-- Submit a vote by rearranging the choices below by preference." ]
+        , h1 [ placeholder "Title" ] [ text model.poll.title ]
+        ]
 
-      List.map renderChoice (Dict.toList model.poll.choices) ++
+      , List.map renderChoice (Dict.toList model.poll.choices)
 
-      [ button [ onClick SubmitVoteRequest ] [ text "Submit Vote" ] ]
+      , [ button [ onClick SubmitVoteRequest ] [ text "Submit Vote" ] ]
+      ]
     )
 
 renderChoice : ( String, Int ) -> Html Msg
