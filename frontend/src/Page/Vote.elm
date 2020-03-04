@@ -74,7 +74,7 @@ update msg model =
     SubmitVoteResponse result ->
       case result of
         Ok _ ->
-          (model, Navigation.load ("/poll/" ++ String.fromInt model.id) )
+          ( model, Navigation.load ( "/poll/" ++ String.fromInt model.id ) )
 
         Err _ ->
           ( model, Cmd.none )
@@ -114,27 +114,56 @@ submitVoteJson model =
 -- VIEW
 view : Model -> Html Msg
 view model =
+  let choicesSize = Dict.size model.poll.choices
+  in
   div []
     ( List.concat 
-      [ [ div [ class "fv-main-text" ]
-            [ text "-- Submit a vote by rearranging the choices below by preference." ]
-        , h1 [ placeholder "Title" ] [ text model.poll.title ]
+      [ 
+        [ div 
+            [ class "fv-main-text" ]
+            [ text "-- Rank the choices below by selecting a preference to the left of each choice." ]
+        , div 
+            [ class "flex justify-center"]
+            [ h1 
+              [ class "fv-main-header text-left" 
+              , placeholder "Title" ] 
+              [ text model.poll.title ]
+            ]
         ]
 
-      , List.map renderChoice (Dict.toList model.poll.choices)
+      , List.map ( renderChoice choicesSize ) <| Dict.toList model.poll.choices 
 
-      , [ button [ onClick SubmitVoteRequest ] [ text "Submit Vote" ] ]
+      , [ button 
+          [ class "fv-main-btn"
+          , onClick SubmitVoteRequest
+          ] 
+          [ text "Submit Vote" ] 
+        ]
       ]
     )
 
-renderChoice : ( String, Int ) -> Html Msg
-renderChoice ( choice, rank ) =
-  div []
-    [ h2 [ style "display" "inline" ] [ text choice ]
-    , input 
-        [ placeholder "Enter rank in here"
+renderChoice : Int -> ( String, Int ) -> Html Msg
+renderChoice choicesSize ( choice, rank ) =
+  div 
+    [ class "w-full flex pb-2" ]
+    [ select 
+        [ class ""
         , value (String.fromInt rank)
         , onInput (ChangeRank choice) 
-        , type_ "number"
-        ] []
+        ] 
+        [ option 
+          [ value "--"
+          , disabled True
+          , selected True 
+          ]
+          [ text "--" ]
+        , option [ value "0" ] [ text "0" ]
+        , option [ value "1" ] [ text "1" ]
+        , option [ value "2" ] [ text "2" ]
+        ]
+    ,
+      div 
+        [ class "fv-main-text"
+        ] 
+        [ text choice ]
     ]
