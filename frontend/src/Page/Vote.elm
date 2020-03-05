@@ -152,21 +152,28 @@ view model =
             ]
         ]
 
-      , List.map ( renderChoice choicesSize ) <| Dict.toList model.poll.choices 
+      , List.indexedMap ( renderChoice choicesSize ) <| Dict.toList model.poll.choices 
 
       , [ div [class "fv-main-code pb-2" ] [ text "]}" ]
         
         , button 
-          [ class "fv-main-btn"
-          , onClick SubmitVoteRequest
-          ] 
-          [ text "Submit Vote" ] 
+            [ class "fv-main-btn"
+            , onClick SubmitVoteRequest
+            ] 
+            [ text "Submit Vote" ] 
         ]
       ]
     )
 
-renderChoice : Int -> ( String, String ) -> Html Msg
-renderChoice choicesSize ( choice, rank ) =
+renderChoice : Int -> Int -> ( String, String ) -> Html Msg
+renderChoice choicesSize index ( choice, rank ) =
+  let 
+    textColorClass = 
+      if modBy 2 index == 0 then
+        class "text-blue-100"
+      else
+        class "text-blue-300"
+  in
   div 
     [ class "flex justify-between items-center pb-2" ]
     [ div [ class "fv-main-code w-8"] [ text "(" ]
@@ -191,7 +198,8 @@ renderChoice choicesSize ( choice, rank ) =
         , div [class "fv-main-code w-8 text-center " ] [ text ",\"" ]
 
         , div 
-            [ class "fv-main-text text-blue-100 w-full" ] 
+            [ class "fv-main-text w-full" 
+            , textColorClass ]
             [ text choice ]
         ]
 
