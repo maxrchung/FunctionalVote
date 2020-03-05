@@ -19,7 +19,7 @@ type alias Model =
 
 type alias Poll =
   { title: String,
-    choices: Dict.Dict String Int
+    choices: Dict.Dict String String
   }
 
 type alias PollResponse =
@@ -48,7 +48,7 @@ update msg model =
       case result of
         Ok pollResponse ->
           let 
-            indexedChoices = List.indexedMap (\x y -> ( y , x )) pollResponse.choices
+            indexedChoices = List.map (\choice -> ( choice, "--" )) pollResponse.choices
             choicesDict = Dict.fromList indexedChoices
             newPoll = Poll pollResponse.title choicesDict
           in ( { model | poll = newPoll }, Cmd.none )
@@ -57,16 +57,11 @@ update msg model =
           ( model, Cmd.none )
 
     ChangeRank choice rank ->
-      case String.toInt rank of
-          Just newRank ->
-            let 
-              newChoices = model.poll.choices |> Dict.update choice (Maybe.map <| \_ -> newRank)
-              oldPoll = model.poll
-              newPoll = { oldPoll | choices = newChoices }
-            in ( { model | poll = newPoll }, Cmd.none)
-            
-          Nothing ->
-            ( model, Cmd.none )
+        let 
+          newChoices = model.poll.choices |> Dict.update choice (Maybe.map <| \_ -> rank)
+          oldPoll = model.poll
+          newPoll = { oldPoll | choices = newChoices }
+        in ( { model | poll = newPoll }, Cmd.none)
 
     SubmitVoteRequest ->
         ( model, submitVoteRequest model) 
@@ -102,11 +97,9 @@ submitVoteRequest model =
 
 submitVoteJson : Model -> Encode.Value
 submitVoteJson model = 
-  let stringChoices = Dict.map (\_ value -> String.fromInt value) model.poll.choices 
-  in 
   Encode.object
     [ ( "poll_id", Encode.string <| String.fromInt model.id )
-    , ( "choices", Encode.dict identity Encode.string stringChoices )
+    , ( "choices", Encode.dict identity Encode.string model.poll.choices )
     ]
 
 
@@ -142,13 +135,13 @@ view model =
       ]
     )
 
-renderChoice : Int -> ( String, Int ) -> Html Msg
+renderChoice : Int -> ( String, String ) -> Html Msg
 renderChoice choicesSize ( choice, rank ) =
   div 
     [ class "w-full flex pb-2" ]
     [ select 
         [ class ""
-        , value (String.fromInt rank)
+        , value rank
         , onInput (ChangeRank choice) 
         ] 
         [ option 
