@@ -115,18 +115,48 @@ view model =
         [ div 
             [ class "fv-main-text" ]
             [ text "-- Rank the choices below by selecting a preference to the left of each choice." ]
+
         , div 
-            [ class "flex justify-center"]
-            [ h1 
-              [ class "fv-main-header text-left" 
-              , placeholder "Title" ] 
-              [ text model.poll.title ]
+            [ class "flex justify-between" ]
+            [ h1 [ class "fv-main-code" ] [ text "vote" ]
+            , div [ class "fv-main-code" ] [ text "={" ]
+            ]
+        
+        , div 
+            [ class "flex justify-between items-center" ]
+            [ div [ class "w-8" ] []
+            , h2 [ class "fv-main-header" ] [ text "Question" ]
+            , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+            ]
+
+        , div 
+            [ class "flex justify-between items-center pb-1" ]
+            [ div [ class "fv-main-code w-8"] [ text "\"" ]
+            , div 
+              [ class "flex justify-center w-full"]
+              [ h1 
+                [ class "fv-main-text text-blue-100 text-left" 
+                , placeholder "Title" ] 
+                [ text model.poll.title ]
+              ]
+            , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+            ]
+
+        , div [ class "fv-main-code" ] [ text "," ]
+
+        , div 
+            [ class "flex justify-between items-center" ]
+            [ div [ class "w-8" ] []
+            , h2 [ class "fv-main-header" ] [ text "Ranks" ]
+            , div [ class "fv-main-code w-8 text-right" ] [ text "=[" ]
             ]
         ]
 
       , List.map ( renderChoice choicesSize ) <| Dict.toList model.poll.choices 
 
-      , [ button 
+      , [ div [class "fv-main-code pb-2" ] [ text "]}" ]
+        
+        , button 
           [ class "fv-main-btn"
           , onClick SubmitVoteRequest
           ] 
@@ -138,25 +168,35 @@ view model =
 renderChoice : Int -> ( String, String ) -> Html Msg
 renderChoice choicesSize ( choice, rank ) =
   div 
-    [ class "w-full flex pb-2" ]
-    [ select 
-        [ class ""
-        , value rank
-        , onInput (ChangeRank choice) 
-        ] 
-        [ option 
-          [ value "--"
-          , disabled True
-          , selected True 
-          ]
-          [ text "--" ]
-        , option [ value "0" ] [ text "0" ]
-        , option [ value "1" ] [ text "1" ]
-        , option [ value "2" ] [ text "2" ]
+    [ class "flex justify-between items-center pb-2" ]
+    [ div [ class "fv-main-code w-8"] [ text "(" ]
+
+    , div 
+        [ class "flex items-center w-full" ]
+        [ select 
+            [ class ""
+            , value rank
+            , onInput ( ChangeRank choice ) 
+            ] 
+            [ option 
+              [ value "--"
+              , selected True 
+              ]
+              [ text "--" ]
+            , option [ value "1" ] [ text "1" ]
+            , option [ value "2" ] [ text "2" ]
+            , option [ value "3" ] [ text "3" ]
+            ]
+
+        , div [class "fv-main-code w-8 text-center " ] [ text ",\"" ]
+
+        , div 
+            [ class "fv-main-text text-blue-100 w-full" ] 
+            [ text choice ]
         ]
-    ,
-      div 
-        [ class "fv-main-text"
-        ] 
-        [ text choice ]
+
+    , div [class "fv-main-code w-8 text-right" ] [ text "\")" ]
     ]
+
+
+ 
