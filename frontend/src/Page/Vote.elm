@@ -172,7 +172,7 @@ renderChoice choicesSize index ( choice, rank ) =
       if modBy 2 index == 0 then
         class "text-blue-100"
       else
-        class "text-blue-300"
+        class "text-blue-500"
   in
   div 
     [ class "flex justify-between items-center pb-2" ]
@@ -185,14 +185,14 @@ renderChoice choicesSize index ( choice, rank ) =
             , value rank
             , onInput ( ChangeRank choice ) 
             ] 
-            [ option 
+            [ option [ value "1" ] [ text "1" ]
+            , option [ value "2" ] [ text "2" ]
+            , option [ value "3" ] [ text "3" ]
+            , option 
               [ value "--"
               , selected True 
               ]
               [ text "--" ]
-            , option [ value "1" ] [ text "1" ]
-            , option [ value "2" ] [ text "2" ]
-            , option [ value "3" ] [ text "3" ]
             ]
 
         , div [class "fv-main-code w-8 text-center " ] [ text ",\"" ]
