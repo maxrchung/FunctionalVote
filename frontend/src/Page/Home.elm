@@ -130,7 +130,7 @@ view model =
 
       , Array.toList <| Array.indexedMap ( renderChoice model.showError ) model.choices
 
-      , [ div [ class "fv-main-code py-2" ] [ text "]}" ]
+      , [ div [ class "fv-main-code pb-2" ] [ text "]}" ]
         
         , div [class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] [ text "" ]

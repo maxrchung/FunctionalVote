@@ -110,60 +110,56 @@ view model =
   let choicesSize = Dict.size model.poll.choices
   in
   div []
-    ( List.concat 
-      [ 
-        [ div 
-            [ class "fv-main-text" ]
-            [ text "-- Rank the choices below by selecting a preference to the left of each choice." ]
+    [ div 
+        [ class "fv-main-text" ]
+        [ text "-- Rank the choices below by selecting a preference to the left of each choice." ]
 
-        , div 
-            [ class "flex justify-between" ]
-            [ h1 [ class "fv-main-code" ] [ text "vote" ]
-            , div [ class "fv-main-code" ] [ text "={" ]
-            ]
-        
-        , div 
-            [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
-            , h2 [ class "fv-main-header" ] [ text "Question" ]
-            , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
-            ]
-
-        , div 
-            [ class "flex justify-between items-center py-2" ]
-            [ div [ class "fv-main-code w-8"] [ text "\"" ]
-            , div 
-              [ class "flex justify-center w-full"]
-              [ h1 
-                [ class "fv-main-text text-blue-100 text-left" 
-                , placeholder "Title" ] 
-                [ text model.poll.title ]
-              ]
-            , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
-            ]
-
-        , div [ class "fv-main-code" ] [ text "," ]
-
-        , div 
-            [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
-            , h2 [ class "fv-main-header" ] [ text "Ranks" ]
-            , div [ class "fv-main-code w-8 text-right" ] [ text "=[" ]
-            ]
+    , div 
+        [ class "flex justify-between" ]
+        [ h1 [ class "fv-main-code" ] [ text "vote" ]
+        , div [ class "fv-main-code" ] [ text "={" ]
+        ]
+    
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-main-header" ] [ text "Question" ]
+        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
         ]
 
-      , List.indexedMap ( renderChoice choicesSize ) <| Dict.toList model.poll.choices 
-
-      , [ div [class "fv-main-code pb-2" ] [ text "]}" ]
-        
-        , button 
-            [ class "fv-main-btn"
-            , onClick SubmitVoteRequest
-            ] 
-            [ text "Submit Vote" ] 
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-main-code w-8"] [ text "\"" ]
+        , div 
+          [ class "flex justify-center w-full"]
+          [ h1 
+            [ class "fv-main-text text-blue-100 text-left" 
+            , placeholder "Title" ] 
+            [ text model.poll.title ]
+          ]
+        , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
         ]
-      ]
-    )
+
+    , div [ class "fv-main-code" ] [ text "," ]
+
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-main-header" ] [ text "Ranks" ]
+        , div [ class "fv-main-code w-8 text-right" ] [ text "=[" ]
+        ]
+
+    , div []
+        ( List.indexedMap ( renderChoice choicesSize ) <| Dict.toList model.poll.choices )
+
+    , div [class "fv-main-code pb-2" ] [ text "]}" ]
+      
+    , button 
+        [ class "fv-main-btn"
+        , onClick SubmitVoteRequest
+        ] 
+        [ text "Submit Vote" ] 
+    ]
 
 renderChoice : Int -> Int -> ( String, String ) -> Html Msg
 renderChoice choicesSize index ( choice, rank ) =
@@ -179,7 +175,7 @@ renderChoice choicesSize index ( choice, rank ) =
     [ div [ class "fv-main-code w-8"] [ text "(" ]
 
     , div 
-        [ class "flex items-center w-full p-2 " 
+        [ class "flex items-center w-full p-2" 
         , textColorClass ]
         [ select 
             [ class "fv-main-input w-auto"
