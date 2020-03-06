@@ -127,7 +127,7 @@ view model =
     
 
     , hr
-        [ class "my-4 border-orange-900 opacity-25 mx-auto rounded-full" ] []
+        [ class "my-4 border-orange-900 opacity-25 mx-auto" ] []
       
     , div 
         [ class "fv-main-text" ]
@@ -198,9 +198,9 @@ renderChoice choicesSize index ( choice, rank ) =
 
     borderClass =
       if index == 0 then
-        class "rounded-t"
+        class "rounded-t-sm"
       else if index == choicesSize - 1 then
-        class "rounded-b shadow-lg"
+        class "rounded-b-sm shadow-lg"
       else
         class ""
   in
