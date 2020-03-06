@@ -130,7 +130,7 @@ view model =
             ]
 
         , div 
-            [ class "flex justify-between items-center pb-1" ]
+            [ class "flex justify-between items-center py-2" ]
             [ div [ class "fv-main-code w-8"] [ text "\"" ]
             , div 
               [ class "flex justify-center w-full"]
@@ -170,18 +170,19 @@ renderChoice choicesSize index ( choice, rank ) =
   let 
     textColorClass = 
       if modBy 2 index == 0 then
-        class "text-blue-100"
+        class ""
       else
-        class "text-blue-500"
+        class "bg-blue-900 shadow-md rounded-sm"
   in
   div 
-    [ class "flex justify-between items-center pb-2" ]
+    [ class "flex justify-between items-center" ]
     [ div [ class "fv-main-code w-8"] [ text "(" ]
 
     , div 
-        [ class "flex items-center w-full" ]
+        [ class "flex items-center w-full p-2 " 
+        , textColorClass ]
         [ select 
-            [ class ""
+            [ class "fv-main-input w-auto"
             , value rank
             , onInput ( ChangeRank choice ) 
             ] 
@@ -195,11 +196,11 @@ renderChoice choicesSize index ( choice, rank ) =
               [ text "--" ]
             ]
 
-        , div [class "fv-main-code w-8 text-center " ] [ text ",\"" ]
+        , div [class "fv-main-code w-8 text-center" ] [ text ",\"" ]
 
         , div 
-            [ class "fv-main-text w-full" 
-            , textColorClass ]
+            [ class "fv-main-text text-blue-100 w-full" 
+            ]
             [ text choice ]
         ]
 
