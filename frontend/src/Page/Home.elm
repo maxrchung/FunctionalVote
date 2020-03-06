@@ -132,7 +132,7 @@ view model =
 
       , [ div [ class "fv-main-code pb-2" ] [ text "]}" ]
         
-        , div [class "flex justify-between pb-1" ]
+        , div [ class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] [ text "" ]
             , button 
                 [ class "fv-main-btn"

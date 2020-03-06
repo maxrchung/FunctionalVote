@@ -110,9 +110,28 @@ view model =
   let choicesSize = Dict.size model.poll.choices
   in
   div []
-    [ div 
+    [ div
+        [ class "fv-main-text pb-2" ]
+        [ text "-- View the poll results." ]
+      
+    , div 
+        [ class "flex justify-between" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , button 
+          [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+          , onClick SubmitVoteRequest
+          ] 
+          [ text "View Results" ]
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
+    
+
+    , hr
+        [ class "my-4 border-orange-900 opacity-25 mx-auto rounded-full" ] []
+      
+    , div 
         [ class "fv-main-text" ]
-        [ text "-- Rank the choices below by selecting a preference to the left of each choice." ]
+        [ text "-- Submit a new vote below by selecting ranks to the left of each choice." ]
 
     , div 
         [ class "flex justify-between" ]
@@ -154,12 +173,19 @@ view model =
 
     , div [class "fv-main-code pb-2" ] [ text "]}" ]
       
-    , button 
-        [ class "fv-main-btn"
-        , onClick SubmitVoteRequest
-        ] 
-        [ text "Submit Vote" ] 
+    , div 
+        [ class "flex justify-between pb-1" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , button 
+            [ class "fv-main-btn"
+            , onClick SubmitVoteRequest
+            ] 
+            [ text "Submit Vote" ] 
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
     ]
+
+
 
 renderChoice : Int -> Int -> ( String, String ) -> Html Msg
 renderChoice choicesSize index ( choice, rank ) =
