@@ -166,9 +166,17 @@ renderChoice choicesSize index ( choice, rank ) =
   let 
     textColorClass = 
       if modBy 2 index == 0 then
-        class ""
+        class "bg-blue-800"
       else
-        class "bg-blue-900 shadow-md rounded-sm"
+        class "bg-blue-900"
+
+    borderClass =
+      if index == 0 then
+        class "rounded-t"
+      else if index == choicesSize - 1 then
+        class "rounded-b shadow-lg"
+      else
+        class ""
   in
   div 
     [ class "flex justify-between items-center" ]
@@ -176,32 +184,41 @@ renderChoice choicesSize index ( choice, rank ) =
 
     , div 
         [ class "flex items-center w-full p-2" 
-        , textColorClass ]
+        , textColorClass 
+        , borderClass ]
         [ select 
             [ class "fv-main-input w-auto"
             , value rank
             , onInput ( ChangeRank choice ) 
             ] 
-            [ option [ value "1" ] [ text "1" ]
-            , option [ value "2" ] [ text "2" ]
-            , option [ value "3" ] [ text "3" ]
-            , option 
-              [ value "--"
-              , selected True 
-              ]
-              [ text "--" ]
-            ]
 
-        , div [class "fv-main-code w-8 text-center" ] [ text ",\"" ]
+            ( List.concat
+              [ renderOptions choicesSize
+              , [ option 
+                  [ value "--"
+                  , selected True 
+                  ]
+                  [ text "--" ]
+                ]
+              ]
+            )
 
         , div 
-            [ class "fv-main-text text-blue-100 w-full" 
-            ]
+            [ class "fv-main-code w-8 text-center" ] 
+            [ text ",\"" ]
+
+        , div 
+            [ class "fv-main-text text-blue-100 w-full" ]
             [ text choice ]
         ]
 
     , div [class "fv-main-code w-8 text-right" ] [ text "\")" ]
     ]
 
+renderOptions : Int -> List ( Html Msg )
+renderOptions choicesSize = 
+  List.map renderOption <| List.range 1 choicesSize
 
- 
+renderOption : Int -> Html Msg
+renderOption rank =
+  option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
