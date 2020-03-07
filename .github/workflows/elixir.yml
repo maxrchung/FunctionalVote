@@ -1,0 +1,30 @@
+name: Elixir CI
+
+on:
+  push:
+    paths:
+    - 'backend/**'
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: 1.9.4 # Define the elixir version [required]
+        otp-version: 22.2 # Define the OTP version [required]
+    - name: Install Dependencies
+      run: mix deps.get
+      env:
+        MIX_EXS: backend/mix.exs
+    - name: Test Compilation
+      run: mix compile
+      env:
+        MIX_EXS: backend/mix.exs
+    # - name: Run Unit Tests
+    #   run: mix test
