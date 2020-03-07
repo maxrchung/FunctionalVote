@@ -25,14 +25,5 @@ jobs:
     - name: Test Compilation
       run: mix compile
       env:
-        MIX_EXS: backend/mix.exs
-    - name: Create Database
-      run: mix ecto.create
-      env:
-        MIX_EXS: backend/mix.exs
-    - name: Test Migrations
-      run: mix ecto.migrate
-      env:
-        MIX_EXS: backend/mix.exs
     # - name: Run Unit Tests
     #   run: mix test
