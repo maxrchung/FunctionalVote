@@ -18,13 +18,14 @@ jobs:
       with:
         elixir-version: 1.9.4 # Define the elixir version [required]
         otp-version: 22.2 # Define the OTP version [required]
-    - name: Change Directory to Backend
-      run: cd backend
     - name: Install Dependencies
       run: mix deps.get
+      env: MIX_EXS=backend/mix.exs
     - name: Test Compilation
       run: mix compile
+      env: MIX_EXS=backend/mix.exs
     - name: Test Migrations
       run: mix ecto.migrate
+      env: MIX_EXS=backend/mix.exs
     # - name: Run Unit Tests
     #   run: mix test
