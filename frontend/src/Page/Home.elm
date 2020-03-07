@@ -108,7 +108,7 @@ view model =
             , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div [ class "flex justify-between items-center pb-1" ]
+        , div [ class "flex justify-between items-center py-2" ]
             [ div [ class "fv-main-code w-8"] [ text "\"" ]
             , input [ class "fv-main-input"
                     , errorClass model.showError
@@ -132,7 +132,7 @@ view model =
 
       , [ div [ class "fv-main-code pb-2" ] [ text "]}" ]
         
-        , div [class "flex justify-between pb-1" ]
+        , div [ class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] [ text "" ]
             , button 
                 [ class "fv-main-btn"
@@ -166,7 +166,7 @@ renderChoice showError index choice =
         ",\""
 
   in
-  div [ class "flex justify-between items-center pb-2" ] 
+  div [ class "flex justify-between items-center py-2" ] 
     [ div [ class "fv-main-code w-8"] [ text startQuotation ]
     , input [ class "fv-main-input"
             , errorClass showError

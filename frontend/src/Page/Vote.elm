@@ -19,7 +19,7 @@ type alias Model =
 
 type alias Poll =
   { title: String,
-    choices: Dict.Dict String Int
+    choices: Dict.Dict String String
   }
 
 type alias PollResponse =
@@ -48,7 +48,7 @@ update msg model =
       case result of
         Ok pollResponse ->
           let 
-            indexedChoices = List.indexedMap (\x y -> ( y , x )) pollResponse.choices
+            indexedChoices = List.map (\choice -> ( choice, "--" )) pollResponse.choices
             choicesDict = Dict.fromList indexedChoices
             newPoll = Poll pollResponse.title choicesDict
           in ( { model | poll = newPoll }, Cmd.none )
@@ -57,16 +57,11 @@ update msg model =
           ( model, Cmd.none )
 
     ChangeRank choice rank ->
-      case String.toInt rank of
-          Just newRank ->
-            let 
-              newChoices = model.poll.choices |> Dict.update choice (Maybe.map <| \_ -> newRank)
-              oldPoll = model.poll
-              newPoll = { oldPoll | choices = newChoices }
-            in ( { model | poll = newPoll }, Cmd.none)
-            
-          Nothing ->
-            ( model, Cmd.none )
+        let 
+          newChoices = model.poll.choices |> Dict.update choice (Maybe.map <| \_ -> rank)
+          oldPoll = model.poll
+          newPoll = { oldPoll | choices = newChoices }
+        in ( { model | poll = newPoll }, Cmd.none)
 
     SubmitVoteRequest ->
         ( model, submitVoteRequest model) 
@@ -74,7 +69,7 @@ update msg model =
     SubmitVoteResponse result ->
       case result of
         Ok _ ->
-          (model, Navigation.load ("/poll/" ++ String.fromInt model.id) )
+          ( model, Navigation.load ( "/poll/" ++ String.fromInt model.id ) )
 
         Err _ ->
           ( model, Cmd.none )
@@ -102,11 +97,9 @@ submitVoteRequest model =
 
 submitVoteJson : Model -> Encode.Value
 submitVoteJson model = 
-  let stringChoices = Dict.map (\_ value -> String.fromInt value) model.poll.choices 
-  in 
   Encode.object
     [ ( "poll_id", Encode.string <| String.fromInt model.id )
-    , ( "choices", Encode.dict identity Encode.string stringChoices )
+    , ( "choices", Encode.dict identity Encode.string model.poll.choices )
     ]
 
 
@@ -114,22 +107,144 @@ submitVoteJson model =
 -- VIEW
 view : Model -> Html Msg
 view model =
+  let choicesSize = Dict.size model.poll.choices
+  in
   div []
-    ( [ h1 [ placeholder "Title" ] [ text model.poll.title ] ] ++
+    [ div
+        [ class "fv-main-text pb-2" ]
+        [ text "-- View the poll results." ]
+      
+    , div 
+        [ class "flex justify-between" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , button 
+          [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+          , onClick SubmitVoteRequest
+          ] 
+          [ text "View Results" ]
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
+    
 
-      List.map renderChoice (Dict.toList model.poll.choices) ++
+    , hr
+        [ class "my-4 border-orange-900 opacity-25 mx-auto" ] []
+      
+    , div 
+        [ class "fv-main-text" ]
+        [ text "-- Submit a new vote below by selecting ranks to the left of each choice." ]
 
-      [ button [ onClick SubmitVoteRequest ] [ text "Submit Vote" ] ]
-    )
+    , div 
+        [ class "flex justify-between" ]
+        [ h1 [ class "fv-main-code" ] [ text "vote" ]
+        , div [ class "fv-main-code" ] [ text "={" ]
+        ]
+    
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-main-header" ] [ text "Question" ]
+        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+        ]
 
-renderChoice : ( String, Int ) -> Html Msg
-renderChoice ( choice, rank ) =
-  div []
-    [ h2 [ style "display" "inline" ] [ text choice ]
-    , input 
-        [ placeholder "Enter rank in here"
-        , value (String.fromInt rank)
-        , onInput (ChangeRank choice) 
-        , type_ "number"
-        ] []
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-main-code w-8"] [ text "\"" ]
+        , div 
+          [ class "flex justify-center w-full"]
+          [ h1 
+            [ class "fv-main-text text-blue-100 text-left" 
+            , placeholder "Title" ] 
+            [ text model.poll.title ]
+          ]
+        , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+        ]
+
+    , div [ class "fv-main-code" ] [ text "," ]
+
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-main-header" ] [ text "Ranks" ]
+        , div [ class "fv-main-code w-8 text-right" ] [ text "=[" ]
+        ]
+
+    , div []
+        ( List.indexedMap ( renderChoice choicesSize ) <| Dict.toList model.poll.choices )
+
+    , div [class "fv-main-code pb-2" ] [ text "]}" ]
+      
+    , div 
+        [ class "flex justify-between pb-1" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , button 
+            [ class "fv-main-btn"
+            , onClick SubmitVoteRequest
+            ] 
+            [ text "Submit Vote" ] 
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
     ]
+
+
+
+renderChoice : Int -> Int -> ( String, String ) -> Html Msg
+renderChoice choicesSize index ( choice, rank ) =
+  let 
+    textColorClass = 
+      if modBy 2 index == 0 then
+        class "bg-blue-800"
+      else
+        class "bg-blue-900"
+
+    borderClass =
+      if index == 0 then
+        class "rounded-t-sm"
+      else if index == choicesSize - 1 then
+        class "rounded-b-sm shadow-lg"
+      else
+        class ""
+  in
+  div 
+    [ class "flex justify-between items-center" ]
+    [ div [ class "fv-main-code w-8"] [ text "(" ]
+
+    , div 
+        [ class "flex items-center w-full p-2" 
+        , textColorClass 
+        , borderClass ]
+        [ select 
+            [ class "fv-main-input w-auto"
+            , value rank
+            , onInput ( ChangeRank choice ) 
+            ] 
+
+            ( List.concat
+              [ renderOptions choicesSize
+              , [ option 
+                  [ value "--"
+                  , selected True 
+                  ]
+                  [ text "--" ]
+                ]
+              ]
+            )
+
+        , div 
+            [ class "fv-main-code w-8 text-center" ] 
+            [ text ",\"" ]
+
+        , div 
+            [ class "fv-main-text text-blue-100 w-full" ]
+            [ text choice ]
+        ]
+
+    , div [class "fv-main-code w-8 text-right" ] [ text "\")" ]
+    ]
+
+renderOptions : Int -> List ( Html Msg )
+renderOptions choicesSize = 
+  List.map renderOption <| List.range 1 choicesSize
+
+renderOption : Int -> Html Msg
+renderOption rank =
+  option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
