@@ -26,6 +26,10 @@ jobs:
       run: mix compile
       env:
         MIX_EXS: backend/mix.exs
+    - name: Create Database
+      run: mix ecto.create
+      env:
+        MIX_EXS: backend/mix.exs
     - name: Test Migrations
       run: mix ecto.migrate
       env:
