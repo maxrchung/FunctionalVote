@@ -25,5 +25,6 @@ jobs:
     - name: Test Compilation
       run: mix compile
       env:
+        MIX_EXS: backend/mix.exs
     # - name: Run Unit Tests
     #   run: mix test
