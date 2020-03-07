@@ -18,11 +18,12 @@ type alias Model =
   , title : String
   , showError: Bool
   , error : String
-  , choices : Array.Array String }
+  , choices : Array.Array String
+  , apiAddress: String }
 
-init : Navigation.Key -> ( Model, Cmd Msg )
-init key = 
-  ( Model key "" False "" (Array.fromList ["", ""]), Cmd.none )
+init : Navigation.Key -> String -> ( Model, Cmd Msg )
+init key apiAddress = 
+  ( Model key "" False "" (Array.fromList ["", ""]) apiAddress, Cmd.none )
 
 
 
@@ -71,7 +72,7 @@ update msg model =
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
   Http.post
-    { url = "http://localhost:4000/poll/"
+    { url = model.apiAddress ++ "/poll/"
     , body = Http.jsonBody (makePollJson model)
     , expect = Http.Detailed.expectJson MakePollResponse makePollDecoder
     }

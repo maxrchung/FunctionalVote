@@ -13,8 +13,9 @@ import Json.Encode as Encode
 
 -- MODEL
 type alias Model = 
-  { id: Int,
-    poll: Poll
+  { id: Int
+  , poll: Poll
+  , apiAddress: String
   }
 
 type alias Poll =
@@ -27,9 +28,9 @@ type alias PollResponse =
     choices: List String
   }
 
-init : Int -> ( Model, Cmd Msg )
-init id = 
-  let model = Model id (Poll "" Dict.empty)
+init : Int -> String -> ( Model, Cmd Msg )
+init id apiAddress = 
+  let model = Model id (Poll "" Dict.empty) apiAddress
   in ( model, getPollRequest model )
 
 
@@ -77,7 +78,7 @@ update msg model =
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
   Http.get
-    { url = "http://localhost:4000/poll/" ++ String.fromInt model.id
+    { url = model.apiAddress ++ "/poll/" ++ String.fromInt model.id
     , expect = Http.expectJson GetPollResponse getPollDecoder
     }
 
@@ -90,7 +91,7 @@ getPollDecoder =
 submitVoteRequest : Model -> Cmd Msg
 submitVoteRequest model =
   Http.post
-    { url = "http://localhost:4000/vote/"
+    { url = model.apiAddress ++ "/vote/"
     , body = Http.jsonBody (submitVoteJson model)
     , expect = Http.expectWhatever SubmitVoteResponse
     }
@@ -126,8 +127,9 @@ view model =
         ]
     
 
-    , hr
-        [ class "my-4 border-orange-900 opacity-25 mx-auto" ] []
+    , div
+        [ class "fv-main-code text-center w-full" ] 
+        [ text "--" ]
       
     , div 
         [ class "fv-main-text" ]
