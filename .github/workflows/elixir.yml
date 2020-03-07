@@ -20,12 +20,15 @@ jobs:
         otp-version: 22.2 # Define the OTP version [required]
     - name: Install Dependencies
       run: mix deps.get
-      env: MIX_EXS=backend/mix.exs
+      env:
+        MIX_EXS: backend/mix.exs
     - name: Test Compilation
       run: mix compile
-      env: MIX_EXS=backend/mix.exs
+      env:
+        MIX_EXS: backend/mix.exs
     - name: Test Migrations
       run: mix ecto.migrate
-      env: MIX_EXS=backend/mix.exs
+      env:
+        MIX_EXS: backend/mix.exs
     # - name: Run Unit Tests
     #   run: mix test
