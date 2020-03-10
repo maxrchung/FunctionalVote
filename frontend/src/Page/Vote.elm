@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Dict
+import Set
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -19,18 +20,19 @@ type alias Model =
   }
 
 type alias Poll =
-  { title: String,
-    choices: Dict.Dict String String
+  { title: String
+  , orderedChoices: Dict.Dict Int String
+  , unorderedChoices: Set.Set String
   }
 
 type alias PollResponse =
-  { title: String,
-    choices: List String
+  { title: String
+  , choices: List String
   }
 
 init : Int -> String -> ( Model, Cmd Msg )
 init id apiAddress = 
-  let model = Model id (Poll "" Dict.empty) apiAddress
+  let model = Model id ( Poll "" Dict.empty Set.empty ) apiAddress
   in ( model, getPollRequest model )
 
 
@@ -38,7 +40,7 @@ init id apiAddress =
 -- UPDATE
 type Msg 
   = GetPollResponse (Result Http.Error PollResponse)
-  | ChangeRank String String
+  | ChangeRank Int String
   | SubmitVoteRequest
   | SubmitVoteResponse (Result Http.Error ())
 
@@ -49,19 +51,24 @@ update msg model =
       case result of
         Ok pollResponse ->
           let 
-            indexedChoices = List.map (\choice -> ( choice, "--" )) pollResponse.choices
-            choicesDict = Dict.fromList indexedChoices
-            newPoll = Poll pollResponse.title choicesDict
+            unorderedChoices = Set.fromList pollResponse.choices
+            newPoll = Poll pollResponse.title Dict.empty unorderedChoices
           in ( { model | poll = newPoll }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
 
-    ChangeRank choice rank ->
-        let 
-          newChoices = model.poll.choices |> Dict.update choice (Maybe.map <| \_ -> rank)
+    ChangeRank rank choice ->
+        let
           oldPoll = model.poll
-          newPoll = { oldPoll | choices = newChoices }
+          -- Remove from choices
+          filteredOrdered = Dict.filter ( \_ v -> v == choice ) oldPoll.orderedChoices
+          filteredUnordered = Set.remove choice oldPoll.unorderedChoices
+          -- Update choices with new rankings
+          ( updatedOrdered, newUnordered ) = updateChoices rank choice filteredOrdered filteredUnordered
+          -- Add into ordered
+          newOrdered = Dict.insert  updatedOrdered
+          newPoll = { oldPoll | orderedChoices = newOrdered, unorderedChoices = newUnordered }
         in ( { model | poll = newPoll }, Cmd.none)
 
     SubmitVoteRequest ->
