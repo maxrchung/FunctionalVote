@@ -10,19 +10,20 @@ import Json.Decode as Decode
 
 -- MODEL
 type alias Model = 
-  { id: Int,
-    poll: Poll
+  { id: Int
+  , poll: Poll
+  , apiAddress: String
   }
 
 type alias Poll =
-  { title: String,
-    choices: List String,
-    winner: String
+  { title: String
+  , choices: List String
+  , winner: String
   }
 
-init : Int -> ( Model, Cmd Msg )
-init id = 
-  let model = Model id (Poll "" [] "")
+init : Int -> String -> ( Model, Cmd Msg )
+init id apiAddress = 
+  let model = Model id (Poll "" [] "" ) apiAddress
   in ( model, getPollRequest model )
 
 
@@ -45,7 +46,7 @@ update msg model =
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
   Http.get
-    { url = "http://localhost:4000/poll/" ++ String.fromInt model.id
+    { url = model.apiAddress ++ "/poll/" ++ String.fromInt model.id
     , expect = Http.expectJson GetPollResponse getPollDecoder
     }
 

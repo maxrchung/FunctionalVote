@@ -17,7 +17,7 @@ import Page.Error as Error
 
 -- MAIN
 main = 
-  Browser.application 
+  Browser.application
     { init = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -31,6 +31,7 @@ main =
 -- MODEL
 type alias Model = 
   { key: Navigation.Key
+  , apiAddress: String
   , page : Page
   }
 
@@ -47,26 +48,32 @@ type Route
   | PollRoute Int
   | AboutRoute
 
-init : () -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init _ url key = 
-  let ( page, cmd ) = initPage url key
-  in ( Model key page, cmd)
+init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
+init environment url key = 
+  let 
+    apiAddress = 
+      if environment == "production" then
+        "https://FunctionalVote.com:4001"
+      else
+        "http://localhost:4000"
+    ( page, cmd ) = initPage url key apiAddress
+  in ( Model key apiAddress page, cmd)
 
-initPage : Url.Url -> Navigation.Key -> ( Page, Cmd Msg )
-initPage url key =
+initPage : Url.Url -> Navigation.Key -> String -> ( Page, Cmd Msg )
+initPage url key apiAddress =
   case Parser.parse routeParser url of
     Just route ->
       case route of
         HomeRoute ->
-          let ( model, cmd ) = Home.init key
+          let ( model, cmd ) = Home.init key apiAddress
           in ( HomePage model , Cmd.map HomeMsg cmd )
 
         VoteRoute pollId ->
-          let ( model, cmd ) = Vote.init pollId
+          let ( model, cmd ) = Vote.init pollId apiAddress
           in ( VotePage model, Cmd.map VoteMsg cmd )
 
         PollRoute pollId ->
-          let ( model, cmd ) = Poll.init pollId
+          let ( model, cmd ) = Poll.init pollId apiAddress
           in ( PollPage model, Cmd.map PollMsg cmd )
 
         AboutRoute ->
@@ -110,7 +117,7 @@ update msg model =
           ( model, Navigation.load href )
 
     UrlChanged url ->
-      let ( page, cmd ) = initPage url model.key
+      let ( page, cmd ) = initPage url model.key model.apiAddress
       in ( { model | page = page }, cmd)
 
     HomeMsg homeMsg ->
