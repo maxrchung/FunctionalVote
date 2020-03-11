@@ -23,7 +23,6 @@ type alias Poll =
   { title: String
   , orderedChoices: Dict.Dict Int String
   , unorderedChoices: Set.Set String
-  , maxRank: Int
   }
 
 type alias PollResponse =
@@ -33,7 +32,7 @@ type alias PollResponse =
 
 init : Int -> String -> ( Model, Cmd Msg )
 init id apiAddress = 
-  let model = Model id ( Poll "" Dict.empty Set.empty 0 ) apiAddress
+  let model = Model id ( Poll "" Dict.empty Set.empty ) apiAddress
   in ( model, getPollRequest model )
 
 
@@ -53,8 +52,7 @@ update msg model =
         Ok pollResponse ->
           let 
             unorderedChoices = Set.fromList pollResponse.choices
-            maxRank = Set.size unorderedChoices 
-            newPoll = Poll pollResponse.title Dict.empty unorderedChoices maxRank
+            newPoll = Poll pollResponse.title Dict.empty unorderedChoices
           in ( { model | poll = newPoll }, Cmd.none )
 
         Err _ ->
@@ -63,27 +61,10 @@ update msg model =
     ChangeRank rank choice ->
       let
         oldPoll = model.poll
-
-        -- Remove from choices
-        filteredOrdered = Dict.filter ( \_ v -> v == choice ) oldPoll.orderedChoices
-        filteredUnordered = Set.remove choice oldPoll.unorderedChoices
-      in
-      case String.toInt rank of
-        Nothing ->
-          let
-            -- Add into unordered
-            addedUnordered = Set.insert choice filteredUnordered
-            newPoll = { oldPoll | orderedChoices = filteredOrdered, unorderedChoices = addedUnordered }
-          in ( { model | poll = newPoll }, Cmd.none)
-        Just newRank ->
-          let
-            -- Update choices with new rankings
-            ( updatedOrdered, updatedUnordered ) = updateChoices 0 True oldPoll.maxRank newRank filteredOrdered Dict.empty filteredUnordered 
-            -- Add new rank into ordered
-            addedOrdered = Dict.insert newRank choice updatedOrdered
-            newPoll = { oldPoll | orderedChoices = addedOrdered, unorderedChoices = updatedUnordered }
-          in ( { model | poll = newPoll }, Cmd.none)
-
+        ( newOrdered, newUnordered ) = changeRank rank choice oldPoll.orderedChoices oldPoll.unorderedChoices
+        newPoll = { oldPoll | orderedChoices = newOrdered, unorderedChoices = newUnordered }
+      in ( { model | poll = newPoll }, Cmd.none)
+      
     SubmitVoteRequest ->
         ( model, submitVoteRequest model) 
 
@@ -94,7 +75,34 @@ update msg model =
 
         Err _ ->
           ( model, Cmd.none )
-      
+
+calculateMaxRank : Dict.Dict Int String -> Set.Set String -> Int
+calculateMaxRank ordered unordered =
+  Dict.size ordered + Set.size unordered
+
+changeRank : String -> String -> Dict.Dict Int String -> Set.Set String -> ( Dict.Dict Int String, Set.Set String )
+changeRank rank choice ordered unordered  =
+  let
+    maxRank = calculateMaxRank ordered unordered
+    -- Remove from choices
+    filteredOrdered = Dict.filter ( \_ v -> v == choice ) ordered
+    filteredUnordered = Set.remove choice unordered
+  in
+  case String.toInt rank of
+    Nothing ->
+      let
+        -- Add into unordered
+        addedUnordered = Set.insert choice filteredUnordered
+      in ( filteredOrdered, addedUnordered )
+    Just newRank ->
+      let
+        -- Update choices with new rankings
+        ( updatedOrdered, updatedUnordered ) = updateChoices 0 True maxRank newRank filteredOrdered Dict.empty filteredUnordered 
+        -- Add new rank into ordered
+        addedOrdered = Dict.insert newRank choice updatedOrdered
+      in ( addedOrdered, updatedUnordered )
+
+
 updateChoices : Int -> Bool -> Int -> Int -> Dict.Dict Int String -> Dict.Dict Int String -> Set.Set String -> ( Dict.Dict Int String, Set.Set String )
 updateChoices index canFill maxRank rank ordered newOrdered newUnordered = 
   if index > maxRank then
@@ -103,11 +111,7 @@ updateChoices index canFill maxRank rank ordered newOrdered newUnordered =
     case Dict.get rank ordered of
       Nothing ->
         let 
-          newCanFill =
-            if canFill && index >= rank then
-              False
-            else
-              True
+          newCanFill = not canFill || index < rank
         in updateChoices ( index + 1 ) newCanFill maxRank rank ordered newOrdered newUnordered
       Just choice ->
         let updateChoicesHelp = updateChoices ( index + 1 ) canFill maxRank rank ordered
@@ -161,6 +165,8 @@ buildSubmissionChoices rank choice choices =
 -- VIEW
 view : Model -> Html Msg
 view model =
+  let maxRank = calculateMaxRank model.poll.orderedChoices model.poll.unorderedChoices
+  in
   div []
     [ div
         [ class "fv-main-text pb-2" ]
@@ -220,12 +226,12 @@ view model =
         , h2 [ class "fv-main-header" ] [ text "Ranks" ]
         , div [ class "fv-main-code w-8 text-right" ] [ text "=[" ]
         ]
+    
+    , div []
+        ( List.indexedMap ( renderOrderedChoice maxRank ) <| Dict.toList model.poll.orderedChoices )
 
     , div []
-        ( List.indexedMap ( renderOrderedChoice model.poll.maxRank ) <| Dict.toList model.poll.orderedChoices )
-
-    , div []
-        ( List.indexedMap ( renderUnorderedChoice model.poll.maxRank ) <| Set.toList model.poll.unorderedChoices )
+        ( List.indexedMap ( renderUnorderedChoice maxRank ) <| Set.toList model.poll.unorderedChoices )
 
     , div [class "fv-main-code pb-2" ] [ text "]}" ]
       
