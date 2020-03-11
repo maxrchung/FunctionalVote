@@ -5,7 +5,6 @@ import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Dict
-import Set
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -22,7 +21,7 @@ type alias Model =
 type alias Poll =
   { title: String
   , orderedChoices: Dict.Dict Int String
-  , unorderedChoices: Set.Set String
+  , unorderedChoices: List String
   }
 
 type alias PollResponse =
@@ -32,7 +31,7 @@ type alias PollResponse =
 
 init : Int -> String -> ( Model, Cmd Msg )
 init id apiAddress = 
-  let model = Model id ( Poll "" Dict.empty Set.empty ) apiAddress
+  let model = Model id ( Poll "" Dict.empty [] ) apiAddress
   in ( model, getPollRequest model )
 
 
@@ -51,7 +50,7 @@ update msg model =
       case result of
         Ok pollResponse ->
           let 
-            unorderedChoices = Set.fromList pollResponse.choices
+            unorderedChoices = pollResponse.choices
             newPoll = Poll pollResponse.title Dict.empty unorderedChoices
           in ( { model | poll = newPoll }, Cmd.none )
 
@@ -76,23 +75,23 @@ update msg model =
         Err _ ->
           ( model, Cmd.none )
 
-calculateMaxRank : Dict.Dict Int String -> Set.Set String -> Int
+calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =
-  Dict.size ordered + Set.size unordered
+  Dict.size ordered + List.length unordered
 
-changeRank : String -> String -> Dict.Dict Int String -> Set.Set String -> ( Dict.Dict Int String, Set.Set String )
+changeRank : String -> String -> Dict.Dict Int String -> List String -> ( Dict.Dict Int String, List String )
 changeRank rank choice ordered unordered  =
   let
     maxRank = calculateMaxRank ordered unordered
     -- Remove from choices
     filteredOrdered = Dict.filter ( \_ v -> v /= choice ) ordered
-    filteredUnordered = Set.remove choice unordered
+    filteredUnordered = List.filter ( \v -> v /= choice ) unordered
   in
   case String.toInt rank of
     Nothing ->
       let
         -- Add into unordered
-        addedUnordered = Set.insert choice filteredUnordered
+        addedUnordered = filteredUnordered ++ [ choice ]
       in ( filteredOrdered, addedUnordered )
     Just newRank ->
       let
@@ -103,7 +102,7 @@ changeRank rank choice ordered unordered  =
       in ( addedOrdered, updatedUnordered )
 
 
-updateChoices : Int -> Bool -> Int -> Int -> Dict.Dict Int String -> Dict.Dict Int String -> Set.Set String -> ( Dict.Dict Int String, Set.Set String )
+updateChoices : Int -> Bool -> Int -> Int -> Dict.Dict Int String -> Dict.Dict Int String -> List String -> ( Dict.Dict Int String, List String )
 updateChoices index canFill maxRank rank ordered newOrdered newUnordered = 
   if index > maxRank then
     ( ordered, newUnordered )
@@ -120,7 +119,7 @@ updateChoices index canFill maxRank rank ordered newOrdered newUnordered =
           updateChoicesHelp ( Dict.insert rank choice newOrdered ) newUnordered
         -- Add to unordered if we need to bump the last ordered choice
         else if index == maxRank then
-          updateChoicesHelp newOrdered ( Set.insert choice newUnordered )
+          updateChoicesHelp newOrdered ( newUnordered ++ [ choice ] )
         else
           updateChoicesHelp ( Dict.insert ( rank + 1 ) choice newOrdered ) newUnordered
 
@@ -236,7 +235,7 @@ view model =
         [ text "--" ]
 
     , div []
-        ( List.indexedMap ( renderUnorderedChoice maxRank hasOrderedChoices ) <| Set.toList model.poll.unorderedChoices )
+        ( List.indexedMap ( renderUnorderedChoice maxRank hasOrderedChoices ) <| model.poll.unorderedChoices )
 
     , div [class "fv-main-code pb-2" ] [ text "]}" ]
       
