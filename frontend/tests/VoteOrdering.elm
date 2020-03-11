@@ -93,4 +93,44 @@ voteOrdering =
                     [ ( 2, "c1" ) ]
                 , [ "c2" ] 
                 )
+
+    , test "bumps unfilled space and stops" <|
+      \_ ->
+          changeRank 
+            "1" 
+            "c1" 
+            ( Dict.fromList 
+                [ ( 1, "c2" )
+                , ( 3, "c3" )
+                ]
+            )
+            [ "c1" ] 
+            |> Expect.equal 
+                ( Dict.fromList 
+                    [ ( 1, "c1" )
+                    , ( 2, "c2" ) 
+                    , ( 3, "c3" )
+                    ]
+                , [] 
+                )
+    
+    , test "bumps multiple unfilled spaces and stops" <|
+      \_ ->
+          changeRank 
+            "1" 
+            "c1" 
+            ( Dict.fromList 
+                [ ( 1, "c2" )
+                , ( 4, "c4" )
+                ]
+            )
+            [ "c1", "c5", "c6" ] 
+            |> Expect.equal 
+                ( Dict.fromList 
+                    [ ( 1, "c1" )
+                    , ( 2, "c2" ) 
+                    , ( 4, "c4" )
+                    ]
+                , [ "c5", "c6" ] 
+                )
     ]

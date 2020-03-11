@@ -109,7 +109,12 @@ updateChoices index canFill maxRank rank ordered newOrdered newUnordered =
   else 
     case Dict.get index ordered of
       Nothing ->
-        let newCanFill = not canFill || index < rank
+        let 
+          newCanFill = 
+            if not canFill then
+              False
+            else 
+              index < rank
         in updateChoices ( index + 1 ) newCanFill maxRank rank ordered newOrdered newUnordered
       Just choice ->
         let updateChoicesHelp = updateChoices ( index + 1 ) canFill maxRank rank ordered
