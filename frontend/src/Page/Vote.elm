@@ -1,9 +1,9 @@
-module Page.Vote exposing (..)
+module Page.Vote exposing ( .. )
 
 import Browser.Navigation as Navigation
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing ( .. )
+import Html.Attributes exposing ( .. )
+import Html.Events exposing ( .. )
 import Dict
 import Set
 import Http
@@ -58,7 +58,7 @@ update msg model =
         Err _ ->
           ( model, Cmd.none )
 
-    ChangeRank rank choice ->
+    ChangeRank choice rank ->
       let
         oldPoll = model.poll
         ( newOrdered, newUnordered ) = changeRank rank choice oldPoll.orderedChoices oldPoll.unorderedChoices
@@ -85,7 +85,7 @@ changeRank rank choice ordered unordered  =
   let
     maxRank = calculateMaxRank ordered unordered
     -- Remove from choices
-    filteredOrdered = Dict.filter ( \_ v -> v == choice ) ordered
+    filteredOrdered = Dict.filter ( \_ v -> v /= choice ) ordered
     filteredUnordered = Set.remove choice unordered
   in
   case String.toInt rank of
@@ -183,7 +183,6 @@ view model =
         , div [ class "w-8 text-right" ] [ text "" ]
         ]
     
-
     , div
         [ class "fv-main-code text-center w-full" ] 
         [ text "--" ]
@@ -229,6 +228,10 @@ view model =
     
     , div []
         ( List.indexedMap ( renderOrderedChoice maxRank ) <| Dict.toList model.poll.orderedChoices )
+
+      , div
+        [ class "fv-main-code text-center w-full" ] 
+        [ text "--" ]
 
     , div []
         ( List.indexedMap ( renderUnorderedChoice maxRank ) <| Set.toList model.poll.unorderedChoices )
@@ -279,7 +282,8 @@ renderChoice maxRank index ( rank, choice ) =
     , div 
         [ class "flex items-center w-full p-2" 
         , textColorClass 
-        , borderClass ]
+        , borderClass 
+        ]
         [ select 
             [ class "fv-main-input w-auto"
             , value rank
