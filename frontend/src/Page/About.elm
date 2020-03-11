@@ -1,8 +1,8 @@
-module Page.About exposing (..)
+module Page.About exposing ( .. )
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing ( .. )
+import Html.Attributes exposing ( .. )
+import Html.Events exposing ( .. )
 
 
 
@@ -15,7 +15,7 @@ view =
     , h1 [ class "fv-main-header" ]
       [ text "Why Functional Vote?" ]
 
-    , div [ class "fv-main-text pb-6" ]
+    , div [ class "fv-main-text" ]
       [ text "Functional Vote was started by us ("
       , a [ href "https://github.com/maxrchung"
           , target "_blank" ] [ text "Max" ]
@@ -24,16 +24,20 @@ view =
           , target "_blank" ] [ text "Aaron" ]
       , text ") when we couldn’t easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."]
 
+    , div
+      [ class "fv-main-code text-center w-full my-3" ] 
+      [ text "--" ]
+
     , h2 [ class "fv-main-header" ]
       [ text "Why Ranked-Choice?"]
 
-    , div [ class "fv-main-text pb-6" ]
-      [ text "In traditional voting, voters can only vote for 1 out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter’s preferred 1st option loses, that voter’s 2nd choice is counted instead, and so forth." ]
+    , div [ class "fv-main-text mb-6" ]
+      [ text "With traditional voting, voters can only vote for 1 out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter’s preferred 1st option loses, that voter’s 2nd choice is counted instead, and so forth." ]
 
-    , div [ class "fv-main-text pb-6" ]
+    , div [ class "fv-main-text mb-6" ]
       [ text "Ranked-choice voting is more fair than traditional voting because preferential ranking is much more flexible than a single vote cast in stone. Voters are incentivized to vote for their personal favorite options rather than try and vote for a popular choice that they think will win." ]
 
-    , div [ class "fv-main-text pb-6" ]
+    , div [ class "fv-main-text mb-6" ]
       [ text "There are many resources online that explain ranked-choice in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to it:" ]
 
     , div [ class "embed-responsive embed-responsive-16by9"]
@@ -46,5 +50,5 @@ view =
         ] []
       ]
 
-    , div [ class "fv-main-code pt-2" ] [ text "-}" ]
+    , div [ class "fv-main-code mt-2" ] [ text "-}" ]
     ]
