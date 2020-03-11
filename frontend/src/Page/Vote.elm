@@ -165,7 +165,9 @@ buildSubmissionChoices rank choice choices =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  let maxRank = calculateMaxRank model.poll.orderedChoices model.poll.unorderedChoices
+  let 
+    maxRank = calculateMaxRank model.poll.orderedChoices model.poll.unorderedChoices
+    hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices 
   in
   div []
     [ div
@@ -230,11 +232,11 @@ view model =
         ( List.indexedMap ( renderOrderedChoice maxRank ) <| Dict.toList model.poll.orderedChoices )
 
       , div
-        [ class "fv-main-code text-center w-full" ] 
+        [ class "fv-main-code text-center w-full py-1" ] 
         [ text "--" ]
 
     , div []
-        ( List.indexedMap ( renderUnorderedChoice maxRank ) <| Set.toList model.poll.unorderedChoices )
+        ( List.indexedMap ( renderUnorderedChoice maxRank hasOrderedChoices ) <| Set.toList model.poll.unorderedChoices )
 
     , div [class "fv-main-code pb-2" ] [ text "]}" ]
       
@@ -252,15 +254,21 @@ view model =
 
 renderOrderedChoice : Int -> Int -> ( Int, String ) -> Html Msg
 renderOrderedChoice maxRank index ( rank, choice ) =
-  renderChoice maxRank index ( String.fromInt rank, choice )
+  renderChoice maxRank False index ( String.fromInt rank, choice )
 
-renderUnorderedChoice : Int -> Int -> String -> Html Msg
-renderUnorderedChoice maxRank index choice  =
-  renderChoice maxRank index ( "--", choice )
+renderUnorderedChoice : Int -> Bool -> Int -> String -> Html Msg
+renderUnorderedChoice maxRank hasOrderedChoices index choice  =
+  renderChoice maxRank hasOrderedChoices index ( "--", choice )
 
-renderChoice : Int -> Int -> ( String, String ) -> Html Msg
-renderChoice maxRank index ( rank, choice ) =
-  let 
+renderChoice : Int -> Bool -> Int -> ( String, String ) -> Html Msg
+renderChoice maxRank hasOrderedChoices index ( rank, choice ) =
+  let
+    comma = 
+      if hasOrderedChoices || index > 0 then
+        ","
+      else 
+        ""
+
     textColorClass = 
       if modBy 2 index == 0 then
         class "bg-blue-800"
@@ -277,7 +285,7 @@ renderChoice maxRank index ( rank, choice ) =
   in
   div 
     [ class "flex justify-between items-center" ]
-    [ div [ class "fv-main-code w-8"] [ text "(" ]
+    [ div [ class "fv-main-code w-8"] [ text <| comma ++ "(" ]
 
     , div 
         [ class "flex items-center w-full p-2" 
