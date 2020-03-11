@@ -105,23 +105,22 @@ changeRank rank choice ordered unordered  =
 updateChoices : Int -> Bool -> Int -> Int -> Dict.Dict Int String -> Dict.Dict Int String -> List String -> ( Dict.Dict Int String, List String )
 updateChoices index canFill maxRank rank ordered newOrdered newUnordered = 
   if index > maxRank then
-    ( ordered, newUnordered )
+    ( newOrdered, newUnordered )
   else 
-    case Dict.get rank ordered of
+    case Dict.get index ordered of
       Nothing ->
-        let 
-          newCanFill = not canFill || index < rank
+        let newCanFill = not canFill || index < rank
         in updateChoices ( index + 1 ) newCanFill maxRank rank ordered newOrdered newUnordered
       Just choice ->
         let updateChoicesHelp = updateChoices ( index + 1 ) canFill maxRank rank ordered
         in
         if not canFill || index < rank then
-          updateChoicesHelp ( Dict.insert rank choice newOrdered ) newUnordered
+          updateChoicesHelp ( Dict.insert index choice newOrdered ) newUnordered
         -- Add to unordered if we need to bump the last ordered choice
         else if index == maxRank then
           updateChoicesHelp newOrdered ( newUnordered ++ [ choice ] )
         else
-          updateChoicesHelp ( Dict.insert ( rank + 1 ) choice newOrdered ) newUnordered
+          updateChoicesHelp ( Dict.insert ( index + 1 ) choice newOrdered ) newUnordered
 
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
