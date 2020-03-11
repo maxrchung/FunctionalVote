@@ -1,9 +1,9 @@
-module Page.Home exposing (..)
+module Page.Home exposing ( .. )
 
 import Browser.Navigation as Navigation
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing ( .. )
+import Html.Attributes exposing ( .. )
+import Html.Events exposing ( .. )
 import Http
 import Http.Detailed
 import Array
@@ -73,7 +73,7 @@ makePollRequest : Model -> Cmd Msg
 makePollRequest model =
   Http.post
     { url = model.apiAddress ++ "/poll/"
-    , body = Http.jsonBody (makePollJson model)
+    , body = Http.jsonBody ( makePollJson model )
     , expect = Http.Detailed.expectJson MakePollResponse makePollDecoder
     }
 
@@ -120,9 +120,9 @@ view model =
             , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
             ]
 
-        , div [class "fv-main-code" ] [ text "," ]
+        , div [ class "fv-main-code" ] [ text "," ]
 
-        , div [class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] [ text "" ]
             , h2 [ class "fv-main-header" ] [ text "Choices" ]
             , div [ class "fv-main-code w-8 text-right" ] [text "=[" ]
