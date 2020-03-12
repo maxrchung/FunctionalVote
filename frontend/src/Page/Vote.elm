@@ -6,6 +6,7 @@ import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Dict
 import Http
+import Http.Detailed
 import Json.Decode as Decode
 import Json.Encode as Encode
 
@@ -13,9 +14,12 @@ import Json.Encode as Encode
 
 -- MODEL
 type alias Model = 
-  { id: Int
+  { key: Navigation.Key
+  , id: Int
   , poll: Poll
   , apiAddress: String
+  , error : String
+  , showError: Bool
   }
 
 type alias Poll =
@@ -29,9 +33,9 @@ type alias PollResponse =
   , choices: List String
   }
 
-init : Int -> String -> ( Model, Cmd Msg )
-init id apiAddress = 
-  let model = Model id ( Poll "" Dict.empty [] ) apiAddress
+init : Navigation.Key -> Int -> String -> ( Model, Cmd Msg )
+init key id apiAddress = 
+  let model = Model key id ( Poll "" Dict.empty [] ) apiAddress "" False
   in ( model, getPollRequest model )
 
 
@@ -41,7 +45,7 @@ type Msg
   = GetPollResponse ( Result Http.Error PollResponse )
   | ChangeRank String String
   | SubmitVoteRequest
-  | SubmitVoteResponse ( Result Http.Error () )
+  | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | GoToPoll
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -63,7 +67,7 @@ update msg model =
         oldPoll = model.poll
         ( newOrdered, newUnordered ) = changeRank rank choice oldPoll.orderedChoices oldPoll.unorderedChoices
         newPoll = { oldPoll | orderedChoices = newOrdered, unorderedChoices = newUnordered }
-      in ( { model | poll = newPoll }, Cmd.none)
+      in ( { model | poll = newPoll, showError = False }, Cmd.none)
       
     SubmitVoteRequest ->
         ( model, submitVoteRequest model) 
@@ -71,10 +75,18 @@ update msg model =
     SubmitVoteResponse result ->
       case result of
         Ok _ ->
-          ( model, Navigation.load ( "/poll/" ++ String.fromInt model.id ) )
+          ( model, Navigation.pushUrl model.key ( "/poll/" ++ String.fromInt model.id ) )
 
-        Err _ ->
-          ( model, Cmd.none )
+        Err error ->
+          let 
+            newError =
+              case error of
+                Http.Detailed.BadStatus _ body ->
+                  body
+                _ ->
+                  "Unable to submit vote. The website may be down for maintenace. Please try again later."
+          in
+          ( { model | showError = True, error = newError }, Cmd.none )
     
     GoToPoll ->
       ( model, Navigation.load ( "/poll/" ++ String.fromInt model.id ) )
@@ -104,7 +116,6 @@ changeRank rank choice ordered unordered  =
         -- Add new rank into ordered
         addedOrdered = Dict.insert newRank choice updatedOrdered
       in ( addedOrdered, updatedUnordered )
-
 
 updateChoices : Int -> Bool -> Int -> Int -> Dict.Dict Int String -> Dict.Dict Int String -> List String -> ( Dict.Dict Int String, List String )
 updateChoices index canFill maxRank rank ordered newOrdered newUnordered = 
@@ -149,7 +160,7 @@ submitVoteRequest model =
   Http.post
     { url = model.apiAddress ++ "/vote/"
     , body = Http.jsonBody <| submitVoteJson model
-    , expect = Http.expectWhatever SubmitVoteResponse
+    , expect = Http.Detailed.expectString SubmitVoteResponse
     }
 
 submitVoteJson : Model -> Encode.Value
@@ -217,14 +228,14 @@ view model =
         ]
     
     , div []
-        ( List.indexedMap ( renderOrderedChoice maxRank ) <| Dict.toList model.poll.orderedChoices )
+        ( List.indexedMap ( renderOrderedChoice maxRank model.showError ) <| Dict.toList model.poll.orderedChoices )
 
       , div
         [ class "fv-main-code text-center w-full py-1" ] 
         [ text "--" ]
 
     , div []
-        ( List.indexedMap ( renderUnorderedChoice maxRank hasOrderedChoices ) <| model.poll.unorderedChoices )
+        ( List.indexedMap ( renderUnorderedChoice maxRank hasOrderedChoices model.showError ) <| model.poll.unorderedChoices )
 
     , div [class "fv-main-code pb-2" ] [ text "]}" ]
       
@@ -236,6 +247,13 @@ view model =
             , onClick SubmitVoteRequest
             ] 
             [ text "Submit Vote" ] 
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
+
+    , div 
+        [ class "flex justify-between" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.error ] 
         , div [ class "w-8 text-right" ] [ text "" ]
         ]
 
@@ -259,48 +277,32 @@ view model =
         ]
     ]
 
-renderOrderedChoice : Int -> Int -> ( Int, String ) -> Html Msg
-renderOrderedChoice maxRank index ( rank, choice ) =
-  renderChoice maxRank False index ( String.fromInt rank, choice )
+renderOrderedChoice : Int -> Bool -> Int -> ( Int, String ) -> Html Msg
+renderOrderedChoice maxRank showError index ( rank, choice ) =
+  renderChoice maxRank False showError index ( String.fromInt rank, choice )
 
-renderUnorderedChoice : Int -> Bool -> Int -> String -> Html Msg
-renderUnorderedChoice maxRank hasOrderedChoices index choice  =
-  renderChoice maxRank hasOrderedChoices index ( "--", choice )
+renderUnorderedChoice : Int -> Bool -> Bool -> Int -> String -> Html Msg
+renderUnorderedChoice maxRank hasOrderedChoices showError index choice  =
+  renderChoice maxRank hasOrderedChoices showError index ( "--", choice )
 
-renderChoice : Int -> Bool -> Int -> ( String, String ) -> Html Msg
-renderChoice maxRank hasOrderedChoices index ( rank, choice ) =
-  let
-    comma = 
-      if hasOrderedChoices || index > 0 then
-        ","
-      else 
-        ""
-
-    textColorClass = 
-      if modBy 2 index == 0 then
-        class "bg-blue-800"
-      else
-        class "bg-blue-900"
-
-    borderClass =
-      if index == 0 then
-        class "rounded-t-sm"
-      else if index == maxRank - 1 then
-        class "rounded-b-sm shadow-lg"
-      else
-        class ""
-  in
+renderChoice : Int -> Bool -> Bool -> Int -> ( String, String ) -> Html Msg
+renderChoice maxRank hasOrderedChoices showError index ( rank, choice ) =
   div 
     [ class "flex justify-between items-center" ]
-    [ div [ class "fv-main-code w-8"] [ text <| comma ++ "(" ]
+    [ div 
+      [ class "fv-main-code w-8"] 
+      [ unorderedCommaText hasOrderedChoices index
+      , text "(" 
+      ]
 
     , div 
         [ class "flex items-center w-full p-2" 
-        , textColorClass 
-        , borderClass 
+        , textColorClass index
+        , borderClass index maxRank 
         ]
         [ select 
             [ class "fv-main-input w-auto"
+            , errorClass showError
             , value rank
             , onInput ( ChangeRank choice ) 
             ] 
@@ -335,3 +337,40 @@ renderOptions maxRank =
 renderOption : Int -> Html Msg
 renderOption rank =
   option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
+
+unorderedCommaText : Bool -> Int -> Html a
+unorderedCommaText hasOrderedChoices index = 
+  if hasOrderedChoices || index > 0 then
+    text ","
+  else 
+    text ""
+
+textColorClass : Int -> Attribute a
+textColorClass index = 
+  if modBy 2 index == 0 then
+    class "bg-blue-800"
+  else
+    class "bg-blue-900"
+
+borderClass : Int -> Int -> Attribute a
+borderClass index maxRank =
+  if index == 0 then
+    class "rounded-t-sm"
+  else if index == maxRank - 1 then
+    class "rounded-b-sm shadow-lg"
+  else
+    class ""
+
+errorClass : Bool -> Attribute a
+errorClass showError =
+  if showError then
+    class "fv-main-input-error"
+  else
+    class ""
+
+errorText : String -> Html a
+errorText error =
+  if String.isEmpty error then
+    text ""
+  else
+    text <| "-- " ++ error
