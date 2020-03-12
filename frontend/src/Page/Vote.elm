@@ -177,26 +177,7 @@ view model =
     hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices 
   in
   div []
-    [ div
-        [ class "fv-main-text pb-2" ]
-        [ text "-- View the poll results." ]
-      
-    , div 
-        [ class "flex justify-between" ]
-        [ div [ class "w-8" ] [ text "" ]
-        , button 
-          [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
-          , onClick SubmitVoteRequest
-          ] 
-          [ text "View Results" ]
-        , div [ class "w-8 text-right" ] [ text "" ]
-        ]
-    
-    , div
-        [ class "fv-main-code text-center w-full" ] 
-        [ text "--" ]
-      
-    , div 
+    [ div 
         [ class "fv-main-text" ]
         [ text "-- Submit a new vote below by selecting ranks to the left of each choice." ]
 
@@ -255,6 +236,25 @@ view model =
             , onClick SubmitVoteRequest
             ] 
             [ text "Submit Vote" ] 
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
+
+    , div
+        [ class "fv-main-code text-center w-full my-3" ] 
+        [ text "--" ]
+    
+    , div
+        [ class "fv-main-text mb-2" ]
+        [ text "-- View the poll results." ]
+      
+    , div 
+        [ class "flex justify-between" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , button 
+          [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+          , onClick GoToPoll
+          ] 
+          [ text "View Results" ]
         , div [ class "w-8 text-right" ] [ text "" ]
         ]
     ]
