@@ -38,10 +38,11 @@ init id apiAddress =
 
 -- UPDATE
 type Msg 
-  = GetPollResponse (Result Http.Error PollResponse)
+  = GetPollResponse ( Result Http.Error PollResponse )
   | ChangeRank String String
   | SubmitVoteRequest
-  | SubmitVoteResponse (Result Http.Error ())
+  | SubmitVoteResponse ( Result Http.Error () )
+  | GoToPoll
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -74,6 +75,9 @@ update msg model =
 
         Err _ ->
           ( model, Cmd.none )
+    
+    GoToPoll ->
+      ( model, Navigation.load ( "/poll/" ++ String.fromInt model.id ) )
 
 calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =
