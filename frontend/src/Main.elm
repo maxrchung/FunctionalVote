@@ -217,7 +217,7 @@ renderBody model =
               [ class "fv-nav-btn"
               , onClick GoToAbout
               ]
-              [ i [ class "fas fa-question" ] [] ]
+              [ i [ class "text-base fas fa-question" ] [] ]
 
           , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
