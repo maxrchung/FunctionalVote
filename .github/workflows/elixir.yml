@@ -2,9 +2,16 @@ name: Elixir CI
 
 on:
   push:
+    branches:
+    - master
     paths:
-    - 'backend/**'
+    - backend/**
+
   pull_request:
+    branches:
+    - master
+    paths:
+    - backend/**
 
 jobs:
   build:
