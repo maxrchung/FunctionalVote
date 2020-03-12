@@ -42,9 +42,13 @@ view _ =
 
     , div [ class "fv-main-code mb-1" ] [ text "-}" ]
 
-    , button 
-        [ class "fv-main-btn"
-        , onClick GoToHome
+    , div [ class "flex justify-between" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , button 
+            [ class "fv-main-btn"
+            , onClick GoToHome
+            ]
+            [ text "Go Home" ] 
+        , div [ class "w-8 text-right" ] [ text "" ]
         ]
-        [ text "Go Home" ] 
     ]
