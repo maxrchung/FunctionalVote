@@ -205,8 +205,8 @@ renderBody model =
             [ class "fv-nav-btn"
             , onClick GoToHome
             ]
-            [ text "v" 
-            , div [ class "text-orange-500 font-mono text-sm pl-1"] [ text "=" ]
+            [ text "fv" 
+            , div [ class "text-orange-500 font-mono text-sm"] [ text "=" ]
             ]
 
         , div [ class "flex flex-row items-center justify-center" ]
