@@ -22,7 +22,7 @@ body {
   @apply outline-none;
 }
 .fv-nav-btn:hover {
-  @apply bg-blue-700 shadow-md;
+  @apply bg-blue-700 shadow-md text-blue-500;
 }
 
 .fv-nav-code {
