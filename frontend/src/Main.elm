@@ -2,16 +2,17 @@ module Main exposing (..)
 
 import Browser
 import Browser.Navigation as Navigation
+import FeatherIcons
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Url
-import Url.Parser as Parser exposing ((</>))
 import Page.Home as Home
 import Page.Vote as Vote
 import Page.Poll as Poll
 import Page.About as About
 import Page.Error as Error
+import Url
+import Url.Parser as Parser exposing ((</>))
 
 
 
@@ -192,7 +193,7 @@ renderBody model =
             , href "/home"
             ]
             [ text "fv" 
-            , div [ class "text-orange-500 font-mono text-sm"] [ text "=" ]
+            , div [ class "text-orange-500 font-mono opacity-25 text-sm" ] [ text "=" ]
             ]
 
         , div [ class "flex flex-row items-center justify-center" ]
@@ -203,7 +204,10 @@ renderBody model =
               [ class "fv-nav-btn"
               , href "/about"
               ]
-              [ i [ class "text-base fas fa-question" ] [] ]
+              [ FeatherIcons.helpCircle
+                  |> FeatherIcons.withSize 22
+                  |> FeatherIcons.withStrokeWidth 2
+                  |> FeatherIcons.toHtml [] ]
 
           , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
@@ -213,7 +217,10 @@ renderBody model =
               , href "https://github.com/maxrchung/FunctionalVote"
               , target "_blank"
               ]
-              [ i [ class "fab fa-github" ] [] ]
+              [ FeatherIcons.github
+                  |> FeatherIcons.withSize 22
+                  |> FeatherIcons.withStrokeWidth 2
+                  |> FeatherIcons.toHtml [] ]
 
           , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
@@ -223,7 +230,10 @@ renderBody model =
               , href "https://twitter.com/FunctionalVote"
               , target "_blank"
               ]
-              [ i [ class "fab fa-twitter" ] [] ]
+              [ FeatherIcons.twitter
+                  |> FeatherIcons.withSize 22
+                  |> FeatherIcons.withStrokeWidth 2
+                  |> FeatherIcons.toHtml [] ]
 
           , div [ class "fv-nav-code justify-end w-5" ]
             [ text "]" ]
