@@ -190,7 +190,7 @@ renderBody model =
       [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]
         [ a
             [ class "fv-nav-btn"
-            , href "/home"
+            , href "/"
             ]
             [ text "fv" 
             , div [ class "text-orange-500 font-mono opacity-25 text-sm" ] [ text "=" ]
