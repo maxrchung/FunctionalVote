@@ -102,8 +102,6 @@ type Msg
   | VoteMsg Vote.Msg
   | PollMsg Poll.Msg
   | ErrorMsg Error.Msg
-  | GoToAbout
-  | GoToHome
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -148,18 +146,6 @@ update msg model =
           in ( { model | page = ErrorPage newModel }, Cmd.map ErrorMsg cmd )
         _ -> ( model, Cmd.none )
 
-    GoToAbout ->
-      case model.page of
-        AboutPage ->
-          (model, Cmd.none)
-        _ -> ( model, Navigation.pushUrl model.key "/about" )
-      
-    GoToHome ->
-      case model.page of
-        HomePage _ ->
-          (model, Cmd.none)
-        _ -> ( model, Navigation.pushUrl model.key "/" )
-
 
 
 -- VIEW
@@ -201,9 +187,9 @@ renderBody model =
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
       [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]
-        [ button
+        [ a
             [ class "fv-nav-btn"
-            , onClick GoToHome
+            , href "/home"
             ]
             [ text "fv" 
             , div [ class "text-orange-500 font-mono text-sm"] [ text "=" ]
@@ -213,9 +199,9 @@ renderBody model =
           [ div [ class "fv-nav-code justify-start w-5" ]
               [ text "[" ]
             
-          , button 
+          , a 
               [ class "fv-nav-btn"
-              , onClick GoToAbout
+              , href "/about"
               ]
               [ i [ class "text-base fas fa-question" ] [] ]
 
