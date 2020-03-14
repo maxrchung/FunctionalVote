@@ -59,30 +59,62 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Determined user_id: #{user_id}")
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
-      if (Enum.sort(available_choices) === Enum.sort(Map.keys(choices)) and
-          Map.values(choices) === Enum.uniq(Map.values(choices))) do
-        IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
-        Enum.each choices, fn {k, v} ->
-          choice_map = %{"poll_id" => poll_id,
-                        "user_id" => user_id,
-                        "choice"  => k,
-                        "rank"    => String.to_integer(v)}
-          %Votes{}
+      cond do
+        validate_integer_ranks(choices) == :non_integer_rank_error ->
+          # Received a vote with a non-integer rank
+          :non_integer_rank_error # RETURN ENDPOINT
+        validate_duplicate_ranks(choices) == :duplicate_rank_error ->
+          # Received votes with duplicate ranks
+          :duplicate_rank_error # RETURN ENDPOINT
+        validate_choices(choices, available_choices) == :available_choices_error ->
+          # Received a choice that does not exist in this poll
+          :available_choices_error # RETURN ENDPOINT
+        true ->
+          # No error
+          IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
+          Enum.each choices, fn {k, v} ->
+            choice_map = %{"poll_id" => poll_id,
+                           "user_id" => user_id,
+                           "choice"  => k,
+                           "rank"    => String.to_integer(v)}
+            %Votes{}
             |> Votes.changeset(choice_map)
             |> Repo.insert() # RETURN ENDPOINT
-        end
-      else
-        # Invalid choice(s) received
-        IO.puts("[VoteCtx] Received invalid choices:")
-        IO.inspect(Map.keys(choices))
-        IO.puts("[VoteCtx] Expected choices:")
-        IO.inspect(available_choices)
-        :choices_error # RETURN ENDPOINT
+          end
       end
     else
       # Poll we are voting for does not exist
       IO.puts("[VoteCtx] poll_id #{poll_id} does not exist!")
       :id_error # RETURN ENDPOINT
+    end
+  end
+
+  defp validate_integer_ranks(choices) do
+    try do
+      Enum.map(choices, fn {k, v} -> {k, String.to_integer(v)} end)
+    rescue
+      ArgumentError ->
+        IO.puts("[VoteCtx] Received a vote with a non-integer rank")
+        IO.inspect(Map.values(choices))
+        :non_integer_rank_error
+    end
+  end
+
+  def validate_duplicate_ranks(choices) do
+    if Map.values(choices) !== Enum.uniq(Map.values(choices)) do
+      IO.puts("[VoteCtx] Received votes with duplicate ranks:")
+      IO.inspect(choices)
+      :duplicate_rank_error
+    end
+  end
+
+  defp validate_choices(choices, available_choices) do
+    if Map.keys(choices) -- available_choices !== [] do
+      IO.puts("[VoteCtx] Received a choice that does not exist in this poll:")
+      IO.inspect(Map.keys(choices))
+      IO.puts("[VoteCtx] Available choices:")
+      IO.inspect(available_choices)
+      :available_choices_error
     end
   end
 

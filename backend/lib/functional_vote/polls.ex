@@ -101,6 +101,7 @@ defmodule FunctionalVote.Polls do
   """
   def instant_runoff_recurse(votes, poll_id, round) do
     tallies_by_choice = Map.values(votes)
+                        |> Enum.filter(fn elem -> elem !== [] end)
                         |> List.zip()
                         |> List.first()
                         |> Tuple.to_list()
@@ -127,17 +128,15 @@ defmodule FunctionalVote.Polls do
         end
         round = round + 1 # Round 1 = Tallies after first elimination
         loser = tallies_by_count[Map.keys(tallies_by_count) |> Enum.min()] |> Enum.random()
+        # TODO: Now that we are allowing missing ranks, fix bug where a choice with 0 first-choice votes is not eliminated
         IO.puts("[PollCtx] Eliminated #{loser} in round #{round}")
+        # Remove all votes cast for this choice
         votes = for {k, v} <- votes,
                 into: %{},
                 do: {k, 
-                    if (List.first(v) == loser) do
-                      [_head | tail] = v
-                      tail
-                    else
-                      v
-                    end
+                    Enum.filter(v, fn choice -> choice !== loser end)
                 }
+        IO.inspect(votes)
         {tallies_by_choice, winner} = instant_runoff_recurse(votes, poll_id, round)
         # At this point, we will have already hit a base case and wrote the winner to DB
         {tallies_by_choice, winner} # RETURN ENDPOINT
@@ -258,7 +257,7 @@ defmodule FunctionalVote.Polls do
         |> Poll.changeset(attrs)
         |> Repo.insert()
       else
-        :choices_error
+        :duplicate_choices_error
       end
     else
       :title_error
