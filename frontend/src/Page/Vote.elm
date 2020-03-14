@@ -183,8 +183,10 @@ buildSubmissionChoices rank choice choices =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  let 
-    maxRank = calculateMaxRank model.poll.orderedChoices model.poll.unorderedChoices
+  let
+    maxOrdered = Dict.size model.poll.orderedChoices 
+    maxUnordered = List.length model.poll.unorderedChoices
+    maxRank = maxOrdered + maxUnordered
     hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices 
   in
   div []
@@ -228,14 +230,14 @@ view model =
         ]
     
     , div []
-        ( List.indexedMap ( renderOrderedChoice maxRank model.showError ) <| Dict.toList model.poll.orderedChoices )
+        ( List.indexedMap ( renderOrderedChoice maxRank maxOrdered model.showError ) <| Dict.toList model.poll.orderedChoices )
 
       , div
         [ class "fv-main-code text-center w-full py-1" ] 
         [ text "--" ]
 
     , div []
-        ( List.indexedMap ( renderUnorderedChoice maxRank hasOrderedChoices model.showError ) <| model.poll.unorderedChoices )
+        ( List.indexedMap ( renderUnorderedChoice maxRank maxUnordered hasOrderedChoices model.showError ) <| model.poll.unorderedChoices )
 
     , div [class "fv-main-code pb-2" ] [ text "]}" ]
       
@@ -277,16 +279,16 @@ view model =
         ]
     ]
 
-renderOrderedChoice : Int -> Bool -> Int -> ( Int, String ) -> Html Msg
-renderOrderedChoice maxRank showError index ( rank, choice ) =
-  renderChoice maxRank False showError index ( String.fromInt rank, choice )
+renderOrderedChoice : Int -> Int -> Bool -> Int -> ( Int, String ) -> Html Msg
+renderOrderedChoice maxRank maxIndex showError index ( rank, choice ) =
+  renderChoice maxRank maxIndex False showError index ( String.fromInt rank, choice )
 
-renderUnorderedChoice : Int -> Bool -> Bool -> Int -> String -> Html Msg
-renderUnorderedChoice maxRank hasOrderedChoices showError index choice  =
-  renderChoice maxRank hasOrderedChoices showError index ( "--", choice )
+renderUnorderedChoice : Int -> Int -> Bool -> Bool -> Int -> String -> Html Msg
+renderUnorderedChoice maxRank maxIndex hasOrderedChoices showError index choice  =
+  renderChoice maxRank maxIndex hasOrderedChoices showError index ( "--", choice )
 
-renderChoice : Int -> Bool -> Bool -> Int -> ( String, String ) -> Html Msg
-renderChoice maxRank hasOrderedChoices showError index ( rank, choice ) =
+renderChoice : Int -> Int -> Bool -> Bool -> Int -> ( String, String ) -> Html Msg
+renderChoice maxRank maxIndex hasOrderedChoices showError index ( rank, choice ) =
   div 
     [ class "flex justify-between items-center" ]
     [ div 
@@ -298,7 +300,7 @@ renderChoice maxRank hasOrderedChoices showError index ( rank, choice ) =
     , div 
         [ class "flex items-center w-full p-2" 
         , textColorClass index
-        , borderClass index maxRank 
+        , borderClass index maxIndex 
         ]
         [ select 
             [ class "fv-main-input w-auto"
@@ -361,10 +363,12 @@ textColorClass index =
     class "bg-blue-900"
 
 borderClass : Int -> Int -> Attribute a
-borderClass index maxRank =
-  if index == 0 then
+borderClass index maxIndex =
+  if maxIndex == 1 then
+    class "rounded-sm shadow-lg"
+  else if index == 0 then
     class "rounded-t-sm"
-  else if index == maxRank - 1 then
+  else if index == maxIndex - 1 then
     class "rounded-b-sm shadow-lg"
   else
     class ""
