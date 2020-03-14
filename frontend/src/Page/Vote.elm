@@ -304,7 +304,7 @@ renderChoice maxRank hasOrderedChoices showError index ( rank, choice ) =
             [ class "fv-main-input w-auto"
             , errorClass showError
             , value rank
-            , onChange ( ChangeRank choice )
+            , onInput ( ChangeRank choice ) 
             ] 
 
             ( List.concat
@@ -329,21 +329,6 @@ renderChoice maxRank hasOrderedChoices showError index ( rank, choice ) =
 
     , div [class "fv-main-code w-8 text-right" ] [ text "\")" ]
     ]
-
-{-
-See: https://package.elm-lang.org/packages/elm/html/latest/Html-Events#targetValue
-There is an issue where select onInput does not work
-in production. I'm not exactly sure why, but this is 
-an attempt to use the on changer handler instead of
-onInput for more consistent results.
--}
-onChange : ( String -> msg ) -> Html.Attribute msg
-onChange tagger =
-  stopPropagationOn "change" <| Decode.map alwaysStop ( Decode.map tagger Html.Events.targetValue )
-
-alwaysStop : a -> (a, Bool)
-alwaysStop x =
-  (x, True)
 
 renderOptions : Int -> List ( Html Msg )
 renderOptions maxRank = 
