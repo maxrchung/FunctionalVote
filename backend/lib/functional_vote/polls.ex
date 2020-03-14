@@ -137,7 +137,6 @@ defmodule FunctionalVote.Polls do
         round = round + 1 # Round 1 = Tallies after first elimination
         loser = tallies_by_count[Map.keys(tallies_by_count) |> Enum.min()] |> Enum.random()
         eliminated = eliminated ++ [loser]
-        # TODO: Now that we are allowing missing ranks, fix bug where a choice with 0 first-choice votes is not eliminated
         IO.puts("[PollCtx] Eliminated #{loser} in round #{round}")
         # Remove all votes cast for this choice
         votes = for {k, v} <- votes,
