@@ -305,13 +305,13 @@ renderChoice maxRank hasOrderedChoices showError index ( rank, choice ) =
             , errorClass showError
             , value rank
             , onInput ( ChangeRank choice ) 
-            ] 
+            ]
 
             ( List.concat
-              [ renderOptions maxRank
+              [ renderOptions maxRank rank
               , [ option 
                   [ value "--"
-                  , selected True 
+                  , selected ( rank == "--" )
                   ]
                   [ text "--" ]
                 ]
@@ -330,13 +330,21 @@ renderChoice maxRank hasOrderedChoices showError index ( rank, choice ) =
     , div [class "fv-main-code w-8 text-right" ] [ text "\")" ]
     ]
 
-renderOptions : Int -> List ( Html Msg )
-renderOptions maxRank = 
-  List.map renderOption <| List.range 1 maxRank
+renderOptions : Int -> String -> List ( Html Msg )
+renderOptions maxRank selectedRank = 
+  List.map ( renderOption selectedRank ) <| List.range 1 maxRank
 
-renderOption : Int -> Html Msg
-renderOption rank =
-  option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
+renderOption : String -> Int -> Html Msg
+renderOption selectedRank rank  =
+  case String.toInt selectedRank of
+     Nothing ->
+      option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
+     Just selectedRankInt ->
+      option 
+        [ value <| String.fromInt rank 
+        , selected ( selectedRankInt == rank )
+        ] 
+        [ text <| String.fromInt rank ]
 
 unorderedCommaText : Bool -> Int -> Html a
 unorderedCommaText hasOrderedChoices index = 
