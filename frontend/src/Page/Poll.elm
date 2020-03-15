@@ -19,11 +19,12 @@ type alias Model =
 type alias Poll =
   { title: String
   , winner: String
+  , timeline: List ( List ( Int, String ) )
   }
 
 init : Int -> String -> ( Model, Cmd Msg )
 init id apiAddress = 
-  let model = Model id ( Poll "" "" ) apiAddress
+  let model = Model id ( Poll "" "" [] ) apiAddress
   in ( model, getPollRequest model )
 
 
@@ -56,9 +57,29 @@ getPollRequest model =
 
 getPollDecoder : Decode.Decoder Poll
 getPollDecoder =
-  Decode.map2 Poll
-    ( Decode.field "data" ( Decode.field "title" Decode.string ) )
-    ( Decode.field "data" ( Decode.field "winner" Decode.string ) )
+  Decode.map2 pollSample
+    ( Decode.at ["data", "title" ] Decode.string )
+    ( Decode.at ["data", "winner"] Decode.string )
+
+pollSample : String -> String -> Poll
+pollSample title winner =
+  Poll 
+    title
+    winner 
+    [ 
+      [ ( 12, "highest choice" )
+      , ( 10, "higher choice" )
+      , ( 8, "lower choice" )
+      , ( 3, "lowest choice" )
+      ]
+    , [ ( 12, "highest choice" )
+      , ( 12, "higher choice" )
+      , ( 9, "lower choice" )
+      ]
+    , [ ( 17, "higher choice" )
+      , ( 16, "highest choice" )
+      ]
+    ]
 
 
 
