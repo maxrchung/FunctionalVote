@@ -95,7 +95,7 @@ view : Model -> Html Msg
 view model =
   Html.form [ onSubmit MakePollRequest ]
       [ div [ class "fv-main-text" ]
-          [ text "-- Welcome to Functional Vote! Enter a question and choices below to create a ranked-choice poll." ]
+          [ text "-- Welcome to Functional Vote! Enter a question and choices below to create a new ranked-choice poll." ]
       
       , div [ class "flex justify-between" ]
           [ h1 [ class "fv-main-code" ] [ text "poll" ]

@@ -116,13 +116,15 @@ view model =
         , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
         ]
 
+    , div [ class "fv-main-code" ] [ text "}" ]
+
     , div
         [ class "fv-main-code text-center w-full my-3" ] 
         [ text "--" ]
     
     , div
         [ class "fv-main-text mb-2" ]
-        [ text "-- Submit a new vote into poll." ]
+        [ text "-- Submit a new vote into the poll." ]
       
     , div 
         [ class "flex justify-between" ]

@@ -32,7 +32,7 @@ view =
       [ text "Why Ranked-Choice?"]
 
     , div [ class "fv-main-text mb-6" ]
-      [ text "With traditional voting, voters can only vote for 1 out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter’s preferred 1st option loses, that voter’s 2nd choice is counted instead, and so forth." ]
+      [ text "With traditional voting, voters only vote for 1 out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter’s preferred 1st option loses, that voter’s 2nd choice is counted instead, then 3rd, and so forth." ]
 
     , div [ class "fv-main-text mb-6" ]
       [ text "Ranked-choice voting is more fair than traditional voting because preferential ranking is much more flexible than a single vote cast in stone. Voters are incentivized to vote for their personal favorite options rather than try and vote for a popular choice that they think will win." ]
