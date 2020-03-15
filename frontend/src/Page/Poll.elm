@@ -1,8 +1,9 @@
-module Page.Poll exposing (..)
+module Page.Poll exposing ( .. )
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Browser.Navigation as Navigation
+import Html exposing ( .. )
+import Html.Attributes exposing ( .. )
+import Html.Events exposing ( .. )
 import Http
 import Json.Decode as Decode
 
@@ -17,22 +18,22 @@ type alias Model =
 
 type alias Poll =
   { title: String
-  , choices: List String
   , winner: String
   }
 
 init : Int -> String -> ( Model, Cmd Msg )
 init id apiAddress = 
-  let model = Model id (Poll "" [] "" ) apiAddress
+  let model = Model id ( Poll "" "" ) apiAddress
   in ( model, getPollRequest model )
 
 
 
 -- UPDATE
 type Msg 
-  = GetPollResponse (Result Http.Error Poll)
+  = GetPollResponse ( Result Http.Error Poll )
+  | GoToVote
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     GetPollResponse result ->
@@ -43,6 +44,9 @@ update msg model =
         Err _ ->
           ( model, Cmd.none )
 
+    GoToVote ->
+      ( model, Navigation.load ( "/vote/" ++ String.fromInt model.id ) )
+
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
   Http.get
@@ -52,10 +56,9 @@ getPollRequest model =
 
 getPollDecoder : Decode.Decoder Poll
 getPollDecoder =
-  Decode.map3 Poll
-    (Decode.field "data" (Decode.field "title" Decode.string))
-    (Decode.field "data" (Decode.field "choices" (Decode.list Decode.string)))
-    (Decode.field "data" (Decode.field "winner" Decode.string))
+  Decode.map2 Poll
+    ( Decode.field "data" ( Decode.field "title" Decode.string ) )
+    ( Decode.field "data" ( Decode.field "winner" Decode.string ) )
 
 
 
@@ -63,14 +66,72 @@ getPollDecoder =
 view : Model -> Html Msg
 view model =
   div [] 
-    ( [ h1 [ placeholder "Title" ] [ text model.poll.title ] ] ++
+    [ div 
+        [ class "fv-main-text" ]
+        [ text "-- View the poll results and navigate the timeline to see how results were calculated." ]
 
-      List.map (renderChoice model.poll.winner) model.poll.choices
-    )
+    , div 
+        [ class "flex justify-between" ]
+        [ h1 [ class "fv-main-code" ] [ text "results" ]
+        , div [ class "fv-main-code" ] [ text "={" ]
+        ]
 
-renderChoice : String -> String -> Html Msg
-renderChoice winner choice =
-  if winner == choice then
-    h2 [] [ text <| "Winner: " ++ choice ]
-  else
-    div [] [ text choice]
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-main-header" ] [ text "Question" ]
+        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+        ]
+
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-main-code w-8"] [ text "\"" ]
+        , div 
+          [ class "flex justify-center w-full"]
+          [ h1 
+            [ class "fv-main-text text-blue-100 text-left" ] 
+            [ text model.poll.title ]
+          ]
+        , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+        ]
+
+    , div [ class "fv-main-code" ] [ text "," ]
+
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-main-header" ] [ text "Winner" ]
+        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+        ]
+
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-main-code w-8"] [ text "\"" ]
+        , div 
+          [ class "flex justify-center w-full"]
+          [ h1 
+            [ class "fv-main-text text-blue-100 text-left" ] 
+            [ text model.poll.winner ]
+          ]
+        , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+        ]
+
+    , div
+        [ class "fv-main-code text-center w-full my-3" ] 
+        [ text "--" ]
+    
+    , div
+        [ class "fv-main-text mb-2" ]
+        [ text "-- Submit a new vote into poll." ]
+      
+    , div 
+        [ class "flex justify-between" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , button 
+          [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+          , onClick GoToVote
+          ] 
+          [ text "Submit Vote" ]
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
+    ]
