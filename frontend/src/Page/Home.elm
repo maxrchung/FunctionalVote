@@ -94,62 +94,60 @@ makePollDecoder =
 view : Model -> Html Msg
 view model =
   Html.form [ onSubmit MakePollRequest ]
-    ( List.concat
-      [ [ div [ class "fv-main-text" ]
-            [ text "-- Welcome to Functional Vote! To create a new ranked-choice poll, enter question and choices below." ]
-        
-        , div [ class "flex justify-between" ]
-            [ h1 [ class "fv-main-code" ] [ text "poll" ]
-            , div [ class "fv-main-code" ] [ text "={" ]
-            ]
-        
-        , div [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
-            , h2 [ class "fv-main-header" ] [ text "Question" ]
-            , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
-            ]
+      [ div [ class "fv-main-text" ]
+          [ text "-- Welcome to Functional Vote! Enter a question and choices below to create a new ranked-choice poll." ]
+      
+      , div [ class "flex justify-between" ]
+          [ h1 [ class "fv-main-code" ] [ text "poll" ]
+          , div [ class "fv-main-code" ] [ text "={" ]
+          ]
+      
+      , div [ class "flex justify-between items-center" ]
+          [ div [ class "w-8" ] []
+          , h2 [ class "fv-main-header" ] [ text "Question" ]
+          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          ]
 
-        , div [ class "flex justify-between items-center py-2" ]
-            [ div [ class "fv-main-code w-8"] [ text "\"" ]
-            , input [ class "fv-main-input"
-                    , errorClass model.showError
-                    , placeholder "-- Enter a question"
-                    , value model.title
-                    , onInput ChangeTitle 
-                    ] [] 
-            , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
-            ]
+      , div [ class "flex justify-between items-center py-2" ]
+          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          , input [ class "fv-main-input"
+                  , errorClass model.showError
+                  , placeholder "-- Enter a question"
+                  , value model.title
+                  , onInput ChangeTitle 
+                  ] [] 
+          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          ]
 
-        , div [ class "fv-main-code" ] [ text "," ]
+      , div [ class "fv-main-code" ] [ text "," ]
 
-        , div [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] [ text "" ]
-            , h2 [ class "fv-main-header" ] [ text "Choices" ]
-            , div [ class "fv-main-code w-8 text-right" ] [text "=[" ]
-            ]
-        ]
+      , div [ class "flex justify-between items-center" ]
+          [ div [ class "w-8" ] [ text "" ]
+          , h2 [ class "fv-main-header" ] [ text "Choices" ]
+          , div [ class "fv-main-code w-8 text-right" ] [text "=[" ]
+          ]
 
-      , Array.toList <| Array.indexedMap ( renderChoice model.showError ) model.choices
+      , div
+          []
+          ( Array.toList <| Array.indexedMap ( renderChoice model.showError ) model.choices )
 
-      , [ div [ class "fv-main-code pb-2" ] [ text "]}" ]
-        
-        , div [ class "flex justify-between pb-1" ]
-            [ div [ class "w-8" ] [ text "" ]
-            , button 
-                [ class "fv-main-btn"
-                , type_ "submit"
-                ] [ text "Create Poll" ] 
-            , div [ class "w-8 text-right" ] [ text "" ]
-            ]
+      , div [ class "fv-main-code pb-2" ] [ text "]}" ]
+      
+      , div [ class "flex justify-between pb-1" ]
+          [ div [ class "w-8" ] [ text "" ]
+          , button 
+              [ class "fv-main-btn"
+              , type_ "submit"
+              ] [ text "Create Poll" ] 
+          , div [ class "w-8 text-right" ] [ text "" ]
+          ]
 
-        , div [class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
-            , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.error ] 
-            , div [ class "w-8 text-right" ] [ text "" ]
-            ]
-        ]
-      ] 
-    )
+      , div [class "flex justify-between" ]
+          [ div [ class "w-8" ] [ text "" ]
+          , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.error ] 
+          , div [ class "w-8 text-right" ] [ text "" ]
+          ]
+      ]
 
 renderChoice : Bool -> Int -> String -> Html Msg
 renderChoice showError index choice =

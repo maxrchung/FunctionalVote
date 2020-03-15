@@ -1,10 +1,10 @@
 module Page.Vote exposing ( .. )
 
 import Browser.Navigation as Navigation
+import Dict
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
-import Dict
 import Http
 import Http.Detailed
 import Json.Decode as Decode
@@ -192,7 +192,7 @@ view model =
   div []
     [ div 
         [ class "fv-main-text" ]
-        [ text "-- Submit a new vote below by selecting ranks to the left of each choice." ]
+        [ text "-- Submit a vote by selecting ranks to the left of each choice." ]
 
     , div 
         [ class "flex justify-between" ]
@@ -213,8 +213,7 @@ view model =
         , div 
           [ class "flex justify-center w-full"]
           [ h1 
-            [ class "fv-main-text text-blue-100 text-left" 
-            , placeholder "Title" ] 
+            [ class "fv-main-text text-blue-100 text-left" ] 
             [ text model.poll.title ]
           ]
         , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
@@ -232,9 +231,9 @@ view model =
     , div []
         ( List.indexedMap ( renderOrderedChoice maxRank maxOrdered model.showError ) <| Dict.toList model.poll.orderedChoices )
 
-      , div
-        [ class "fv-main-code text-center w-full py-1" ] 
-        [ text "--" ]
+    , div
+      [ class "fv-main-code text-center w-full py-1" ] 
+      [ text "--" ]
 
     , div []
         ( List.indexedMap ( renderUnorderedChoice maxRank maxUnordered hasOrderedChoices model.showError ) <| model.poll.unorderedChoices )
