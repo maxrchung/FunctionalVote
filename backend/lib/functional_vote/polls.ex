@@ -6,6 +6,7 @@ defmodule FunctionalVote.Polls do
   import Ecto.Query, warn: false
   alias FunctionalVote.Repo
 
+  alias FunctionalVote.Polls
   alias FunctionalVote.Polls.Poll
   alias FunctionalVote.Polls.Results
 
@@ -99,12 +100,20 @@ defmodule FunctionalVote.Polls do
   @param poll_id - poll_id
   @return {tallies_by_choice, winner}
   """
-  def instant_runoff_recurse(votes, poll_id, round) do
+  def instant_runoff_recurse(votes, poll_id, round, eliminated \\ []) do
+    available_choices = Polls.get_poll_choices(poll_id)
     tallies_by_choice = Map.values(votes)
-                        |> List.zip()
-                        |> List.first()
+                        |> Enum.filter(fn elem -> elem !== [] end) # Remove ballots that are now empty
+                        |> List.zip() # nth choice of each ballot
+                        |> List.first() # 1st choice of each ballot
                         |> Tuple.to_list()
-                        |> Enum.frequencies()
+                        |> Enum.frequencies() # tally them up
+    zero_tally_choices = available_choices -- Map.keys(tallies_by_choice) # Choices with zero tallies
+                         |> Enum.filter(fn choice -> choice not in eliminated end) # that are not eliminated
+                         |> Enum.into(%{}, fn choice -> {choice, 0} end) # Add it to the map
+    tallies_by_choice = Map.merge(tallies_by_choice, zero_tally_choices)
+    IO.puts("[PollCtx] Votes going into round #{round}:")
+    IO.inspect(tallies_by_choice)
     write_round(poll_id, tallies_by_choice, round)
     tallies_by_count = Enum.group_by(tallies_by_choice, fn {_, value} -> value end, fn {key, _} -> key end)
     num_users = Map.values(tallies_by_choice) |> Enum.sum()
@@ -127,18 +136,15 @@ defmodule FunctionalVote.Polls do
         end
         round = round + 1 # Round 1 = Tallies after first elimination
         loser = tallies_by_count[Map.keys(tallies_by_count) |> Enum.min()] |> Enum.random()
+        eliminated = eliminated ++ [loser]
         IO.puts("[PollCtx] Eliminated #{loser} in round #{round}")
+        # Remove all votes cast for this choice
         votes = for {k, v} <- votes,
                 into: %{},
                 do: {k, 
-                    if (List.first(v) == loser) do
-                      [_head | tail] = v
-                      tail
-                    else
-                      v
-                    end
+                    Enum.filter(v, fn choice -> choice !== loser end)
                 }
-        {tallies_by_choice, winner} = instant_runoff_recurse(votes, poll_id, round)
+        {tallies_by_choice, winner} = instant_runoff_recurse(votes, poll_id, round, eliminated)
         # At this point, we will have already hit a base case and wrote the winner to DB
         {tallies_by_choice, winner} # RETURN ENDPOINT
       end
@@ -258,7 +264,7 @@ defmodule FunctionalVote.Polls do
         |> Poll.changeset(attrs)
         |> Repo.insert()
       else
-        :choices_error
+        :duplicate_choices_error
       end
     else
       :title_error
