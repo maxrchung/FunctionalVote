@@ -6,6 +6,7 @@ defmodule FunctionalVote.Polls.Poll do
     field :choices, {:array, :string}
     field :title, :string
     field :winner, :string
+    field :poll_id, :string
 
     timestamps()
   end
@@ -13,7 +14,7 @@ defmodule FunctionalVote.Polls.Poll do
   @doc false
   def changeset(poll, attrs) do
     poll
-    |> cast(attrs, [:title, :choices])
-    |> validate_required([:title, :choices])
+    |> cast(attrs, [:title, :choices, :poll_id])
+    |> validate_required([:title, :choices, :poll_id])
   end
 end

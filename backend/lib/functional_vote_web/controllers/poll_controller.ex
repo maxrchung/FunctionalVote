@@ -20,7 +20,7 @@ defmodule FunctionalVoteWeb.PollController do
         conn
         |> put_status(:created)
         |> put_resp_header("location", Routes.poll_path(conn, :show, poll))
-        |> show(%{"id" => poll.id})
+        |> show(%{"poll_id" => poll.poll_id})
       :duplicate_choices_error ->
         send_resp(conn, :unprocessable_entity, "Duplicate choices provided")
       :title_error ->
@@ -37,9 +37,9 @@ defmodule FunctionalVoteWeb.PollController do
   @param: id - poll id
   @return: Poll information as JSON
   """
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"poll_id" => poll_id}) do
     IO.puts("[PollCtrl] Get poll data")
-    poll = Polls.get_poll_data!(id)
+    poll = Polls.get_poll_data!(poll_id)
     render(conn, "show.json", poll: poll)
   end
 

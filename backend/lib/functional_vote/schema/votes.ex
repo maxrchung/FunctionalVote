@@ -4,7 +4,7 @@ defmodule FunctionalVote.Polls.Votes do
 
   schema "votes" do
     field :choice, :string
-    field :poll_id, :integer
+    field :poll_id, :string
     field :rank, :integer
     field :user_id, :integer
 
