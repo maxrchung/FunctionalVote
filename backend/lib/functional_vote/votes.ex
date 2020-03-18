@@ -47,7 +47,7 @@ defmodule FunctionalVote.Votes do
   @return {:id_error} Invalid poll ID provided
   """
   def create_vote(attrs \\ %{}) do
-    poll_id = String.to_integer(attrs["poll_id"])
+    poll_id = attrs["poll_id"]
     if Polls.poll_exists?(poll_id) do
       available_choices = Polls.get_poll_choices(poll_id)
       IO.puts("[VoteCtx] Create vote in poll_id: #{poll_id}")

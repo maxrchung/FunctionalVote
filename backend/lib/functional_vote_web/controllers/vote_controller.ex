@@ -18,7 +18,6 @@ defmodule FunctionalVoteWeb.VoteController do
     case Votes.create_vote(vote_params) do
       :ok ->
         {_, _, winner} = vote_params["poll_id"]
-                         |> String.to_integer()
                          |> Votes.get_votes()
                          |> Polls.instant_runoff(vote_params["poll_id"], true)
         if (winner === :error) do
