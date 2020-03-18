@@ -231,7 +231,6 @@ defmodule FunctionalVote.Polls do
     IO.puts("[PollCtx] Get poll data")
     poll = Repo.get_by!(Poll, poll_id: poll_id)
     votes = Votes.get_votes(poll_id)
-    IO.puts("[PASSED]")
     if (map_size(votes) == 0) do
       IO.puts("[PollCtx] No votes in poll, returning empty tallies and winner")
       calculated = %{raw_tallies: nil, tallies: nil, winner: nil}
