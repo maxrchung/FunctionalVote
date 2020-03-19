@@ -1,18 +1,18 @@
-module Main exposing (..)
+module Main exposing ( .. )
 
 import Browser
 import Browser.Navigation as Navigation
 import FeatherIcons
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing ( .. )
+import Html.Attributes exposing ( .. )
+import Html.Events exposing ( .. )
 import Page.Home as Home
 import Page.Vote as Vote
 import Page.Poll as Poll
 import Page.About as About
 import Page.Error as Error
 import Url
-import Url.Parser as Parser exposing ((</>))
+import Url.Parser as Parser exposing ( (</>) )
 
 
 
@@ -45,8 +45,8 @@ type Page
 
 type Route 
   = HomeRoute
-  | VoteRoute Int
-  | PollRoute Int
+  | VoteRoute String
+  | PollRoute String
   | AboutRoute
 
 init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
@@ -88,8 +88,8 @@ routeParser : Parser.Parser ( Route -> a ) a
 routeParser =
   Parser.oneOf
     [ Parser.map HomeRoute Parser.top
-    , Parser.map VoteRoute ( Parser.s "vote" </> Parser.int )
-    , Parser.map PollRoute ( Parser.s "poll" </> Parser.int )
+    , Parser.map VoteRoute ( Parser.s "vote" </> Parser.string )
+    , Parser.map PollRoute ( Parser.s "poll" </> Parser.string )
     , Parser.map AboutRoute ( Parser.s "about" )
     ]
 

@@ -15,7 +15,7 @@ import Json.Encode as Encode
 -- MODEL
 type alias Model = 
   { key: Navigation.Key
-  , id: Int
+  , pollId: String
   , poll: Poll
   , apiAddress: String
   , error : String
@@ -33,9 +33,9 @@ type alias PollResponse =
   , choices: List String
   }
 
-init : Navigation.Key -> Int -> String -> ( Model, Cmd Msg )
-init key id apiAddress = 
-  let model = Model key id ( Poll "" Dict.empty [] ) apiAddress "" False
+init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
+init key pollId apiAddress = 
+  let model = Model key pollId ( Poll "" Dict.empty [] ) apiAddress "" False
   in ( model, getPollRequest model )
 
 
@@ -75,7 +75,7 @@ update msg model =
     SubmitVoteResponse result ->
       case result of
         Ok _ ->
-          ( model, Navigation.pushUrl model.key ( "/poll/" ++ String.fromInt model.id ) )
+          ( model, Navigation.pushUrl model.key ( "/poll/" ++ model.pollId ) )
 
         Err error ->
           let 
@@ -89,7 +89,7 @@ update msg model =
           ( { model | showError = True, error = newError }, Cmd.none )
     
     GoToPoll ->
-      ( model, Navigation.load ( "/poll/" ++ String.fromInt model.id ) )
+      ( model, Navigation.load ( "/poll/" ++ model.pollId ) )
 
 calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =
@@ -145,7 +145,7 @@ updateChoices index canFill maxRank rank ordered newOrdered newUnordered =
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
   Http.get
-    { url = model.apiAddress ++ "/poll/" ++ String.fromInt model.id
+    { url = model.apiAddress ++ "/poll/" ++ model.pollId
     , expect = Http.expectJson GetPollResponse getPollDecoder
     }
 
@@ -170,7 +170,7 @@ submitVoteJson model =
       Dict.foldl buildSubmissionChoices Dict.empty model.poll.orderedChoices
   in
   Encode.object
-    [ ( "poll_id", Encode.string <| String.fromInt model.id )
+    [ ( "poll_id", Encode.string model.pollId )
     , ( "choices", Encode.dict identity Encode.string choices )
     ]
 
