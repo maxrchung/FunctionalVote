@@ -6,7 +6,6 @@ defmodule FunctionalVote.Polls do
   import Ecto.Query, warn: false
   alias FunctionalVote.Repo
 
-  alias FunctionalVote.Polls
   alias FunctionalVote.Polls.Poll
   alias FunctionalVote.Polls.Results
 
@@ -101,7 +100,7 @@ defmodule FunctionalVote.Polls do
   @return {tallies_by_choice, winner}
   """
   def instant_runoff_recurse(votes, poll_id, round, eliminated \\ []) do
-    available_choices = Polls.get_poll_choices(poll_id)
+    available_choices = get_poll_choices(poll_id)
     tallies_by_choice = Map.values(votes)
                         |> Enum.filter(fn elem -> elem !== [] end) # Remove ballots that are now empty
                         |> List.zip() # nth choice of each ballot
@@ -256,9 +255,9 @@ defmodule FunctionalVote.Polls do
   """
   def create_poll(attrs \\ %{}) do
     IO.puts("[PollCtx] Create poll")
-    poll_id = StringGenerator.string_of_length(8)
+    poll_id = StringGenerator.poll_id_of_length(8)
     IO.inspect(poll_id)
-    if (String.trim(attrs["title"]) !== "") do
+    if (attrs["title"] !== nil and String.trim(attrs["title"]) !== "") do
       if (attrs["choices"] === Enum.uniq(attrs["choices"])) do
         attrs = Map.update!(attrs, "choices",
                   &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
@@ -324,11 +323,21 @@ end
 
 # https://stackoverflow.com/a/38315317
 defmodule StringGenerator do
+  alias FunctionalVote.Polls
   @chars "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" |> String.split("")
 
   def string_of_length(length) do
     Enum.reduce((1..length), [], fn (_i, acc) ->
       [Enum.random(@chars) | acc]
     end) |> Enum.join("")
+  end
+
+  def poll_id_of_length(length) do
+    poll_id = string_of_length(length)
+    if (Polls.poll_exists?(poll_id)) do
+      _poll_id = poll_id_of_length(length)
+    else
+      poll_id
+    end
   end
 end
