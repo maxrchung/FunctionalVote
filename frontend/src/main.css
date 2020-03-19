@@ -3,9 +3,20 @@
 @tailwind components;
 /* purgecss end ignore */
 
+html {
+  scrollbar-color: #ED8936 #7B341E;
+}
+
 /* body classes are not read properly when using dev server */
 body {
-  @apply bg-gray-900;
+  @apply bg-gray-900 overflow-y-scroll h-screen;
+}
+
+::-webkit-scrollbar {
+  @apply w-4 bg-orange-900;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-orange-500 rounded-full;
 }
 
 .fv-nav-btn {
