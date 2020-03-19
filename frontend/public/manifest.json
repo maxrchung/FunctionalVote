@@ -1,6 +1,5 @@
 {
-  "short_name": "Elm App",
-  "name": "Create Elm App Sample",
+  "name": "Functional Vote",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,6 +9,6 @@
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#4299E1",
+  "background_color": "#ED8936"
 }
