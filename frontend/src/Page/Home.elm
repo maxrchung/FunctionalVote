@@ -32,7 +32,7 @@ type Msg
   = ChangeTitle String
   | ChangeChoice Int String
   | MakePollRequest
-  | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, Int ) )
+  | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -57,7 +57,7 @@ update msg model =
     MakePollResponse result ->
       case result of
         Ok ( _, pollId ) ->
-          ( model, Navigation.pushUrl model.key ( "/vote/" ++ String.fromInt pollId ) )
+          ( model, Navigation.pushUrl model.key ( "/vote/" ++ pollId ) )
         Err error ->
           let 
             newError =
@@ -84,9 +84,9 @@ makePollJson model =
     , ( "choices", Encode.array Encode.string model.choices )
     ]
 
-makePollDecoder : Decode.Decoder Int
+makePollDecoder : Decode.Decoder String
 makePollDecoder =
-  Decode.field "data" (Decode.field "id" Decode.int )
+  Decode.field "data" ( Decode.field "poll_id" Decode.string )
 
 
 
