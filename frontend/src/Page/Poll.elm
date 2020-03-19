@@ -11,7 +11,7 @@ import Json.Decode as Decode
 
 -- MODEL
 type alias Model = 
-  { id: Int
+  { pollId: String
   , poll: Poll
   , apiAddress: String
   }
@@ -22,9 +22,9 @@ type alias Poll =
   , timeline: List ( List ( Int, String ) )
   }
 
-init : Int -> String -> ( Model, Cmd Msg )
-init id apiAddress = 
-  let model = Model id ( Poll "" "" [] ) apiAddress
+init : String -> String -> ( Model, Cmd Msg )
+init pollId apiAddress = 
+  let model = Model pollId ( Poll "" "" [] ) apiAddress
   in ( model, getPollRequest model )
 
 
@@ -46,12 +46,12 @@ update msg model =
           ( model, Cmd.none )
 
     GoToVote ->
-      ( model, Navigation.load ( "/vote/" ++ String.fromInt model.id ) )
+      ( model, Navigation.load ( "/vote/" ++ model.pollId ) )
 
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
   Http.get
-    { url = model.apiAddress ++ "/poll/" ++ String.fromInt model.id
+    { url = model.apiAddress ++ "/poll/" ++ model.pollId
     , expect = Http.expectJson GetPollResponse getPollDecoder
     }
 

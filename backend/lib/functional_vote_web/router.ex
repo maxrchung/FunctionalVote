@@ -18,7 +18,7 @@ defmodule FunctionalVoteWeb.Router do
     pipe_through :browser
 
     post "/poll", PollController, :create
-    get "/poll/:id", PollController, :show
+    get "/poll/:poll_id", PollController, :show
     post "/vote", VoteController, :create
 
   end

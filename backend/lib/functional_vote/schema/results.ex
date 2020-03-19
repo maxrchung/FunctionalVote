@@ -4,7 +4,7 @@ defmodule FunctionalVote.Polls.Results do
 
   schema "results" do
     field :choice, :string
-    field :poll_id, :integer
+    field :poll_id, :string
     field :round, :integer
     field :votes, :integer
 

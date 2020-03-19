@@ -3,7 +3,7 @@ defmodule FunctionalVote.Repo.Migrations.CreateVotes do
 
   def change do
     create table(:votes) do
-      add :poll_id, references(:polls)
+      add :poll_id, :text
       add :user_id, :integer
       add :choice, :string
       add :rank, :integer

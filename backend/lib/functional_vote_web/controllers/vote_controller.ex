@@ -18,7 +18,6 @@ defmodule FunctionalVoteWeb.VoteController do
     case Votes.create_vote(vote_params) do
       :ok ->
         {_, _, winner} = vote_params["poll_id"]
-                         |> String.to_integer()
                          |> Votes.get_votes()
                          |> Polls.instant_runoff(vote_params["poll_id"], true)
         if (winner === :error) do
@@ -28,8 +27,12 @@ defmodule FunctionalVoteWeb.VoteController do
         end
       :id_error ->
         send_resp(conn, :unprocessable_entity, "Invalid poll ID")
-      :choices_error ->
-        send_resp(conn, :unprocessable_entity, "Invalid choices provided")
+      :non_integer_rank_error ->
+        send_resp(conn, :unprocessable_entity, "Received a vote with a non-integer rank")
+      :available_choices_error ->
+        send_resp(conn, :unprocessable_entity, "Received a choice that does not exist in this poll")
+      :duplicate_rank_error ->
+        send_resp(conn, :unprocessable_entity, "Received votes with duplicate ranks")
       _ ->
         send_resp(conn, :internal_server_error, "")
     end
