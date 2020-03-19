@@ -93,6 +93,28 @@ a:hover {
   @apply text-blue-100;
 }
 
+.fv-slider {
+  @apply appearance-none rounded-full bg-blue-900 h-2 shadow-lg cursor-pointer outline-none;
+}
+.fv-slider::-webkit-slider-thumb {
+  @apply appearance-none bg-blue-700 border-0 h-6 w-6 rounded-full shadow-lg;
+}
+.fv-slider::-webkit-slider-thumb:hover {
+  @apply bg-blue-500;
+}
+.fv-slider::-webkit-slider-thumb:focus {
+  @apply bg-blue-500;
+}
+.fv-slider::-moz-range-thumb {
+  @apply bg-blue-700 border-0 w-6 h-6 rounded-full shadow-lg;
+}
+.fv-slider::-moz-range-thumb:hover {
+  @apply bg-blue-500;
+}
+.fv-slider::-moz-range-thumb:focus {
+  @apply bg-blue-500;
+}
+
 @tailwind utilities;
 
 /*
