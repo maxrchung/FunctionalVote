@@ -1,6 +1,7 @@
 module Page.Poll exposing ( .. )
 
 import Browser.Navigation as Navigation
+import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
@@ -135,6 +136,37 @@ view model =
             [ text model.poll.winner ]
           ]
         , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+        ]
+
+    , div [ class "fv-main-code" ] [ text "," ]
+
+    , div 
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-main-header" ] [ text "Timeline" ]
+        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+        ]
+
+    , div 
+        [ class "flex justify-between items-center my-3" ]
+        [ button 
+          [ class "fv-nav-btn"] 
+          [ FeatherIcons.arrowLeft
+            |> FeatherIcons.withSize 22
+            |> FeatherIcons.withStrokeWidth 2
+            |> FeatherIcons.toHtml [] ]
+
+        , input 
+            [ class "flex-grow mx-2 fv-slider"
+            , type_ "range" ] 
+            []
+
+        , button 
+          [ class "fv-nav-btn" ] 
+          [ FeatherIcons.arrowRight
+            |> FeatherIcons.withSize 22
+            |> FeatherIcons.withStrokeWidth 2
+            |> FeatherIcons.toHtml [] ]
         ]
 
     , div [ class "fv-main-code" ] [ text "}" ]
