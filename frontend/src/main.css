@@ -106,6 +106,13 @@ a:hover {
 
 .fv-slider {
   @apply appearance-none rounded-full bg-blue-900 h-2 shadow-lg cursor-pointer outline-none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .fv-slider::-webkit-slider-thumb {
   @apply appearance-none bg-blue-700 border-0 h-6 w-6 rounded-full shadow-lg;
