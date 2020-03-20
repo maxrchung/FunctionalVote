@@ -205,52 +205,52 @@ view model =
 
 w : Float
 w =
-  375
+  400
 
 h : Float
 h =
-  375
+  400
 
 padding : Float
 padding =
   30
 
+xScale : ContinuousScale Float
+xScale =
+  Scale.linear ( 0, w - 2 * padding ) ( 0, 5 )
+
 yScale : List ( Int, String ) -> BandScale String
 yScale model =
   List.map Tuple.second model
-      |> Scale.band { defaultBandConfig | paddingInner = 0.1, paddingOuter = 0.2 } ( 0, w - 2 * padding )
-
-xScale : ContinuousScale Float
-xScale =
-  Scale.linear ( h - 2 * padding, 0 ) ( 0, 5 )
+    |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, h - 2 * padding )
 
 xAxis : SvgCore.Svg msg
 xAxis =
-  Axis.left [ Axis.tickCount 5 ] xScale
+  Axis.top [ Axis.tickCount 5 ] xScale
 
 yAxis : List ( Int, String ) -> SvgCore.Svg msg
 yAxis model =
-  Axis.bottom [] <| Scale.toRenderable identity <| yScale model
+  Axis.left [] <| Scale.toRenderable identity <| yScale model
 
 row : BandScale String -> ( Int, String ) -> SvgCore.Svg msg
 row scale ( votes, choice ) =
-  Svg.g [ SvgAttributes.class [ "text-blue-900 fill-current" ] ]
-      [ Svg.rect
-          [ SvgInPx.x <| Scale.convert scale choice
-          , SvgInPx.y <| Scale.convert xScale <| toFloat votes
-          , SvgInPx.width <| Scale.bandwidth scale
-          , SvgInPx.height <| h - Scale.convert xScale ( toFloat votes ) - 2 * padding
-          ]
-          []
-      ]
+  Svg.g
+    [ SvgAttributes.class [ "text-blue-900 fill-current" ] ]
+    [ Svg.rect
+        [ SvgInPx.y <| Scale.convert scale choice
+        , SvgInPx.width <| Scale.convert xScale ( toFloat votes )
+        , SvgInPx.height <| Scale.bandwidth scale
+        ]
+        []
+    ]
 
 viewChart : List ( Int, String ) -> SvgCore.Svg msg
 viewChart model =
   Svg.svg [ SvgAttributes.viewBox 0 0 w h ]
-    [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) ( h - padding) ] ]
-        [ yAxis model ]
-    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
+    [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
         [ xAxis ]
+    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
+        [ yAxis model ]
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate padding padding ] ] <|
         List.map ( row ( yScale model ) ) model
     ]
@@ -258,13 +258,13 @@ viewChart model =
 sampleData : List ( Int, String )
 sampleData = 
   [ ( 1, "Choice 1" )
-  , ( 2, "Choice 2" )
-  , ( 3, "Choice 3" )
-  , ( 1, "Choice 4" )
+  , ( 1, "Choice 2" )
+  , ( 2, "Choice 3" )
+  , ( 2, "Choice 4" )
   , ( 3, "Choice 5" )
-  , ( 4, "Choice 6" )
-  , ( 2, "Choice 7" )
-  , ( 3, "Choice 8" )
-  , ( 0, "Choice 9" )
-  , ( 4, "Choice 0" )
+  , ( 3, "Choice 6" )
+  , ( 4, "Choice 7" )
+  , ( 4, "Choice 8" )
+  , ( 5, "Choice 9" )
+  , ( 5, "Choice 10" )
   ]
