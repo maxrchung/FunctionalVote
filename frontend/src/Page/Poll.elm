@@ -230,6 +230,7 @@ xAxis =
 
 yAxis : List ( Int, String ) -> SvgCore.Svg msg
 yAxis model =
+  -- List.map so that empty string is shown as ticks
   Axis.left [] <| Scale.toRenderable identity <| yScale model
 
 row : BandScale String -> ( Int, String ) -> SvgCore.Svg msg
@@ -246,10 +247,13 @@ row scale ( votes, choice ) =
 
 viewChart : List ( Int, String ) -> SvgCore.Svg msg
 viewChart model =
-  Svg.svg [ SvgAttributes.viewBox 0 0 w h ]
+  Svg.svg [ SvgAttributes.viewBox 0 0 w ( h - padding / 2 ) ]
     [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
         [ xAxis ]
-    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
+    , Svg.g 
+        [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ]
+        , SvgAttributes.class [ "y-axis" ]
+        ]
         [ yAxis model ]
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate padding padding ] ] <|
         List.map ( row ( yScale model ) ) model

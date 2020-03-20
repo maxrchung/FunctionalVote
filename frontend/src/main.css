@@ -146,6 +146,10 @@ a:hover {
   stroke: #4299E1;
 }
 
+.y-axis text {
+  display: none;
+}
+
 @tailwind utilities;
 
 /*
