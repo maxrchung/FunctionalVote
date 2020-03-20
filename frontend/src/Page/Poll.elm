@@ -44,6 +44,9 @@ init pollId apiAddress =
 type Msg 
   = GetPollResponse ( Result Http.Error Poll )
   | GoToVote
+  | DecrementStep
+  | IncrementStep
+  | ChangeStep String
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -74,6 +77,37 @@ update msg model =
 
     GoToVote ->
       ( model, Navigation.load ( "/vote/" ++ model.pollId ) )
+
+    DecrementStep ->
+      let
+          newStep =
+            if model.step == 0 then
+              model.step
+            else
+              model.step - 1
+      in
+      ( { model | step = newStep }, Cmd.none )
+
+    IncrementStep ->
+      let
+          newStep =
+            if model.step == List.length model.poll.timeline - 1 then
+              model.step
+            else
+              model.step + 1
+      in
+      ( { model | step = newStep }, Cmd.none )
+
+    ChangeStep stepString ->
+      let
+        newStep =
+          case String.toInt stepString of
+            Nothing ->
+              0
+            Just stepInt ->
+              stepInt
+      in
+      ( { model | step = newStep }, Cmd.none )
 
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
@@ -186,7 +220,9 @@ view model =
         , div 
             [ class "flex justify-between items-center mt-2 w-full" ]
             [ button 
-              [ class "fv-nav-btn"] 
+              [ class "fv-nav-btn" 
+              , onClick DecrementStep
+              ] 
               [ FeatherIcons.arrowLeft
                 |> FeatherIcons.withSize 22
                 |> FeatherIcons.withStrokeWidth 2
@@ -194,11 +230,17 @@ view model =
 
             , input 
                 [ class "flex-grow mx-2 fv-slider"
-                , type_ "range" ] 
+                , type_ "range"
+                , onInput ChangeStep
+                , Html.Attributes.max <| String.fromInt <| List.length model.poll.timeline - 1
+                , value <| String.fromInt model.step
+                ]
                 []
 
             , button 
-              [ class "fv-nav-btn" ] 
+              [ class "fv-nav-btn" 
+              , onClick IncrementStep
+              ] 
               [ FeatherIcons.arrowRight
                 |> FeatherIcons.withSize 22
                 |> FeatherIcons.withStrokeWidth 2
