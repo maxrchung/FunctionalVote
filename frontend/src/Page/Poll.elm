@@ -207,7 +207,7 @@ view model =
         , div [ class "w-8" ] []
         ]
 
-    , renderTimeline round <| initTimeline round model.xScaleMax
+    , renderTimeline ( initTimeline round model.xScaleMax ) round
 
     , div [ class "fv-main-code" ] [ text "}" ]
 
@@ -251,8 +251,8 @@ xScale config =
   Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, toFloat config.xScaleMax )
 
 yScale : TimelineConfig -> List ( Int, String ) -> BandScale String
-yScale config model =
-  List.map Tuple.second model
+yScale config round =
+  List.map Tuple.second round
     |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.height - 2 * config.padding )
 
 xAxis : TimelineConfig -> SvgCore.Svg msg
@@ -260,9 +260,9 @@ xAxis config =
   Axis.top [ Axis.tickCount 8 ] <| xScale config
 
 yAxis : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
-yAxis config model =
+yAxis config round =
   -- List.map so that empty string is shown as ticks
-  Axis.left [] <| Scale.toRenderable identity <| yScale config model
+  Axis.left [] <| Scale.toRenderable identity <| yScale config round
 
 row : TimelineConfig -> BandScale String -> ( Int, String ) -> SvgCore.Svg msg
 row config scale ( votes, choice ) =
@@ -301,8 +301,8 @@ truncateChoice choice =
   else
     choice
 
-renderTimeline : List ( Int, String ) -> TimelineConfig -> SvgCore.Svg msg
-renderTimeline model config =
+renderTimeline : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
+renderTimeline config round =
   Svg.svg
     [ SvgAttributes.class [ "fv-timeline" ]
     , SvgAttributes.viewBox 0 0 config.width ( config.height - config.padding / 2 )
@@ -313,7 +313,7 @@ renderTimeline model config =
         [ SvgAttributes.transform [ SvgTypes.Translate ( config.padding - 1 ) config.padding ]
         , SvgAttributes.class [ "y-axis" ]
         ]
-        [ yAxis config model ]
+        [ yAxis config round ]
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate config.padding config.padding ] ] <|
-        List.map ( row config <| yScale config model ) model
+        List.map ( row config <| yScale config round ) round
     ]
