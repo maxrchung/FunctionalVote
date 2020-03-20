@@ -205,11 +205,11 @@ view model =
 
 w : Float
 w =
-  400
+  375
 
 h : Float
 h =
-  400
+  600
 
 padding : Float
 padding =
@@ -236,13 +236,22 @@ yAxis model =
 row : BandScale String -> ( Int, String ) -> SvgCore.Svg msg
 row scale ( votes, choice ) =
   Svg.g
-    [ SvgAttributes.class [ "text-blue-900 fill-current" ] ]
+    []
     [ Svg.rect
-        [ SvgInPx.y <| Scale.convert scale choice
+        [ SvgAttributes.class [ "text-blue-900 fill-current" ] 
+        , SvgInPx.y <| Scale.convert scale choice
         , SvgInPx.width <| Scale.convert xScale ( toFloat votes )
         , SvgInPx.height <| Scale.bandwidth scale
         ]
         []
+    , Svg.text_
+          [ SvgAttributes.class [ "text-blue-500 fill-current text-sm" ] 
+          , SvgInPx.x <| padding / 4
+          , SvgInPx.y <| Scale.convert scale choice + ( Scale.bandwidth scale / 2 )
+          , SvgAttributes.textAnchor SvgTypes.AnchorStart
+          , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
+          ]
+          [ SvgCore.text choice ]
     ]
 
 viewChart : List ( Int, String ) -> SvgCore.Svg msg
@@ -265,13 +274,13 @@ viewChart model =
 sampleData : List ( Int, String )
 sampleData = 
   [ ( 1, "Choice 1" )
-  , ( 1, "Choice 2" )
-  , ( 2, "Choice 3" )
-  , ( 2, "Choice 4" )
-  , ( 3, "Choice 5" )
-  , ( 3, "Choice 6" )
-  , ( 4, "Choice 7" )
-  , ( 4, "Choice 8" )
-  , ( 5, "Choice 9" )
-  , ( 5, "Choice 10" )
+  , ( 2, "Choice 2" )
+  , ( 3, "Choice 3" )
+  , ( 4, "Choice 4" )
+  , ( 5, "Choice 5" )
+  , ( 1, "Choice 6" )
+  , ( 2, "Choice 7" )
+  , ( 3, "Choice 8" )
+  , ( 4, "1234567890 1234567890 1234567890" )
+  , ( 5, "WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW " )
   ]
