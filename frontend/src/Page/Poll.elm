@@ -9,9 +9,7 @@ import Http
 import Json.Decode as Decode
 
 import Axis
-import DateFormat
-import Scale exposing ( BandConfig, BandScale, ContinuousScale, defaultBandConfig )
-import Time
+import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
 import TypedSvg.Attributes.InPx as SvgInPx
@@ -217,7 +215,7 @@ padding : Float
 padding =
   30
 
-xScale : List ( Time.Posix, Int ) -> BandScale Time.Posix
+xScale : List ( String, Int ) -> BandScale String
 xScale model =
   List.map Tuple.first model
       |> Scale.band { defaultBandConfig | paddingInner = 0.1, paddingOuter = 0.2 } ( 0, w - 2 * padding )
@@ -226,23 +224,19 @@ yScale : ContinuousScale Float
 yScale =
   Scale.linear ( h - 2 * padding, 0 ) ( 0, 5 )
 
-dateFormat : Time.Posix -> String
-dateFormat =
-  DateFormat.format [ DateFormat.dayOfMonthFixed, DateFormat.text " ", DateFormat.monthNameAbbreviated ] Time.utc
-
-xAxis : List ( Time.Posix, Int ) -> SvgCore.Svg msg
+xAxis : List ( String, Int ) -> SvgCore.Svg msg
 xAxis model =
-  Axis.bottom [] ( Scale.toRenderable dateFormat ( xScale model ) )
+  Axis.bottom [] <| Scale.toRenderable identity <| xScale model
 
 yAxis : SvgCore.Svg msg
 yAxis =
   Axis.left [ Axis.tickCount 5 ] yScale
 
-column : BandScale Time.Posix -> ( Time.Posix, Int ) -> SvgCore.Svg msg
-column scale ( date, value ) =
+column : BandScale String -> ( String, Int ) -> SvgCore.Svg msg
+column scale ( choice, value ) =
   Svg.g [ SvgAttributes.class [ "text-blue-900 fill-current" ] ]
       [ Svg.rect
-          [ SvgInPx.x <| Scale.convert scale date
+          [ SvgInPx.x <| Scale.convert scale choice
           , SvgInPx.y <| Scale.convert yScale <| toFloat value
           , SvgInPx.width <| Scale.bandwidth scale
           , SvgInPx.height <| h - Scale.convert yScale ( toFloat value ) - 2 * padding
@@ -250,7 +244,7 @@ column scale ( date, value ) =
           []
       ]
 
-viewChart : List ( Time.Posix, Int ) -> SvgCore.Svg msg
+viewChart : List ( String, Int ) -> SvgCore.Svg msg
 viewChart model =
   Svg.svg [ SvgAttributes.viewBox 0 0 w h ]
     [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) ( h - padding) ] ]
@@ -261,16 +255,16 @@ viewChart model =
         List.map ( column ( xScale model ) ) model
     ]
 
-sampleData : List ( Time.Posix, Int )
+sampleData : List ( String, Int )
 sampleData = 
-  [ ( Time.millisToPosix 1000, 1 )
-  , ( Time.millisToPosix 2000, 2 )
-  , ( Time.millisToPosix 100, 3 )
-  , ( Time.millisToPosix 10001, 1 )
-  , ( Time.millisToPosix 10002, 3 )
-  , ( Time.millisToPosix 10003, 4 )
-  , ( Time.millisToPosix 10004, 2 )
-  , ( Time.millisToPosix 100054, 3 )
-  , ( Time.millisToPosix 10006, 0 )
-  , ( Time.millisToPosix 10007, 4 )
+  [ ( "Choice 1", 1 )
+  , ( "Choice 2", 2 )
+  , ( "Choice 3", 3 )
+  , ( "Choice 4", 1 )
+  , ( "Choice 5", 3 )
+  , ( "Choice 6", 4 )
+  , ( "Choice 7", 2 )
+  , ( "Choice 8", 3 )
+  , ( "Choice 9", 0 )
+  , ( "Choice 0", 4 )
   ]
