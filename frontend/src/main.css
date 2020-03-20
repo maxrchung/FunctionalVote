@@ -135,13 +135,13 @@ a:hover {
 }
 
 .fv-timeline .domain {
-  stroke: #4299E1;
+  stroke: #ED8936;
 }
 .fv-timeline .tick {
-  stroke: #4299E1;
+  stroke: #ED8936;
 }
 .fv-timeline .tick line {
-  stroke: #4299E1;
+  stroke: #ED8936;
 }
 .fv-timeline .tick text {
   @apply font-sans;
