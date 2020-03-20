@@ -50,7 +50,7 @@ update msg model =
     GetPollResponse result ->
       case result of
         Ok newPoll ->
-          ( { model | poll = newPoll, step = List.length newPoll.timeline }, Cmd.none )
+          ( { model | poll = newPoll, step = List.length newPoll.timeline - 1 }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -89,6 +89,17 @@ pollSample title winner =
     , [ ( 17, "higher choice" )
       , ( 16, "highest choice" )
       ]
+    , [ ( 1, "Choice 1" )
+      , ( 2, "Choice 2" )
+      , ( 3, "Choice 3" )
+      , ( 4, "Choice 4" )
+      , ( 5, "Choice 5" )
+      , ( 1, "Choice 6" )
+      , ( 2, "Choice 7" )
+      , ( 3, "Choice 8" )
+      , ( 4, "1234567890 1234567890 1234567890" )
+      , ( 5, "WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW" )
+      ]
     ]
 
 
@@ -96,6 +107,12 @@ pollSample title winner =
 -- VIEW
 view : Model -> Html Msg
 view model =
+  let
+      round = 
+        case listGet model.step model.poll.timeline of
+          Nothing -> []
+          Just newRound -> newRound
+  in
   div 
     [] 
     [ div 
@@ -179,7 +196,7 @@ view model =
             |> FeatherIcons.toHtml [] ]
         ]
 
-    , renderTimeline sampleData <| initTimeline model.step model.poll.timeline
+    , renderTimeline round <| initTimeline round
 
     , div [ class "fv-main-code" ] [ text "}" ]
 
@@ -204,23 +221,35 @@ view model =
     ]
 
 type alias TimelineConfig = 
-  { w: Float
-  , h: Float
+  { width: Float
+  , height: Float
   , padding: Float
   }
 
-initTimeline : Int -> List ( List ( Int, String ) ) -> TimelineConfig
-initTimeline step timeline =
-  TimelineConfig 375 370 30
+initTimeline : List ( Int, String ) -> TimelineConfig
+initTimeline round =
+  let
+    height = 
+        100 + 30 * List.length round - 1
+  in
+  TimelineConfig 375 ( toFloat height ) 30
+
+-- Lifted from list-extra
+listGet : Int -> List a -> Maybe a
+listGet index list =
+    if index < 0 then
+        Nothing
+    else
+        List.head <| List.drop index list
 
 xScale : TimelineConfig -> ContinuousScale Float
 xScale config =
-  Scale.linear ( 0, config.w - 2 * config.padding ) ( 0, 5 )
+  Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, 5 )
 
 yScale : TimelineConfig -> List ( Int, String ) -> BandScale String
 yScale config model =
   List.map Tuple.second model
-    |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.h - 2 * config.padding )
+    |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.height - 2 * config.padding )
 
 xAxis : TimelineConfig -> SvgCore.Svg msg
 xAxis config =
@@ -263,7 +292,7 @@ renderTimeline : List ( Int, String ) -> TimelineConfig -> SvgCore.Svg msg
 renderTimeline model config =
   Svg.svg
     [ SvgAttributes.class [ "fv-timeline" ]
-    , SvgAttributes.viewBox 0 0 config.w ( config.h - config.padding / 2 )
+    , SvgAttributes.viewBox 0 0 config.width ( config.height - config.padding / 2 )
     ]
     [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( config.padding - 1 ) config.padding ] ]
         [ xAxis config ]
@@ -275,17 +304,3 @@ renderTimeline model config =
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate config.padding config.padding ] ] <|
         List.map ( row config <| yScale config model ) model
     ]
-
-sampleData : List ( Int, String )
-sampleData = 
-  [ ( 1, "Choice 1" )
-  , ( 2, "Choice 2" )
-  , ( 3, "Choice 3" )
-  , ( 4, "Choice 4" )
-  , ( 5, "Choice 5" )
-  , ( 1, "Choice 6" )
-  , ( 2, "Choice 7" )
-  , ( 3, "Choice 8" )
-  , ( 4, "1234567890 1234567890 1234567890" )
-  , ( 5, "WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW" )
-  ]
