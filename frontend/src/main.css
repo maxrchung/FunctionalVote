@@ -4,6 +4,7 @@
 /* purgecss end ignore */
 
 html {
+  /* Firefox scrollbar */
   scrollbar-color: #ED8936 #7B341E;
 }
 
@@ -131,6 +132,18 @@ a:hover {
 }
 .fv-slider::-moz-range-thumb:focus {
   @apply bg-blue-500;
+}
+
+.domain {
+  stroke: #4299E1;
+}
+
+.tick {
+  stroke: #4299E1;
+}
+
+.tick line {
+  stroke: #4299E1;
 }
 
 @tailwind utilities;
