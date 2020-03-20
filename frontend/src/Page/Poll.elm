@@ -23,6 +23,7 @@ type alias Model =
   { pollId: String
   , poll: Poll
   , apiAddress: String
+  , step: Int
   }
 
 type alias Poll =
@@ -33,7 +34,7 @@ type alias Poll =
 
 init : String -> String -> ( Model, Cmd Msg )
 init pollId apiAddress = 
-  let model = Model pollId ( Poll "" "" [] ) apiAddress
+  let model = Model pollId ( Poll "" "" [] ) apiAddress 0
   in ( model, getPollRequest model )
 
 
@@ -49,7 +50,7 @@ update msg model =
     GetPollResponse result ->
       case result of
         Ok newPoll ->
-          ( { model | poll = newPoll }, Cmd.none )
+          ( { model | poll = newPoll, step = List.length newPoll.timeline }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -95,7 +96,8 @@ pollSample title winner =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div [] 
+  div 
+    [] 
     [ div 
         [ class "fv-main-text" ]
         [ text "-- View the poll results and navigate the timeline to see how results were calculated." ]
@@ -177,7 +179,7 @@ view model =
             |> FeatherIcons.toHtml [] ]
         ]
 
-    , viewChart sampleData
+    , renderTimeline sampleData <| initTimeline model.step model.poll.timeline
 
     , div [ class "fv-main-code" ] [ text "}" ]
 
@@ -201,52 +203,48 @@ view model =
         ]
     ]
 
+type alias TimelineConfig = 
+  { w: Float
+  , h: Float
+  , padding: Float
+  }
 
+initTimeline : Int -> List ( List ( Int, String ) ) -> TimelineConfig
+initTimeline step timeline =
+  TimelineConfig 375 370 30
 
-w : Float
-w =
-  375
+xScale : TimelineConfig -> ContinuousScale Float
+xScale config =
+  Scale.linear ( 0, config.w - 2 * config.padding ) ( 0, 5 )
 
-h : Float
-h =
-  370
-
-padding : Float
-padding =
-  30
-
-xScale : ContinuousScale Float
-xScale =
-  Scale.linear ( 0, w - 2 * padding ) ( 0, 5 )
-
-yScale : List ( Int, String ) -> BandScale String
-yScale model =
+yScale : TimelineConfig -> List ( Int, String ) -> BandScale String
+yScale config model =
   List.map Tuple.second model
-    |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, h - 2 * padding )
+    |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.h - 2 * config.padding )
 
-xAxis : SvgCore.Svg msg
-xAxis =
-  Axis.top [ Axis.tickCount 5 ] xScale
+xAxis : TimelineConfig -> SvgCore.Svg msg
+xAxis config =
+  Axis.top [ Axis.tickCount 5 ] <| xScale config
 
-yAxis : List ( Int, String ) -> SvgCore.Svg msg
-yAxis model =
+yAxis : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
+yAxis config model =
   -- List.map so that empty string is shown as ticks
-  Axis.left [] <| Scale.toRenderable identity <| yScale model
+  Axis.left [] <| Scale.toRenderable identity <| yScale config model
 
-row : BandScale String -> ( Int, String ) -> SvgCore.Svg msg
-row scale ( votes, choice ) =
+row : TimelineConfig -> BandScale String -> ( Int, String ) -> SvgCore.Svg msg
+row config scale ( votes, choice ) =
   Svg.g
     []
     [ Svg.rect
         [ SvgAttributes.class [ "text-blue-900 fill-current" ] 
         , SvgInPx.y <| Scale.convert scale choice
-        , SvgInPx.width <| Scale.convert xScale ( toFloat votes )
+        , SvgInPx.width <| Scale.convert ( xScale config ) <| toFloat votes
         , SvgInPx.height <| Scale.bandwidth scale
         ]
         []
     , Svg.text_
           [ SvgAttributes.class [ "text-blue-500 fill-current text-sm" ] 
-          , SvgInPx.x <| padding / 4
+          , SvgInPx.x <| config.padding / 4
           , SvgInPx.y <| Scale.convert scale choice + ( Scale.bandwidth scale / 2 )
           , SvgAttributes.textAnchor SvgTypes.AnchorStart
           , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
@@ -261,21 +259,21 @@ truncateChoice choice =
   else
     choice
 
-viewChart : List ( Int, String ) -> SvgCore.Svg msg
-viewChart model =
-  Svg.svg 
+renderTimeline : List ( Int, String ) -> TimelineConfig -> SvgCore.Svg msg
+renderTimeline model config =
+  Svg.svg
     [ SvgAttributes.class [ "fv-timeline" ]
-    , SvgAttributes.viewBox 0 0 w ( h - padding / 2 ) 
+    , SvgAttributes.viewBox 0 0 config.w ( config.h - config.padding / 2 )
     ]
-    [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
-        [ xAxis ]
-    , Svg.g 
-        [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ]
+    [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( config.padding - 1 ) config.padding ] ]
+        [ xAxis config ]
+    , Svg.g
+        [ SvgAttributes.transform [ SvgTypes.Translate ( config.padding - 1 ) config.padding ]
         , SvgAttributes.class [ "y-axis" ]
         ]
-        [ yAxis model ]
-    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate padding padding ] ] <|
-        List.map ( row ( yScale model ) ) model
+        [ yAxis config model ]
+    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate config.padding config.padding ] ] <|
+        List.map ( row config <| yScale config model ) model
     ]
 
 sampleData : List ( Int, String )
@@ -289,5 +287,5 @@ sampleData =
   , ( 2, "Choice 7" )
   , ( 3, "Choice 8" )
   , ( 4, "1234567890 1234567890 1234567890" )
-  , ( 5, "WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW " )
+  , ( 5, "WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW" )
   ]
