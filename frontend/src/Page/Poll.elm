@@ -247,7 +247,10 @@ row scale ( votes, choice ) =
 
 viewChart : List ( Int, String ) -> SvgCore.Svg msg
 viewChart model =
-  Svg.svg [ SvgAttributes.viewBox 0 0 w ( h - padding / 2 ) ]
+  Svg.svg 
+    [ SvgAttributes.class [ "fv-timeline" ]
+    , SvgAttributes.viewBox 0 0 w ( h - padding / 2 ) 
+    ]
     [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
         [ xAxis ]
     , Svg.g 

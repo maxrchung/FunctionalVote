@@ -134,19 +134,20 @@ a:hover {
   @apply bg-blue-500;
 }
 
-.domain {
+/* Timeline styling */
+.fv-timeline .domain {
   stroke: #4299E1;
 }
-
-.tick {
+.fv-timeline .tick {
   stroke: #4299E1;
 }
-
-.tick line {
+.fv-timeline .tick line {
   stroke: #4299E1;
 }
-
-.y-axis text {
+.fv-timeline .tick text {
+  font-weight: none;
+}
+.fv-timeline .y-axis text {
   display: none;
 }
 
