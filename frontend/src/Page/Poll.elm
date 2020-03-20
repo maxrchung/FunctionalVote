@@ -1,5 +1,6 @@
 module Page.Poll exposing ( .. )
 
+import Axis
 import Browser.Navigation as Navigation
 import FeatherIcons
 import Html exposing ( .. )
@@ -7,8 +8,7 @@ import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
 import Json.Decode as Decode
-
-import Axis
+import List.Extra
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
@@ -24,6 +24,7 @@ type alias Model =
   , poll: Poll
   , apiAddress: String
   , step: Int
+  , xScaleMax: Int
   }
 
 type alias Poll =
@@ -34,7 +35,7 @@ type alias Poll =
 
 init : String -> String -> ( Model, Cmd Msg )
 init pollId apiAddress = 
-  let model = Model pollId ( Poll "" "" [] ) apiAddress 0
+  let model = Model pollId ( Poll "" "" [] ) apiAddress 0 0
   in ( model, getPollRequest model )
 
 
@@ -50,7 +51,23 @@ update msg model =
     GetPollResponse result ->
       case result of
         Ok newPoll ->
-          ( { model | poll = newPoll, step = List.length newPoll.timeline - 1 }, Cmd.none )
+          let
+              lastRound = 
+                case List.Extra.last newPoll.timeline of
+                   Nothing -> []
+                   Just last -> last
+              newXScaleMax = 
+                case List.head lastRound of
+                  Nothing -> 0
+                  Just head -> Tuple.first head
+          in
+          ( { model 
+            | poll = newPoll
+            , step = List.length newPoll.timeline - 1 
+            , xScaleMax = newXScaleMax
+            }
+          , Cmd.none 
+          )
 
         Err _ ->
           ( model, Cmd.none )
@@ -89,17 +106,6 @@ pollSample title winner =
     , [ ( 17, "higher choice" )
       , ( 16, "highest choice" )
       ]
-    , [ ( 1, "Choice 1" )
-      , ( 2, "Choice 2" )
-      , ( 3, "Choice 3" )
-      , ( 4, "Choice 4" )
-      , ( 5, "Choice 5" )
-      , ( 1, "Choice 6" )
-      , ( 2, "Choice 7" )
-      , ( 3, "Choice 8" )
-      , ( 4, "1234567890 1234567890 1234567890" )
-      , ( 5, "WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW WWWWWWWWWW" )
-      ]
     ]
 
 
@@ -109,9 +115,9 @@ view : Model -> Html Msg
 view model =
   let
       round = 
-        case listGet model.step model.poll.timeline of
+        case List.Extra.getAt model.step model.poll.timeline of
           Nothing -> []
-          Just newRound -> newRound
+          Just getAt -> getAt
   in
   div 
     [] 
@@ -196,7 +202,7 @@ view model =
             |> FeatherIcons.toHtml [] ]
         ]
 
-    , renderTimeline round <| initTimeline round
+    , renderTimeline round <| initTimeline round model.xScaleMax
 
     , div [ class "fv-main-code" ] [ text "}" ]
 
@@ -224,27 +230,20 @@ type alias TimelineConfig =
   { width: Float
   , height: Float
   , padding: Float
+  , xScaleMax: Int
   }
 
-initTimeline : List ( Int, String ) -> TimelineConfig
-initTimeline round =
+initTimeline : List ( Int, String ) -> Int -> TimelineConfig
+initTimeline round xScaleMax =
   let
     height = 
         100 + 30 * List.length round - 1
   in
-  TimelineConfig 375 ( toFloat height ) 30
-
--- Lifted from list-extra
-listGet : Int -> List a -> Maybe a
-listGet index list =
-    if index < 0 then
-        Nothing
-    else
-        List.head <| List.drop index list
+  TimelineConfig 375 ( toFloat height ) 30 xScaleMax
 
 xScale : TimelineConfig -> ContinuousScale Float
 xScale config =
-  Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, 5 )
+  Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, toFloat config.xScaleMax )
 
 yScale : TimelineConfig -> List ( Int, String ) -> BandScale String
 yScale config model =
@@ -253,7 +252,7 @@ yScale config model =
 
 xAxis : TimelineConfig -> SvgCore.Svg msg
 xAxis config =
-  Axis.top [ Axis.tickCount 5 ] <| xScale config
+  Axis.top [ Axis.tickCount 8 ] <| xScale config
 
 yAxis : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
 yAxis config model =
@@ -272,7 +271,9 @@ row config scale ( votes, choice ) =
         ]
         []
     , Svg.text_
-          [ SvgAttributes.class [ "text-blue-500 fill-current text-sm" ] 
+          [ SvgAttributes.class 
+              [ choiceTextColor votes config.xScaleMax
+              , "fill-current text-sm" ]
           , SvgInPx.x <| config.padding / 4
           , SvgInPx.y <| Scale.convert scale choice + ( Scale.bandwidth scale / 2 )
           , SvgAttributes.textAnchor SvgTypes.AnchorStart
@@ -280,6 +281,13 @@ row config scale ( votes, choice ) =
           ]
           [ SvgCore.text <| truncateChoice choice ]
     ]
+    
+choiceTextColor : Int -> Int -> String
+choiceTextColor votes xScaleMax =
+  if votes == xScaleMax then
+    "text-blue-100"
+  else
+    "text-blue-500"
 
 truncateChoice : String -> String
 truncateChoice choice =
