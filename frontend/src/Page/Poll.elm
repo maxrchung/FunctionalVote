@@ -179,6 +179,8 @@ view model =
             |> FeatherIcons.toHtml [] ]
         ]
 
+    , viewChart sampleData
+
     , div [ class "fv-main-code" ] [ text "}" ]
 
     , div
@@ -205,12 +207,12 @@ view model =
 
 w : Float
 w =
-  900
+  640
 
 
 h : Float
 h =
-  450
+  640
 
 
 padding : Float
@@ -236,7 +238,7 @@ dateFormat =
 
 xAxis : List ( Time.Posix, Float ) -> SvgCore.Svg msg
 xAxis model =
-  Axis.bottom [] (Scale.toRenderable dateFormat (xScale model))
+  Axis.bottom [] ( Scale.toRenderable dateFormat ( xScale model ) )
 
 
 yAxis : SvgCore.Svg msg
@@ -272,10 +274,18 @@ viewChart model =
         .column:hover rect { fill: rgb(118, 214, 78); }
         .column:hover text { display: inline; }
       """ ]
-    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate (padding - 1) (h - padding) ] ]
+    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) ( h - padding) ] ]
         [ xAxis model ]
-    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate (padding - 1) padding ] ]
+    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
         [ yAxis ]
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate padding padding ], SvgAttributes.class [ "series" ] ] <|
-        List.map (column (xScale model)) model
+        List.map ( column ( xScale model ) ) model
     ]
+
+sampleData : List ( Time.Posix, Float )
+sampleData = 
+  [ ( Time.millisToPosix 1000, 1 )
+  , ( Time.millisToPosix 2000, 2 )
+  , ( Time.millisToPosix 100, 3 )
+  , ( Time.millisToPosix 10000, 5 )
+  ]
