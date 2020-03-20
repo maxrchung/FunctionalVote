@@ -158,7 +158,7 @@ view model =
         ]
 
     , div 
-        [ class "flex justify-between items-center my-3" ]
+        [ class "flex justify-between items-center mt-2" ]
         [ button 
           [ class "fv-nav-btn"] 
           [ FeatherIcons.arrowLeft
@@ -207,74 +207,53 @@ view model =
 
 w : Float
 w =
-  640
-
+  375
 
 h : Float
 h =
-  640
-
+  375
 
 padding : Float
 padding =
   30
 
-
-xScale : List ( Time.Posix, Float ) -> BandScale Time.Posix
+xScale : List ( Time.Posix, Int ) -> BandScale Time.Posix
 xScale model =
   List.map Tuple.first model
       |> Scale.band { defaultBandConfig | paddingInner = 0.1, paddingOuter = 0.2 } ( 0, w - 2 * padding )
-
 
 yScale : ContinuousScale Float
 yScale =
   Scale.linear ( h - 2 * padding, 0 ) ( 0, 5 )
 
-
 dateFormat : Time.Posix -> String
 dateFormat =
   DateFormat.format [ DateFormat.dayOfMonthFixed, DateFormat.text " ", DateFormat.monthNameAbbreviated ] Time.utc
 
-
-xAxis : List ( Time.Posix, Float ) -> SvgCore.Svg msg
+xAxis : List ( Time.Posix, Int ) -> SvgCore.Svg msg
 xAxis model =
   Axis.bottom [] ( Scale.toRenderable dateFormat ( xScale model ) )
-
 
 yAxis : SvgCore.Svg msg
 yAxis =
   Axis.left [ Axis.tickCount 5 ] yScale
 
-
-column : BandScale Time.Posix -> ( Time.Posix, Float ) -> SvgCore.Svg msg
+column : BandScale Time.Posix -> ( Time.Posix, Int ) -> SvgCore.Svg msg
 column scale ( date, value ) =
-  Svg.g [ SvgAttributes.class [ "column" ] ]
+  Svg.g [ SvgAttributes.class [ "text-blue-900 fill-current" ] ]
       [ Svg.rect
           [ SvgInPx.x <| Scale.convert scale date
-          , SvgInPx.y <| Scale.convert yScale value
+          , SvgInPx.y <| Scale.convert yScale <| toFloat value
           , SvgInPx.width <| Scale.bandwidth scale
-          , SvgInPx.height <| h - Scale.convert yScale value - 2 * padding
+          , SvgInPx.height <| h - Scale.convert yScale ( toFloat value ) - 2 * padding
           ]
           []
-      , Svg.text_
-          [ SvgInPx.x <| Scale.convert (Scale.toRenderable dateFormat scale) date
-          , SvgInPx.y <| Scale.convert yScale value - 5
-          , SvgAttributes.textAnchor SvgTypes.AnchorMiddle
-          ]
-          [ SvgCore.text <| String.fromFloat value ]
       ]
 
-
-viewChart : List ( Time.Posix, Float ) -> SvgCore.Svg msg
+viewChart : List ( Time.Posix, Int ) -> SvgCore.Svg msg
 viewChart model =
   Svg.svg [ SvgAttributes.viewBox 0 0 w h ]
-    [ Svg.style [] [ SvgCore.text """
-        .column rect { fill: rgba(118, 214, 78, 0.8); }
-        .column text { display: none; }
-        .column:hover rect { fill: rgb(118, 214, 78); }
-        .column:hover text { display: inline; }
-      """ ]
-    , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) ( h - padding) ] ]
+    [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) ( h - padding) ] ]
         [ xAxis model ]
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( padding - 1 ) padding ] ]
         [ yAxis ]
@@ -282,10 +261,16 @@ viewChart model =
         List.map ( column ( xScale model ) ) model
     ]
 
-sampleData : List ( Time.Posix, Float )
+sampleData : List ( Time.Posix, Int )
 sampleData = 
   [ ( Time.millisToPosix 1000, 1 )
   , ( Time.millisToPosix 2000, 2 )
   , ( Time.millisToPosix 100, 3 )
-  , ( Time.millisToPosix 10000, 5 )
+  , ( Time.millisToPosix 10001, 1 )
+  , ( Time.millisToPosix 10002, 3 )
+  , ( Time.millisToPosix 10003, 4 )
+  , ( Time.millisToPosix 10004, 2 )
+  , ( Time.millisToPosix 100054, 3 )
+  , ( Time.millisToPosix 10006, 0 )
+  , ( Time.millisToPosix 10007, 4 )
   ]
