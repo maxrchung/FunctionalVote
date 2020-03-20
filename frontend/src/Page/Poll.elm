@@ -209,7 +209,7 @@ w =
 
 h : Float
 h =
-  600
+  370
 
 padding : Float
 padding =
@@ -251,8 +251,15 @@ row scale ( votes, choice ) =
           , SvgAttributes.textAnchor SvgTypes.AnchorStart
           , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
           ]
-          [ SvgCore.text choice ]
+          [ SvgCore.text <| truncateChoice choice ]
     ]
+
+truncateChoice : String -> String
+truncateChoice choice =
+  if String.length choice > 27 then
+    String.slice 0 27 choice  ++ "..."
+  else
+    choice
 
 viewChart : List ( Int, String ) -> SvgCore.Svg msg
 viewChart model =
