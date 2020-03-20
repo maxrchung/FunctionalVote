@@ -93,7 +93,7 @@ pollSample title winner =
   Poll 
     title
     winner 
-    [ 
+    [
       [ ( 12, "highest choice" )
       , ( 10, "higher choice" )
       , ( 8, "lower choice" )
@@ -181,25 +181,30 @@ view model =
         ]
 
     , div 
-        [ class "flex justify-between items-center mt-2" ]
-        [ button 
-          [ class "fv-nav-btn"] 
-          [ FeatherIcons.arrowLeft
-            |> FeatherIcons.withSize 22
-            |> FeatherIcons.withStrokeWidth 2
-            |> FeatherIcons.toHtml [] ]
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , div 
+            [ class "flex justify-between items-center mt-2 w-full" ]
+            [ button 
+              [ class "fv-nav-btn"] 
+              [ FeatherIcons.arrowLeft
+                |> FeatherIcons.withSize 22
+                |> FeatherIcons.withStrokeWidth 2
+                |> FeatherIcons.toHtml [] ]
 
-        , input 
-            [ class "flex-grow mx-2 fv-slider"
-            , type_ "range" ] 
-            []
+            , input 
+                [ class "flex-grow mx-2 fv-slider"
+                , type_ "range" ] 
+                []
 
-        , button 
-          [ class "fv-nav-btn" ] 
-          [ FeatherIcons.arrowRight
-            |> FeatherIcons.withSize 22
-            |> FeatherIcons.withStrokeWidth 2
-            |> FeatherIcons.toHtml [] ]
+            , button 
+              [ class "fv-nav-btn" ] 
+              [ FeatherIcons.arrowRight
+                |> FeatherIcons.withSize 22
+                |> FeatherIcons.withStrokeWidth 2
+                |> FeatherIcons.toHtml [] ]
+            ]
+        , div [ class "w-8" ] []
         ]
 
     , renderTimeline round <| initTimeline round model.xScaleMax
