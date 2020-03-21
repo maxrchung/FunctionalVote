@@ -147,12 +147,6 @@ pollSample title winner =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  let
-      round = 
-        case List.Extra.getAt model.step model.poll.timeline of
-          Nothing -> []
-          Just getAt -> getAt
-  in
   div 
     [] 
     [ div 
@@ -205,51 +199,7 @@ view model =
         , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
         ]
 
-    , div [ class "fv-main-code" ] [ text "," ]
-
-    , div 
-        [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] []
-        , h2 [ class "fv-main-header" ] [ text "Timeline" ]
-        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
-        ]
-
-    , div 
-        [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] []
-        , div 
-            [ class "flex justify-between items-center mt-2 w-full" ]
-            [ button 
-              [ class "fv-nav-btn" 
-              , onClick DecrementStep
-              ] 
-              [ FeatherIcons.arrowLeft
-                |> FeatherIcons.withSize 22
-                |> FeatherIcons.withStrokeWidth 2
-                |> FeatherIcons.toHtml [] ]
-
-            , input 
-                [ class "flex-grow mx-2 fv-slider"
-                , type_ "range"
-                , onInput ChangeStep
-                , Html.Attributes.max <| String.fromInt <| List.length model.poll.timeline - 1
-                , value <| String.fromInt model.step
-                ]
-                []
-
-            , button 
-              [ class "fv-nav-btn" 
-              , onClick IncrementStep
-              ] 
-              [ FeatherIcons.arrowRight
-                |> FeatherIcons.withSize 22
-                |> FeatherIcons.withStrokeWidth 2
-                |> FeatherIcons.toHtml [] ]
-            ]
-        , div [ class "w-8" ] []
-        ]
-
-    , renderTimeline ( initTimeline round model.xScaleMax ) round
+    , renderTimeline model
 
     , div [ class "fv-main-code" ] [ text "}" ]
 
@@ -343,8 +293,66 @@ truncateChoice choice =
   else
     choice
 
-renderTimeline : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
-renderTimeline config round =
+renderTimeline : Model -> Html Msg
+renderTimeline model =
+  let
+      round = 
+        case List.Extra.getAt model.step model.poll.timeline of
+          Nothing -> []
+          Just getAt -> getAt
+  in
+    div []
+      ( if List.isEmpty model.poll.timeline then
+          []
+        else
+          [ div [ class "fv-main-code" ] [ text "," ]
+          , div 
+              [ class "flex justify-between items-center" ]
+              [ div [ class "w-8" ] []
+              , h2 [ class "fv-main-header" ] [ text "Timeline" ]
+              , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+              ]
+
+          , div 
+              [ class "flex justify-between items-center" ]
+              [ div [ class "w-8" ] []
+              , div 
+                [ class "flex justify-between items-center mt-2 w-full" ]
+                [ button 
+                  [ class "fv-nav-btn" 
+                  , onClick DecrementStep
+                  ] 
+                  [ FeatherIcons.arrowLeft
+                    |> FeatherIcons.withSize 22
+                    |> FeatherIcons.withStrokeWidth 2
+                    |> FeatherIcons.toHtml [] ]
+
+                , input 
+                    [ class "flex-grow mx-2 fv-slider"
+                    , type_ "range"
+                    , onInput ChangeStep
+                    , Html.Attributes.max <| String.fromInt <| List.length model.poll.timeline - 1
+                    , value <| String.fromInt model.step
+                    ]
+                    []
+
+                , button 
+                  [ class "fv-nav-btn" 
+                  , onClick IncrementStep
+                  ] 
+                  [ FeatherIcons.arrowRight
+                    |> FeatherIcons.withSize 22
+                    |> FeatherIcons.withStrokeWidth 2
+                    |> FeatherIcons.toHtml [] ]
+                ]
+              , div [ class "w-8" ] []
+              ]
+          , renderChart ( initTimeline round model.xScaleMax ) round
+          ]
+      )
+
+renderChart : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
+renderChart config round =
   Svg.svg
     [ SvgAttributes.class [ "fv-timeline" ]
     , SvgAttributes.viewBox 0 0 config.width ( config.height - config.padding / 2 )
