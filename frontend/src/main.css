@@ -3,9 +3,21 @@
 @tailwind components;
 /* purgecss end ignore */
 
+html {
+  /* Firefox scrollbar */
+  scrollbar-color: #ED8936 #7B341E;
+}
+
 /* body classes are not read properly when using dev server */
 body {
-  @apply bg-gray-900;
+  @apply bg-gray-900 overflow-y-scroll h-screen;
+}
+
+::-webkit-scrollbar {
+  @apply w-4 bg-orange-900;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-orange-500 rounded-full;
 }
 
 .fv-nav-btn {
@@ -91,6 +103,52 @@ a {
 }
 a:hover {
   @apply text-blue-100;
+}
+
+.fv-slider {
+  @apply appearance-none rounded-full bg-blue-900 h-2 shadow-lg cursor-pointer outline-none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.fv-slider::-webkit-slider-thumb {
+  @apply appearance-none bg-blue-700 border-0 h-6 w-6 rounded-full shadow-lg;
+}
+.fv-slider::-webkit-slider-thumb:hover {
+  @apply bg-blue-500;
+}
+.fv-slider::-webkit-slider-thumb:focus {
+  @apply bg-blue-500;
+}
+.fv-slider::-moz-range-thumb {
+  @apply bg-blue-700 border-0 w-6 h-6 rounded-full shadow-lg;
+}
+.fv-slider::-moz-range-thumb:hover {
+  @apply bg-blue-500;
+}
+.fv-slider::-moz-range-thumb:focus {
+  @apply bg-blue-500;
+}
+
+.fv-timeline .domain {
+  stroke: #ED8936;
+}
+.fv-timeline .tick {
+  stroke: #ED8936;
+}
+.fv-timeline .tick line {
+  stroke: #ED8936;
+}
+.fv-timeline .tick text {
+  @apply font-sans;
+  font-weight: none;
+}
+.fv-timeline .y-axis text {
+  display: none;
 }
 
 @tailwind utilities;
