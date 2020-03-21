@@ -128,18 +128,18 @@ pollSample title winner =
     title
     winner 
     [
-      [ ( 12, "highest choice" )
-      , ( 10, "higher choice" )
-      , ( 8, "lower choice" )
-      , ( 3, "lowest choice" )
-      ]
-    , [ ( 12, "highest choice" )
-      , ( 12, "higher choice" )
-      , ( 9, "lower choice" )
-      ]
-    , [ ( 17, "higher choice" )
-      , ( 16, "highest choice" )
-      ]
+    --   [ ( 12, "highest choice" )
+    --   , ( 10, "higher choice" )
+    --   , ( 8, "lower choice" )
+    --   , ( 3, "lowest choice" )
+    --   ]
+    -- , [ ( 12, "highest choice" )
+    --   , ( 12, "higher choice" )
+    --   , ( 9, "lower choice" )
+    --   ]
+    -- , [ ( 17, "higher choice" )
+    --   , ( 16, "highest choice" )
+    --   ]
     ]
 
 
