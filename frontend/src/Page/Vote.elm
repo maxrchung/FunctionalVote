@@ -172,12 +172,12 @@ submitVoteJson model =
   in
   Encode.object
     [ ( "poll_id", Encode.string model.pollId )
-    , ( "choices", Encode.dict identity Encode.string choices )
+    , ( "choices", Encode.dict identity Encode.int choices )
     ]
 
-buildSubmissionChoices : Int -> String -> Dict.Dict String String -> Dict.Dict String String
+buildSubmissionChoices : Int -> String -> Dict.Dict String Int -> Dict.Dict String Int
 buildSubmissionChoices rank choice choices =
-  Dict.insert choice ( String.fromInt rank ) choices
+  Dict.insert choice rank choices
 
 
 
