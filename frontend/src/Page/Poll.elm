@@ -32,7 +32,7 @@ type alias Model =
 type alias Poll =
   { title: String
   , winner: String
-  , timeline: List ( List ( String, Int ) )
+  , tallies: List ( List ( String, Int ) )
   }
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
@@ -58,7 +58,7 @@ update msg model =
         Ok newPoll ->
           let
               lastRound = 
-                case List.Extra.last newPoll.timeline of
+                case List.Extra.last newPoll.tallies of
                    Nothing -> []
                    Just last -> last
               newXScaleMax = 
@@ -68,7 +68,7 @@ update msg model =
           in
           ( { model 
             | poll = newPoll
-            , step = List.length newPoll.timeline - 1 
+            , step = List.length newPoll.tallies - 1 
             , xScaleMax = newXScaleMax
             , isLoading = False
             }
@@ -94,7 +94,7 @@ update msg model =
     IncrementStep ->
       let
           newStep =
-            if model.step == List.length model.poll.timeline - 1 then
+            if model.step == List.length model.poll.tallies - 1 then
               model.step
             else
               model.step + 1
@@ -121,9 +121,10 @@ getPollRequest model =
 
 getPollDecoder : Decode.Decoder Poll
 getPollDecoder =
-  Decode.map2 pollSample
+  Decode.map3 Poll
     ( Decode.at ["data", "title" ] Decode.string )
     ( Decode.at ["data", "winner"] Decode.string )
+    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.int )
 
 pollSample : String -> String -> Poll
 pollSample title winner =
@@ -301,61 +302,61 @@ truncateChoice choice =
 
 renderTimeline : Model -> Html Msg
 renderTimeline model =
-  let
-      round = 
-        case List.Extra.getAt model.step model.poll.timeline of
-          Nothing -> []
-          Just getAt -> getAt
-  in
-    div []
-      ( if List.isEmpty model.poll.timeline then
-          []
-        else
-          [ div [ class "fv-main-code" ] [ text "," ]
-          , div 
-              [ class "flex justify-between items-center" ]
-              [ div [ class "w-8" ] []
-              , h2 [ class "fv-main-header" ] [ text "Timeline" ]
-              , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+  div []
+    ( if List.isEmpty model.poll.tallies then
+        []
+      else
+        let
+          round = 
+            case List.Extra.getAt model.step model.poll.tallies of
+              Nothing -> []
+              Just getAt -> getAt
+        in
+        [ div [ class "fv-main-code" ] [ text "," ]
+        , div 
+            [ class "flex justify-between items-center" ]
+            [ div [ class "w-8" ] []
+            , h2 [ class "fv-main-header" ] [ text "Timeline" ]
+            , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+            ]
+
+        , div 
+            [ class "flex justify-between items-center" ]
+            [ div [ class "w-8" ] []
+            , div 
+              [ class "flex justify-between items-center mt-2 w-full" ]
+              [ button 
+                [ class "fv-nav-btn" 
+                , onClick DecrementStep
+                ] 
+                [ FeatherIcons.arrowLeft
+                  |> FeatherIcons.withSize 22
+                  |> FeatherIcons.withStrokeWidth 2
+                  |> FeatherIcons.toHtml [] ]
+
+              , input 
+                  [ class "flex-grow mx-2 fv-slider"
+                  , type_ "range"
+                  , onInput ChangeStep
+                  , Html.Attributes.max <| String.fromInt <| List.length model.poll.tallies - 1
+                  , value <| String.fromInt model.step
+                  ]
+                  []
+
+              , button 
+                [ class "fv-nav-btn" 
+                , onClick IncrementStep
+                ] 
+                [ FeatherIcons.arrowRight
+                  |> FeatherIcons.withSize 22
+                  |> FeatherIcons.withStrokeWidth 2
+                  |> FeatherIcons.toHtml [] ]
               ]
-
-          , div 
-              [ class "flex justify-between items-center" ]
-              [ div [ class "w-8" ] []
-              , div 
-                [ class "flex justify-between items-center mt-2 w-full" ]
-                [ button 
-                  [ class "fv-nav-btn" 
-                  , onClick DecrementStep
-                  ] 
-                  [ FeatherIcons.arrowLeft
-                    |> FeatherIcons.withSize 22
-                    |> FeatherIcons.withStrokeWidth 2
-                    |> FeatherIcons.toHtml [] ]
-
-                , input 
-                    [ class "flex-grow mx-2 fv-slider"
-                    , type_ "range"
-                    , onInput ChangeStep
-                    , Html.Attributes.max <| String.fromInt <| List.length model.poll.timeline - 1
-                    , value <| String.fromInt model.step
-                    ]
-                    []
-
-                , button 
-                  [ class "fv-nav-btn" 
-                  , onClick IncrementStep
-                  ] 
-                  [ FeatherIcons.arrowRight
-                    |> FeatherIcons.withSize 22
-                    |> FeatherIcons.withStrokeWidth 2
-                    |> FeatherIcons.toHtml [] ]
-                ]
-              , div [ class "w-8" ] []
-              ]
-          , renderChart ( initTimeline round model.xScaleMax ) round
-          ]
-      )
+            , div [ class "w-8" ] []
+            ]
+        , renderChart ( initTimeline round model.xScaleMax ) round
+        ]
+    )
 
 renderChart : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg msg
 renderChart config round =
