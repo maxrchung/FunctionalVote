@@ -74,7 +74,7 @@ initPage url key apiAddress =
           in ( VotePage model, Cmd.map VoteMsg cmd )
 
         PollRoute pollId ->
-          let ( model, cmd ) = Poll.init pollId apiAddress
+          let ( model, cmd ) = Poll.init key pollId apiAddress
           in ( PollPage model, Cmd.map PollMsg cmd )
 
         AboutRoute ->

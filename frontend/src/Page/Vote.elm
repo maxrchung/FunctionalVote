@@ -60,7 +60,7 @@ update msg model =
           in ( { model | poll = newPoll }, Cmd.none )
 
         Err _ ->
-          ( model, Cmd.none )
+          ( model, Navigation.pushUrl model.key "/error" )
 
     ChangeRank choice rank ->
       let
