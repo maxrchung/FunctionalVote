@@ -8,16 +8,19 @@ html {
   scrollbar-color: #ED8936 #7B341E;
 }
 
-/* body classes are not read properly when using dev server */
-body {
-  @apply bg-gray-900 overflow-y-scroll h-screen;
-}
-
 ::-webkit-scrollbar {
   @apply w-4 bg-orange-900;
 }
+
+/* PurgeCSS tries to remove ::-webkit-scrollbar-thumb, which is a little weird because ::-webkit-scrollbar is still kept */
+/* purgecss ignore */
 ::-webkit-scrollbar-thumb {
   @apply bg-orange-500 rounded-full;
+}
+
+/* body classes are not read properly when using dev server */
+body {
+  @apply bg-gray-900 overflow-y-scroll h-screen;
 }
 
 .fv-nav-btn {

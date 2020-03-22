@@ -267,7 +267,7 @@ module.exports = {
                   flexbox: 'no-2009'
                 }),
                 purgecss({
-                  content: ['./src/**/*.elm'],
+                  content: ['./src/**/*.elm', './src/main.css'],
                   defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || []
                 })
               ]
