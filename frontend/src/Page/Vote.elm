@@ -192,7 +192,7 @@ view model =
   div []
     [ div 
         [ class "fv-main-text" ]
-        [ text "-- Submit a vote by selecting ranks to the left of each choice." ]
+        [ text "-- Submit a vote by selecting ranks to the left of each choice. Smaller numbers have higher preference." ]
 
     , div 
         [ class "flex justify-between" ]
