@@ -20,7 +20,8 @@ import TypedSvg.Types as SvgTypes
 
 -- MODEL
 type alias Model = 
-  { pollId: String
+  { key: Navigation.Key
+  , pollId: String
   , poll: Poll
   , apiAddress: String
   , step: Int
@@ -33,9 +34,9 @@ type alias Poll =
   , timeline: List ( List ( Int, String ) )
   }
 
-init : String -> String -> ( Model, Cmd Msg )
-init pollId apiAddress = 
-  let model = Model pollId ( Poll "" "" [] ) apiAddress 0 0
+init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
+init key pollId apiAddress = 
+  let model = Model key pollId ( Poll "" "" [] ) apiAddress 0 0
   in ( model, getPollRequest model )
 
 
@@ -73,7 +74,7 @@ update msg model =
           )
 
         Err _ ->
-          ( model, Cmd.none )
+          ( model, Navigation.pushUrl model.key "/error" )
 
     GoToVote ->
       ( model, Navigation.load ( "/vote/" ++ model.pollId ) )
