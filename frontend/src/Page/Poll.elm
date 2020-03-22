@@ -26,6 +26,7 @@ type alias Model =
   , apiAddress: String
   , step: Int
   , xScaleMax: Int
+  , isLoading: Bool
   }
 
 type alias Poll =
@@ -36,7 +37,7 @@ type alias Poll =
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
 init key pollId apiAddress = 
-  let model = Model key pollId ( Poll "" "" [] ) apiAddress 0 0
+  let model = Model key pollId ( Poll "" "" [] ) apiAddress 0 0 True
   in ( model, getPollRequest model )
 
 
@@ -69,6 +70,7 @@ update msg model =
             | poll = newPoll
             , step = List.length newPoll.timeline - 1 
             , xScaleMax = newXScaleMax
+            , isLoading = False
             }
           , Cmd.none 
           )
@@ -148,81 +150,84 @@ pollSample title winner =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  div 
-    [] 
-    [ div 
-        [ class "fv-main-text" ]
-        [ text "-- View the poll results and navigate the timeline to see how results were calculated." ]
+  if model.isLoading then
+    div [] []
+  else
+    div 
+      [] 
+      [ div 
+          [ class "fv-main-text" ]
+          [ text "-- View the poll results and navigate the timeline to see how results were calculated." ]
 
-    , div 
-        [ class "flex justify-between" ]
-        [ h1 [ class "fv-main-code" ] [ text "results" ]
-        , div [ class "fv-main-code" ] [ text "={" ]
-        ]
-
-    , div 
-        [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] []
-        , h2 [ class "fv-main-header" ] [ text "Question" ]
-        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
-        ]
-
-    , div 
-        [ class "flex justify-between items-center" ]
-        [ div [ class "fv-main-code w-8"] [ text "\"" ]
-        , div 
-          [ class "flex justify-center w-full"]
-          [ h1 
-            [ class "fv-main-text text-blue-100 text-left" ] 
-            [ text model.poll.title ]
+      , div 
+          [ class "flex justify-between" ]
+          [ h1 [ class "fv-main-code" ] [ text "results" ]
+          , div [ class "fv-main-code" ] [ text "={" ]
           ]
-        , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
-        ]
 
-    , div [ class "fv-main-code" ] [ text "," ]
-
-    , div 
-        [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] []
-        , h2 [ class "fv-main-header" ] [ text "Winner" ]
-        , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
-        ]
-
-    , div 
-        [ class "flex justify-between items-center" ]
-        [ div [ class "fv-main-code w-8"] [ text "\"" ]
-        , div 
-          [ class "flex justify-center w-full"]
-          [ h1 
-            [ class "fv-main-text text-blue-100 text-left" ] 
-            [ text model.poll.winner ]
+      , div 
+          [ class "flex justify-between items-center" ]
+          [ div [ class "w-8" ] []
+          , h2 [ class "fv-main-header" ] [ text "Question" ]
+          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
           ]
-        , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
-        ]
 
-    , renderTimeline model
+      , div 
+          [ class "flex justify-between items-center" ]
+          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          , div 
+            [ class "flex justify-center w-full"]
+            [ h1 
+              [ class "fv-main-text text-blue-100 text-left" ] 
+              [ text model.poll.title ]
+            ]
+          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          ]
 
-    , div [ class "fv-main-code" ] [ text "}" ]
+      , div [ class "fv-main-code" ] [ text "," ]
 
-    , div
-        [ class "fv-main-code text-center w-full my-3" ] 
-        [ text "--" ]
-    
-    , div
-        [ class "fv-main-text mb-2" ]
-        [ text "-- Submit a new vote into the poll." ]
+      , div 
+          [ class "flex justify-between items-center" ]
+          [ div [ class "w-8" ] []
+          , h2 [ class "fv-main-header" ] [ text "Winner" ]
+          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          ]
+
+      , div 
+          [ class "flex justify-between items-center" ]
+          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          , div 
+            [ class "flex justify-center w-full"]
+            [ h1 
+              [ class "fv-main-text text-blue-100 text-left" ] 
+              [ text model.poll.winner ]
+            ]
+          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , renderTimeline model
+
+      , div [ class "fv-main-code" ] [ text "}" ]
+
+      , div
+          [ class "fv-main-code text-center w-full my-3" ] 
+          [ text "--" ]
       
-    , div 
-        [ class "flex justify-between" ]
-        [ div [ class "w-8" ] [ text "" ]
-        , button 
-          [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
-          , onClick GoToVote
-          ] 
-          [ text "Submit Vote" ]
-        , div [ class "w-8 text-right" ] [ text "" ]
-        ]
-    ]
+      , div
+          [ class "fv-main-text mb-2" ]
+          [ text "-- Submit a new vote into the poll." ]
+        
+      , div 
+          [ class "flex justify-between" ]
+          [ div [ class "w-8" ] [ text "" ]
+          , button 
+            [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+            , onClick GoToVote
+            ] 
+            [ text "Submit Vote" ]
+          , div [ class "w-8 text-right" ] [ text "" ]
+          ]
+      ]
 
 type alias TimelineConfig = 
   { width: Float
