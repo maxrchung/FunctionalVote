@@ -32,7 +32,7 @@ type alias Model =
 type alias Poll =
   { title: String
   , winner: String
-  , timeline: List ( List ( Int, String ) )
+  , timeline: List ( List ( String, Int ) )
   }
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
@@ -64,7 +64,7 @@ update msg model =
               newXScaleMax = 
                 case List.head lastRound of
                   Nothing -> 0
-                  Just head -> Tuple.first head
+                  Just head -> Tuple.second head
           in
           ( { model 
             | poll = newPoll
@@ -131,18 +131,18 @@ pollSample title winner =
     title
     winner 
     [
-    --   [ ( 12, "highest choice" )
-    --   , ( 10, "higher choice" )
-    --   , ( 8, "lower choice" )
-    --   , ( 3, "lowest choice" )
-    --   ]
-    -- , [ ( 12, "highest choice" )
-    --   , ( 12, "higher choice" )
-    --   , ( 9, "lower choice" )
-    --   ]
-    -- , [ ( 17, "higher choice" )
-    --   , ( 16, "highest choice" )
-    --   ]
+      [ ( "highest choice", 12 )
+      , ( "higher choice", 10 )
+      , ( "lower choice", 8 )
+      , ( "lowest choice", 3 )
+      ]
+    , [ ( "highest choice", 12 )
+      , ( "higher choice", 12 )
+      , ( "lower choice", 9 )
+      ]
+    , [ ( "higher choice", 17 )
+      , ( "highest choice", 16 )
+      ]
     ]
 
 
@@ -236,7 +236,7 @@ type alias TimelineConfig =
   , xScaleMax: Int
   }
 
-initTimeline : List ( Int, String ) -> Int -> TimelineConfig
+initTimeline : List ( String, Int ) -> Int -> TimelineConfig
 initTimeline round xScaleMax =
   let
     height = 
@@ -248,22 +248,22 @@ xScale : TimelineConfig -> ContinuousScale Float
 xScale config =
   Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, toFloat config.xScaleMax )
 
-yScale : TimelineConfig -> List ( Int, String ) -> BandScale String
+yScale : TimelineConfig -> List ( String, Int ) -> BandScale String
 yScale config round =
-  List.map Tuple.second round
+  List.map Tuple.first round
     |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.height - 2 * config.padding )
 
 xAxis : TimelineConfig -> SvgCore.Svg msg
 xAxis config =
   Axis.top [ Axis.tickCount 8 ] <| xScale config
 
-yAxis : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
+yAxis : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg msg
 yAxis config round =
   -- List.map so that empty string is shown as ticks
   Axis.left [] <| Scale.toRenderable identity <| yScale config round
 
-row : TimelineConfig -> BandScale String -> ( Int, String ) -> SvgCore.Svg msg
-row config scale ( votes, choice ) =
+row : TimelineConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg msg
+row config scale ( choice, votes ) =
   Svg.g
     []
     [ Svg.rect
@@ -357,7 +357,7 @@ renderTimeline model =
           ]
       )
 
-renderChart : TimelineConfig -> List ( Int, String ) -> SvgCore.Svg msg
+renderChart : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg msg
 renderChart config round =
   Svg.svg
     [ SvgAttributes.class [ "fv-timeline" ]
