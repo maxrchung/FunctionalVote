@@ -38,7 +38,7 @@ view =
       [ text "Ranked-choice voting is more fair than traditional voting because preferential ranking is much more flexible than a single vote cast in stone. Voters are incentivized to vote for their personal favorite options rather than try and vote for a popular choice that they think will win." ]
 
     , div [ class "fv-main-text mb-6" ]
-      [ text "There are many resources online that explain ranked-choice in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to it:" ]
+      [ text "There are many resources online that explain ranked-choice in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to the concept:" ]
 
     , div [ class "embed-responsive embed-responsive-16by9"]
       [ iframe 
