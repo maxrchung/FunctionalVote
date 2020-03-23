@@ -41,21 +41,6 @@ init key pollId apiAddress =
   let model = Model key pollId ( Poll "" "" [] ) apiAddress 0 0 True
   in ( model, getPollRequest model )
 
-reorderTallies : List ( List ( String, Int ) ) -> List ( List ( String, Int ) )
-reorderTallies tallies =
-  List.map reorderRounds tallies
-
-reorderRounds : List ( String, Int ) -> List ( String, Int )
-reorderRounds round =
-  List.sortWith compareEntries round
-
-compareEntries : ( String, Int ) -> ( String, Int ) -> Order
-compareEntries ( _, a ) ( _, b ) =
-  case compare a b of
-      LT -> GT
-      EQ -> EQ
-      GT -> LT
-
 
 
 -- UPDATE
@@ -71,8 +56,9 @@ update msg model =
   case msg of
     GetPollResponse result ->
       case result of
-        Ok newPoll ->
+        Ok response ->
           let
+            newPoll = { response | tallies = reorderTallies response.tallies}
             lastRound = 
               case List.Extra.last newPoll.tallies of
                   Nothing -> []
@@ -141,6 +127,21 @@ getPollDecoder =
     ( Decode.at ["data", "title" ] Decode.string )
     ( Decode.at ["data", "winner"] Decode.string )
     ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.int )
+
+reorderTallies : List ( List ( String, Int ) ) -> List ( List ( String, Int ) )
+reorderTallies tallies =
+  List.map reorderRounds tallies
+
+reorderRounds : List ( String, Int ) -> List ( String, Int )
+reorderRounds round =
+  List.sortWith compareEntries round
+
+compareEntries : ( String, Int ) -> ( String, Int ) -> Order
+compareEntries ( _, a ) ( _, b ) =
+  case compare a b of
+      LT -> GT
+      EQ -> EQ
+      GT -> LT
 
 
 
