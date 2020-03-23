@@ -10,6 +10,7 @@ import Http
 import Json.Decode as Decode
 import List.Extra
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
+import Shared
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
 import TypedSvg.Attributes.InPx as SvgInPx
@@ -309,10 +310,7 @@ renderTimeline model =
                 [ class "fv-nav-btn" 
                 , onClick DecrementStep
                 ] 
-                [ FeatherIcons.arrowLeft
-                  |> FeatherIcons.withSize 22
-                  |> FeatherIcons.withStrokeWidth 2
-                  |> FeatherIcons.toHtml [] ]
+                [ Shared.renderIcon FeatherIcons.arrowLeft ]
 
               , input 
                   [ class "flex-grow mx-2 fv-slider"
@@ -327,10 +325,7 @@ renderTimeline model =
                 [ class "fv-nav-btn" 
                 , onClick IncrementStep
                 ] 
-                [ FeatherIcons.arrowRight
-                  |> FeatherIcons.withSize 22
-                  |> FeatherIcons.withStrokeWidth 2
-                  |> FeatherIcons.toHtml [] ]
+                [ Shared.renderIcon FeatherIcons.arrowRight ]
               ]
             , div [ class "w-8" ] []
             ]
