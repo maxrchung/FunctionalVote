@@ -80,7 +80,6 @@ defmodule FunctionalVote.Polls do
             where: r.poll_id == ^poll_id,
             select: {r.round, r.choice, r.votes}
     data = Repo.all(query)
-    IO.inspect(data)
     _tallies_by_count = Enum.group_by(data,
                                      fn {round, _, _} -> round end,
                                      fn {_, choice, votes} -> {choice, votes} end)
@@ -230,7 +229,7 @@ defmodule FunctionalVote.Polls do
     votes = Votes.get_votes(poll_id)
     if (map_size(votes) == 0) do
       IO.puts("[PollCtx] No votes in poll, returning empty tallies and winner")
-      calculated = %{tallies: nil, winner: nil}
+      calculated = %{tallies: [], winner: ""}
       Map.merge(poll, calculated) # RETURN ENDPOINT
     else
       {irv_tallies, winner} = instant_runoff(votes, poll_id)
