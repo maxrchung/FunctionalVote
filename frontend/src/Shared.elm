@@ -13,7 +13,7 @@ renderShareLinks url description =
         [ text "--" ]
 
     , div
-        [ class "fv-main-text mb-2" ]
+        [ class "fv-text mb-2" ]
         [ text description ]
 
     , div 
@@ -30,7 +30,10 @@ renderShareLinks url description =
 
                 , div
                     [ class "flex-grow bg-orange-900" ]
-                    [ text "asdf" ]
+                    [ div
+                        [ class "" ]
+                        []
+                    ]
 
                 , div 
                     [ class "w-8 text-orange-500" ] 

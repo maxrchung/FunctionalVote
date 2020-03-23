@@ -138,72 +138,72 @@ view model =
     div 
       [] 
       [ div 
-          [ class "fv-main-text" ]
+          [ class "fv-text" ]
           [ text "-- View the poll results and navigate the timeline to see how results were calculated." ]
 
       , div 
           [ class "flex justify-between" ]
-          [ h1 [ class "fv-main-code" ] [ text "results" ]
-          , div [ class "fv-main-code" ] [ text "={" ]
+          [ h1 [ class "fv-code" ] [ text "results" ]
+          , div [ class "fv-code" ] [ text "={" ]
           ]
 
       , div 
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
-          , h2 [ class "fv-main-header" ] [ text "Question" ]
-          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          , h2 [ class "fv-header" ] [ text "Question" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
       , div 
           [ class "flex justify-between items-center" ]
-          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          [ div [ class "fv-code w-8"] [ text "\"" ]
           , div 
             [ class "flex justify-center w-full"]
             [ h1 
-              [ class "fv-main-text text-blue-100 text-left" ] 
+              [ class "fv-text text-blue-100 text-left" ] 
               [ text model.poll.title ]
             ]
-          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "fv-main-code" ] [ text "," ]
+      , div [ class "fv-code" ] [ text "," ]
 
       , div 
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
-          , h2 [ class "fv-main-header" ] [ text "Winner" ]
-          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          , h2 [ class "fv-header" ] [ text "Winner" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
       , div 
           [ class "flex justify-between items-center" ]
-          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          [ div [ class "fv-code w-8"] [ text "\"" ]
           , div 
             [ class "flex justify-center w-full"]
             [ h1 
-              [ class "fv-main-text text-blue-100 text-left" ] 
+              [ class "fv-text text-blue-100 text-left" ] 
               [ text model.poll.winner ]
             ]
-          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , renderTimeline model
 
-      , div [ class "fv-main-code" ] [ text "}" ]
+      , div [ class "fv-code" ] [ text "}" ]
 
       , div
           [ class "fv-break" ] 
           [ text "--" ]
       
       , div
-          [ class "fv-main-text mb-2" ]
+          [ class "fv-text mb-2" ]
           [ text "-- Submit a new vote into the poll." ]
         
       , div 
           [ class "flex justify-between" ]
           [ div [ class "w-8" ] [ text "" ]
           , button 
-            [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+            [ class "fv-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
             , onClick GoToVote
             ] 
             [ text "Submit Vote" ]
@@ -293,12 +293,12 @@ renderTimeline model =
               Nothing -> []
               Just getAt -> getAt
         in
-        [ div [ class "fv-main-code" ] [ text "," ]
+        [ div [ class "fv-code" ] [ text "," ]
         , div 
             [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
-            , h2 [ class "fv-main-header" ] [ text "Timeline" ]
-            , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+            , h2 [ class "fv-header" ] [ text "Timeline" ]
+            , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
         , div 

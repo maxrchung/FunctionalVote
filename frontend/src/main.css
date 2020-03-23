@@ -44,47 +44,47 @@ body {
   @apply flex items-center h-6 opacity-25 font-mono text-sm text-orange-500;
 }
 
-.fv-main-header {
+.fv-header {
   @apply font-sans font-bold text-2xl text-blue-500 text-center;
 }
 
-.fv-main-text {
+.fv-text {
   @apply font-sans text-orange-500 leading-relaxed;
 }
-.fv-main-text-error {
+.fv-text-error {
   @apply text-red-500;
 }
 
-.fv-main-code {
+.fv-code {
   @apply font-mono text-sm text-orange-500 opacity-25;
 }
 
-.fv-main-input {
+.fv-input {
   @apply bg-gray-900 w-full p-2 rounded shadow-md border-2 border-blue-700 outline-none font-sans text-blue-100;
 }
-.fv-main-input:focus {
+.fv-input:focus {
   @apply bg-blue-900 shadow-lg;
 }
-.fv-main-input:hover {
+.fv-input:hover {
   @apply bg-blue-900;
 }
-.fv-main-input::placeholder {
+.fv-input::placeholder {
   @apply text-blue-100;
 }
-.fv-main-input-error {
+.fv-input-error {
   @apply border-red-700;
 }
-.fv-main-input-error:focus {
+.fv-input-error:focus {
   @apply bg-red-900;
 }
-.fv-main-input-error:hover {
+.fv-input-error:hover {
   @apply bg-red-900;
 }
-.fv-main-input-error::placeholder {
+.fv-input-error::placeholder {
   @apply text-red-100;
 }
 
-.fv-main-btn {
+.fv-btn {
   @apply w-full py-2 bg-orange-500 rounded-full shadow-lg font-sans font-bold text-2xl text-orange-100;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
@@ -94,10 +94,10 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
-.fv-main-btn:focus {
+.fv-btn:focus {
   @apply outline-none;
 }
-.fv-main-btn:hover {
+.fv-btn:hover {
   @apply bg-orange-700 shadow-md;
 }
 
@@ -155,7 +155,7 @@ a:hover {
 }
 
 .fv-break {
-  @apply fv-main-code text-center w-full my-3;
+  @apply fv-code text-center w-full my-3;
 }
 
 @tailwind utilities;
