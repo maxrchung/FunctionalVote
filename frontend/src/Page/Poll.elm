@@ -203,7 +203,7 @@ view model =
           , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , renderTimeline model
+      , renderTimeline model.step model.xScaleMax model.poll.tallies
 
       , div [ class "fv-code" ] [ text "}" ]
 
@@ -257,16 +257,16 @@ yScale config round =
   List.map Tuple.first round
     |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.height - 2 * config.padding )
 
-xAxis : TimelineConfig -> SvgCore.Svg msg
+xAxis : TimelineConfig -> SvgCore.Svg a
 xAxis config =
   Axis.top [ Axis.tickCount 8 ] <| xScale config
 
-yAxis : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg msg
+yAxis : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg a
 yAxis config round =
   -- List.map so that empty string is shown as ticks
   Axis.left [] <| Scale.toRenderable identity <| yScale config round
 
-row : TimelineConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg msg
+row : TimelineConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg a
 row config scale ( choice, votes ) =
   Svg.g
     []
@@ -303,15 +303,15 @@ truncateChoice choice =
   else
     choice
 
-renderTimeline : Model -> Html Msg
-renderTimeline model =
+renderTimeline : Int -> Int -> List ( List ( String, Int ) ) -> Html Msg
+renderTimeline step xScaleMax tallies =
   div []
-    ( if List.isEmpty model.poll.tallies then
+    ( if List.isEmpty tallies then
         []
       else
         let
           round = 
-            case List.Extra.getAt model.step model.poll.tallies of
+            case List.Extra.getAt step tallies of
               Nothing -> []
               Just getAt -> getAt
         in
@@ -323,39 +323,47 @@ renderTimeline model =
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div 
-            [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
-            , div 
-              [ class "flex justify-between items-center mt-2 w-full" ]
-              [ button 
-                [ class "fv-nav-btn" 
-                , onClick DecrementStep
-                ] 
-                [ Shared.renderIcon FeatherIcons.arrowLeft ]
-
-              , input 
-                  [ class "flex-grow mx-2 fv-slider"
-                  , type_ "range"
-                  , onInput ChangeStep
-                  , Html.Attributes.max <| String.fromInt <| List.length model.poll.tallies - 1
-                  , value <| String.fromInt model.step
-                  ]
-                  []
-
-              , button 
-                [ class "fv-nav-btn" 
-                , onClick IncrementStep
-                ] 
-                [ Shared.renderIcon FeatherIcons.arrowRight ]
-              ]
-            , div [ class "w-8" ] []
-            ]
-        , renderChart ( initTimeline round model.xScaleMax ) round
+        , renderSlider step tallies
+        , renderChart ( initTimeline round xScaleMax ) round
         ]
     )
 
-renderChart : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg msg
+renderSlider : Int -> List ( List ( String, Int ) ) -> Html Msg
+renderSlider step tallies =
+  -- Only show slider if there's at least 2 elements
+  if List.length ( List.take 2 tallies ) < 2 then
+    div [] []
+  else
+    div 
+      [ class "flex justify-between items-center" ]
+      [ div [ class "w-8" ] []
+      , div 
+        [ class "flex justify-between items-center mt-2 w-full" ]
+        [ button 
+          [ class "fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900" 
+          , onClick DecrementStep
+          ]
+          [ Shared.renderIcon FeatherIcons.arrowLeft ]
+
+        , input 
+            [ class "flex-grow mx-2 fv-slider"
+            , type_ "range"
+            , onInput ChangeStep
+            , Html.Attributes.max <| String.fromInt <| List.length tallies - 1
+            , value <| String.fromInt step
+            ]
+            []
+
+        , button 
+            [ class "fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900" 
+            , onClick IncrementStep
+            ]
+            [ Shared.renderIcon FeatherIcons.arrowRight ]
+        ]
+      , div [ class "w-8" ] []
+      ]
+
+renderChart : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg a
 renderChart config round =
   Svg.svg
     [ SvgAttributes.class [ "fv-timeline" ]
