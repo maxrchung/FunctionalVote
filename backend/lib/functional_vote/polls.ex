@@ -47,17 +47,15 @@ defmodule FunctionalVote.Polls do
   @param talles_by_count
   """
   def write_round(poll_id, tallies_by_choice, round) do
-    if (round != 0) do # Round 0 is just raw_tallies, no need to write it in DB
-      IO.puts("[PollCtx] Writing round #{round} results to DB")
-      Enum.each tallies_by_choice, fn {k, v} ->
-        choice_map = %{poll_id: poll_id,
-                      round: round,
-                      choice: k, 
-                      votes: v}
-        %Results{}
-          |> Results.changeset(choice_map)
-          |> Repo.insert() # RETURN ENDPOINT
-      end
+    IO.puts("[PollCtx] Writing round #{round} results to DB")
+    Enum.each tallies_by_choice, fn {k, v} ->
+      choice_map = %{poll_id: poll_id,
+                    round: round,
+                    choice: k, 
+                    votes: v}
+      %Results{}
+        |> Results.changeset(choice_map)
+        |> Repo.insert() # RETURN ENDPOINT
     end
   end
 
@@ -82,6 +80,7 @@ defmodule FunctionalVote.Polls do
             where: r.poll_id == ^poll_id,
             select: {r.round, r.choice, r.votes}
     data = Repo.all(query)
+    IO.inspect(data)
     _tallies_by_count = Enum.group_by(data,
                                      fn {round, _, _} -> round end,
                                      fn {_, choice, votes} -> {choice, votes} end)
@@ -160,7 +159,7 @@ defmodule FunctionalVote.Polls do
   @param votes - votes data from DB
   @param poll_id - poll_id
   @param write_winner - write the calculated winner to DB with the provided poll (false => just read the winner)
-  @return {raw_tallies, irv_tallies} - raw_tallies before IRV, tallies after IRV
+  @return {irv_tallies, winner} - tallies for each round, final winner
   """
   def instant_runoff(votes, poll_id, write_winner \\ false) do
     IO.puts("[PollCtx] Starting IRV algorithm with the following votes:")
@@ -177,11 +176,11 @@ defmodule FunctionalVote.Polls do
       # Just read the winner and return raw_tallies and winner
       winner = read_winner(poll_id)
       irv_tallies = read_rounds(poll_id)
-      {raw_tallies, irv_tallies, winner} # RETURN ENDPOINT
+      {irv_tallies, winner} # RETURN ENDPOINT
     else
       {_, winner} = instant_runoff_recurse(votes, poll_id, 0)
       irv_tallies = read_rounds(poll_id)
-      {raw_tallies, irv_tallies, winner} # RETURN ENDPOINT
+      {irv_tallies, winner} # RETURN ENDPOINT
     end
   end
 
@@ -232,11 +231,11 @@ defmodule FunctionalVote.Polls do
     votes = Votes.get_votes(poll_id)
     if (map_size(votes) == 0) do
       IO.puts("[PollCtx] No votes in poll, returning empty tallies and winner")
-      calculated = %{raw_tallies: nil, tallies: nil, winner: nil}
+      calculated = %{tallies: nil, winner: nil}
       Map.merge(poll, calculated) # RETURN ENDPOINT
     else
-      {raw_tallies, irv_tallies, winner} = instant_runoff(votes, poll_id)
-      calculated = %{raw_tallies: raw_tallies, tallies: irv_tallies, winner: winner}
+      {irv_tallies, winner} = instant_runoff(votes, poll_id)
+      calculated = %{tallies: irv_tallies, winner: winner}
       Map.merge(poll, calculated) # RETURN ENDPOINT
     end
   end

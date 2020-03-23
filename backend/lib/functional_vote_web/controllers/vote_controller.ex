@@ -17,7 +17,7 @@ defmodule FunctionalVoteWeb.VoteController do
     IO.puts("[VoteCtrl] Submit vote")
     case Votes.create_vote(vote_params) do
       :ok ->
-        {_, _, winner} = vote_params["poll_id"]
+        {_, winner} = vote_params["poll_id"]
                          |> Votes.get_votes()
                          |> Polls.instant_runoff(vote_params["poll_id"], true)
         if (winner === :error) do
