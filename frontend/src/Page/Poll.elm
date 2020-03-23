@@ -126,26 +126,6 @@ getPollDecoder =
     ( Decode.at ["data", "winner"] Decode.string )
     ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.int )
 
-pollSample : String -> String -> Poll
-pollSample title winner =
-  Poll 
-    title
-    winner 
-    [
-      [ ( "highest choice", 12 )
-      , ( "higher choice", 10 )
-      , ( "lower choice", 8 )
-      , ( "lowest choice", 3 )
-      ]
-    , [ ( "highest choice", 12 )
-      , ( "higher choice", 12 )
-      , ( "lower choice", 9 )
-      ]
-    , [ ( "higher choice", 17 )
-      , ( "highest choice", 16 )
-      ]
-    ]
-
 
 
 -- VIEW
