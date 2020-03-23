@@ -286,7 +286,7 @@ view model =
           ( model.apiAddress ++ "/vote/" ++ model.pollId ) 
           "-- Share the vote submission page." 
           model.poll.title
-          ( "Vote in my poll: " ++ model.poll.title )
+          "Vote in my poll: "
       ]
 
 renderOrderedChoice : Int -> Int -> Bool -> Int -> ( Int, String ) -> Html Msg

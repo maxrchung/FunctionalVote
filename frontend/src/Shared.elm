@@ -8,9 +8,9 @@ import Html.Attributes exposing ( .. )
 renderShareLinks : String -> String -> String -> String -> Html a
 renderShareLinks url helpText title message =
   let
-    twitterUrl = "https://twitter.com/intent/tweet?text=" ++ message ++ "&via=FunctionalVote&url=" ++ url
+    twitterUrl = "https://twitter.com/intent/tweet?text=" ++ message ++ title ++ "&via=FunctionalVote&url=" ++ url
     facebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" ++ url
-    mailUrl = "mailto:?subject=Functional Vote - " ++ title ++ "&body=" ++ url
+    mailUrl = "mailto:?subject=Functional Vote - " ++ title ++ "&body=" ++ message ++ url
   in
   
   div []

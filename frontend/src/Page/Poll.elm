@@ -230,7 +230,7 @@ view model =
           ( model.apiAddress ++ "/poll/" ++ model.pollId ) 
           "-- Share the poll results page." 
           model.poll.title
-          ( "View my poll results: " ++ model.poll.title )
+          "View my poll results: "
       ]
 
 type alias TimelineConfig = 
