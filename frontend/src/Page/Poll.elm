@@ -155,7 +155,7 @@ view model =
       [] 
       [ div 
           [ class "fv-text" ]
-          [ text "-- View the poll results and navigate the timeline to see how results were calculated." ]
+          [ text "-- View the poll results and see how results were calculated." ]
 
       , div 
           [ class "flex justify-between" ]
@@ -321,7 +321,7 @@ renderTimeline step xScaleMax tallies =
         , div 
             [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
-            , h2 [ class "fv-header" ] [ text "Timeline" ]
+            , h2 [ class "fv-header" ] [ text "Results" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
