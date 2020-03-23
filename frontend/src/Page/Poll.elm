@@ -203,7 +203,7 @@ view model =
           , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , renderTimeline model.step model.xScaleMax model.poll.tallies
+      , renderResults model.step model.xScaleMax model.poll.tallies
 
       , div [ class "fv-code" ] [ text "}" ]
 
@@ -233,40 +233,40 @@ view model =
           "View my poll results: "
       ]
 
-type alias TimelineConfig = 
+type alias ResultsConfig = 
   { width: Float
   , height: Float
   , padding: Float
   , xScaleMax: Int
   }
 
-initTimeline : List ( String, Int ) -> Int -> TimelineConfig
-initTimeline round xScaleMax =
+initResults : List ( String, Int ) -> Int -> ResultsConfig
+initResults round xScaleMax =
   let
     height = 
         100 + 30 * List.length round - 1
   in
-  TimelineConfig 375 ( toFloat height ) 30 xScaleMax
+  ResultsConfig 375 ( toFloat height ) 30 xScaleMax
 
-xScale : TimelineConfig -> ContinuousScale Float
+xScale : ResultsConfig -> ContinuousScale Float
 xScale config =
   Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, toFloat config.xScaleMax )
 
-yScale : TimelineConfig -> List ( String, Int ) -> BandScale String
+yScale : ResultsConfig -> List ( String, Int ) -> BandScale String
 yScale config round =
   List.map Tuple.first round
     |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.height - 2 * config.padding )
 
-xAxis : TimelineConfig -> SvgCore.Svg a
+xAxis : ResultsConfig -> SvgCore.Svg a
 xAxis config =
   Axis.top [ Axis.tickCount 8 ] <| xScale config
 
-yAxis : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg a
+yAxis : ResultsConfig -> List ( String, Int ) -> SvgCore.Svg a
 yAxis config round =
   -- List.map so that empty string is shown as ticks
   Axis.left [] <| Scale.toRenderable identity <| yScale config round
 
-row : TimelineConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg a
+row : ResultsConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg a
 row config scale ( choice, votes ) =
   let choiceText = String.fromInt votes ++ " - " ++ choice
   in
@@ -305,8 +305,8 @@ truncateChoice choice =
   else
     choice
 
-renderTimeline : Int -> Int -> List ( List ( String, Int ) ) -> Html Msg
-renderTimeline step xScaleMax tallies =
+renderResults : Int -> Int -> List ( List ( String, Int ) ) -> Html Msg
+renderResults step xScaleMax tallies =
   div []
     ( if List.isEmpty tallies then
         []
@@ -326,7 +326,7 @@ renderTimeline step xScaleMax tallies =
             ]
 
         , renderSlider step tallies
-        , renderChart ( initTimeline round xScaleMax ) round
+        , renderChart ( initResults round xScaleMax ) round
         ]
     )
 
@@ -365,10 +365,10 @@ renderSlider step tallies =
       , div [ class "w-8" ] []
       ]
 
-renderChart : TimelineConfig -> List ( String, Int ) -> SvgCore.Svg a
+renderChart : ResultsConfig -> List ( String, Int ) -> SvgCore.Svg a
 renderChart config round =
   Svg.svg
-    [ SvgAttributes.class [ "fv-timeline" ]
+    [ SvgAttributes.class [ "fv-results" ]
     , SvgAttributes.viewBox 0 0 config.width ( config.height - config.padding / 2 )
     ]
     [ Svg.g [ SvgAttributes.transform [ SvgTypes.Translate ( config.padding - 1 ) config.padding ] ]

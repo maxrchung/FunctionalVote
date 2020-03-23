@@ -137,20 +137,20 @@ a:hover {
   @apply bg-blue-500;
 }
 
-.fv-timeline .domain {
+.fv-results .domain {
   stroke: #ED8936;
 }
-.fv-timeline .tick {
+.fv-results .tick {
   stroke: #ED8936;
 }
-.fv-timeline .tick line {
+.fv-results .tick line {
   stroke: #ED8936;
 }
-.fv-timeline .tick text {
+.fv-results .tick text {
   @apply font-sans;
   font-weight: none;
 }
-.fv-timeline .y-axis text {
+.fv-results .y-axis text {
   display: none;
 }
 
