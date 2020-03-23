@@ -9,6 +9,7 @@ import Http
 import Http.Detailed
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Shared
 
 
 
@@ -195,60 +196,60 @@ view model =
     in
     div []
       [ div 
-          [ class "fv-main-text" ]
+          [ class "fv-text" ]
           [ text "-- Submit a vote by selecting ranks to the left of each choice. Smaller numbers have higher preference." ]
 
       , div 
           [ class "flex justify-between" ]
-          [ h1 [ class "fv-main-code" ] [ text "vote" ]
-          , div [ class "fv-main-code" ] [ text "={" ]
+          [ h1 [ class "fv-code" ] [ text "vote" ]
+          , div [ class "fv-code" ] [ text "={" ]
           ]
       
       , div 
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
-          , h2 [ class "fv-main-header" ] [ text "Question" ]
-          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          , h2 [ class "fv-header" ] [ text "Question" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
       , div 
           [ class "flex justify-between items-center" ]
-          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          [ div [ class "fv-code w-8"] [ text "\"" ]
           , div 
             [ class "flex justify-center w-full"]
             [ h1 
-              [ class "fv-main-text text-blue-100 text-left" ] 
+              [ class "fv-text text-blue-100 text-left" ] 
               [ text model.poll.title ]
             ]
-          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "fv-main-code" ] [ text "," ]
+      , div [ class "fv-code" ] [ text "," ]
 
       , div 
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
-          , h2 [ class "fv-main-header" ] [ text "Ranks" ]
-          , div [ class "fv-main-code w-8 text-right" ] [ text "=[" ]
+          , h2 [ class "fv-header" ] [ text "Ranks" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=[" ]
           ]
       
       , div []
           ( List.indexedMap ( renderOrderedChoice maxRank maxOrdered model.showError ) <| Dict.toList model.poll.orderedChoices )
 
       , div
-        [ class "fv-main-code text-center w-full py-1" ] 
-        [ text "--" ]
+          [ class "fv-break py-1" ] 
+          [ text "--" ]
 
       , div []
           ( List.indexedMap ( renderUnorderedChoice maxRank maxUnordered hasOrderedChoices model.showError ) <| model.poll.unorderedChoices )
 
-      , div [class "fv-main-code pb-2" ] [ text "]}" ]
+      , div [class "fv-code pb-2" ] [ text "]}" ]
         
       , div 
           [ class "flex justify-between pb-1" ]
           [ div [ class "w-8" ] [ text "" ]
           , button 
-              [ class "fv-main-btn"
+              [ class "fv-btn"
               , onClick SubmitVoteRequest
               ] 
               [ text "Submit Vote" ] 
@@ -258,28 +259,34 @@ view model =
       , div 
           [ class "flex justify-between" ]
           [ div [ class "w-8" ] [ text "" ]
-          , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.error ] 
+          , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
 
       , div
-          [ class "fv-main-code text-center w-full my-3" ] 
+          [ class "fv-break" ] 
           [ text "--" ]
       
       , div
-          [ class "fv-main-text mb-2" ]
+          [ class "fv-text mb-2" ]
           [ text "-- View the poll results." ]
         
       , div 
           [ class "flex justify-between" ]
           [ div [ class "w-8" ] [ text "" ]
           , button 
-            [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+            [ class "fv-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
             , onClick GoToPoll
             ] 
             [ text "View Results" ]
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
+
+      , Shared.renderShareLinks 
+          ( model.apiAddress ++ "/vote/" ++ model.pollId ) 
+          "-- Share the vote submission page." 
+          model.poll.title
+          ( "Vote in my poll: " ++ model.poll.title )
       ]
 
 renderOrderedChoice : Int -> Int -> Bool -> Int -> ( Int, String ) -> Html Msg
@@ -295,7 +302,7 @@ renderChoice maxRank maxIndex hasOrderedChoices showError index ( rank, choice )
   div 
     [ class "flex justify-between items-center" ]
     [ div 
-      [ class "fv-main-code w-8"] 
+      [ class "fv-code w-8"] 
       [ unorderedCommaText hasOrderedChoices index
       , text "(" 
       ]
@@ -306,7 +313,7 @@ renderChoice maxRank maxIndex hasOrderedChoices showError index ( rank, choice )
         , borderClass index maxIndex 
         ]
         [ select 
-            [ class "fv-main-input w-auto"
+            [ class "fv-input w-auto"
             , errorClass showError
             , value rank
             , onInput ( ChangeRank choice ) 
@@ -324,15 +331,15 @@ renderChoice maxRank maxIndex hasOrderedChoices showError index ( rank, choice )
             )
 
         , div 
-            [ class "fv-main-code w-8 text-center" ] 
+            [ class "fv-code w-8 text-center" ] 
             [ text ",\"" ]
 
         , div 
-            [ class "fv-main-text text-blue-100 w-full" ]
+            [ class "fv-text text-blue-100 w-full" ]
             [ text choice ]
         ]
 
-    , div [class "fv-main-code w-8 text-right" ] [ text "\")" ]
+    , div [class "fv-code w-8 text-right" ] [ text "\")" ]
     ]
 
 renderOptions : Int -> String -> List ( Html Msg )
@@ -379,7 +386,7 @@ borderClass index maxIndex =
 errorClass : Bool -> Attribute a
 errorClass showError =
   if showError then
-    class "fv-main-input-error"
+    class "fv-input-error"
   else
     class ""
 

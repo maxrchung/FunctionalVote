@@ -11,6 +11,7 @@ import Page.Vote as Vote
 import Page.Poll as Poll
 import Page.About as About
 import Page.Error as Error
+import Shared
 import Url
 import Url.Parser as Parser exposing ( (</>) )
 
@@ -204,10 +205,7 @@ renderBody model =
               [ class "fv-nav-btn"
               , href "/about"
               ]
-              [ FeatherIcons.helpCircle
-                  |> FeatherIcons.withSize 22
-                  |> FeatherIcons.withStrokeWidth 2
-                  |> FeatherIcons.toHtml [] ]
+              [ Shared.renderIcon FeatherIcons.helpCircle ]
 
           , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
@@ -217,10 +215,7 @@ renderBody model =
               , href "https://github.com/maxrchung/FunctionalVote"
               , target "_blank"
               ]
-              [ FeatherIcons.github
-                  |> FeatherIcons.withSize 22
-                  |> FeatherIcons.withStrokeWidth 2
-                  |> FeatherIcons.toHtml [] ]
+              [ Shared.renderIcon FeatherIcons.github ]
 
           , div [ class "fv-nav-code justify-center w-6" ]
             [ text "," ]
@@ -230,10 +225,7 @@ renderBody model =
               , href "https://twitter.com/FunctionalVote"
               , target "_blank"
               ]
-              [ FeatherIcons.twitter
-                  |> FeatherIcons.withSize 22
-                  |> FeatherIcons.withStrokeWidth 2
-                  |> FeatherIcons.toHtml [] ]
+              [ Shared.renderIcon FeatherIcons.twitter ]
 
           , div [ class "fv-nav-code justify-end w-5" ]
             [ text "]" ]

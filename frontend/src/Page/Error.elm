@@ -28,24 +28,24 @@ update msg model =
 view : Model -> Html Msg
 view _ =
   div [] 
-    [ div [ class "fv-main-code" ] [ text "{-" ]
+    [ div [ class "fv-code" ] [ text "{-" ]
       
-    , h1 [ class "fv-main-header" ]
+    , h1 [ class "fv-header" ]
       [ text "Error" ]
 
-    ,  div [ class "fv-main-text mb-2" ]
+    ,  div [ class "fv-text mb-2" ]
       [ text "Hmm, this page doesn’t seem to exist, or maybe we encountered an error. Feel free to "
       , a [ href "https://twitter.com/FunctionalVote" 
           , target "_blank"
           ] [ text "contact us"]
       , text " if you’re experiencing any issues." ]
 
-    , div [ class "fv-main-code mb-1" ] [ text "-}" ]
+    , div [ class "fv-code mb-1" ] [ text "-}" ]
 
     , div [ class "flex justify-between" ]
         [ div [ class "w-8" ] [ text "" ]
         , button 
-            [ class "fv-main-btn"
+            [ class "fv-btn"
             , onClick GoToHome
             ]
             [ text "Go Home" ] 

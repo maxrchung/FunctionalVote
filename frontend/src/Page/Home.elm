@@ -94,49 +94,49 @@ makePollDecoder =
 view : Model -> Html Msg
 view model =
   Html.form [ onSubmit MakePollRequest ]
-      [ div [ class "fv-main-text" ]
+      [ div [ class "fv-text" ]
           [ text "-- Welcome to Functional Vote! Enter a question and choices below to create a new ranked-choice poll." ]
       
       , div [ class "flex justify-between" ]
-          [ h1 [ class "fv-main-code" ] [ text "poll" ]
-          , div [ class "fv-main-code" ] [ text "={" ]
+          [ h1 [ class "fv-code" ] [ text "poll" ]
+          , div [ class "fv-code" ] [ text "={" ]
           ]
       
       , div [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
-          , h2 [ class "fv-main-header" ] [ text "Question" ]
-          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          , h2 [ class "fv-header" ] [ text "Question" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
       , div [ class "flex justify-between items-center py-2" ]
-          [ div [ class "fv-main-code w-8"] [ text "\"" ]
-          , input [ class "fv-main-input"
+          [ div [ class "fv-code w-8"] [ text "\"" ]
+          , input [ class "fv-input"
                   , errorClass model.showError
                   , placeholder "-- Enter a question"
                   , value model.title
                   , onInput ChangeTitle 
                   ] [] 
-          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "fv-main-code" ] [ text "," ]
+      , div [ class "fv-code" ] [ text "," ]
 
       , div [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] [ text "" ]
-          , h2 [ class "fv-main-header" ] [ text "Choices" ]
-          , div [ class "fv-main-code w-8 text-right" ] [text "=[" ]
+          , h2 [ class "fv-header" ] [ text "Choices" ]
+          , div [ class "fv-code w-8 text-right" ] [text "=[" ]
           ]
 
       , div
           []
           ( Array.toList <| Array.indexedMap ( renderChoice model.showError ) model.choices )
 
-      , div [ class "fv-main-code pb-2" ] [ text "]}" ]
+      , div [ class "fv-code pb-2" ] [ text "]}" ]
       
       , div [ class "flex justify-between pb-1" ]
           [ div [ class "w-8" ] [ text "" ]
           , button 
-              [ class "fv-main-btn"
+              [ class "fv-btn"
               , type_ "submit"
               ] [ text "Create Poll" ] 
           , div [ class "w-8 text-right" ] [ text "" ]
@@ -144,7 +144,7 @@ view model =
 
       , div [class "flex justify-between" ]
           [ div [ class "w-8" ] [ text "" ]
-          , div [ class "w-full fv-main-text fv-main-text-error" ] [ errorText model.error ] 
+          , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
       ]
@@ -166,20 +166,20 @@ renderChoice showError index choice =
 
   in
   div [ class "flex justify-between items-center py-2" ] 
-    [ div [ class "fv-main-code w-8"] [ text startQuotation ]
-    , input [ class "fv-main-input"
+    [ div [ class "fv-code w-8"] [ text startQuotation ]
+    , input [ class "fv-input"
             , errorClass showError
             , placeholder placeholderValue
             , value choice
             , onInput ( ChangeChoice index ) 
             ] []
-    , div [ class "fv-main-code w-8 text-right"] [ text "\"" ]
+    , div [ class "fv-code w-8 text-right"] [ text "\"" ]
     ]
   
 errorClass : Bool -> Attribute a
 errorClass showError =
   if showError then
-    class "fv-main-input-error"
+    class "fv-input-error"
   else
     class ""
 

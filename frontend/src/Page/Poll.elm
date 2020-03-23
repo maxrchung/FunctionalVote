@@ -10,6 +10,7 @@ import Http
 import Json.Decode as Decode
 import List.Extra
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
+import Shared
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
 import TypedSvg.Attributes.InPx as SvgInPx
@@ -137,77 +138,83 @@ view model =
     div 
       [] 
       [ div 
-          [ class "fv-main-text" ]
+          [ class "fv-text" ]
           [ text "-- View the poll results and navigate the timeline to see how results were calculated." ]
 
       , div 
           [ class "flex justify-between" ]
-          [ h1 [ class "fv-main-code" ] [ text "results" ]
-          , div [ class "fv-main-code" ] [ text "={" ]
+          [ h1 [ class "fv-code" ] [ text "results" ]
+          , div [ class "fv-code" ] [ text "={" ]
           ]
 
       , div 
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
-          , h2 [ class "fv-main-header" ] [ text "Question" ]
-          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          , h2 [ class "fv-header" ] [ text "Question" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
       , div 
           [ class "flex justify-between items-center" ]
-          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          [ div [ class "fv-code w-8"] [ text "\"" ]
           , div 
             [ class "flex justify-center w-full"]
             [ h1 
-              [ class "fv-main-text text-blue-100 text-left" ] 
+              [ class "fv-text text-blue-100 text-left" ] 
               [ text model.poll.title ]
             ]
-          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "fv-main-code" ] [ text "," ]
+      , div [ class "fv-code" ] [ text "," ]
 
       , div 
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
-          , h2 [ class "fv-main-header" ] [ text "Winner" ]
-          , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+          , h2 [ class "fv-header" ] [ text "Winner" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
       , div 
           [ class "flex justify-between items-center" ]
-          [ div [ class "fv-main-code w-8"] [ text "\"" ]
+          [ div [ class "fv-code w-8"] [ text "\"" ]
           , div 
             [ class "flex justify-center w-full"]
             [ h1 
-              [ class "fv-main-text text-blue-100 text-left" ] 
+              [ class "fv-text text-blue-100 text-left" ] 
               [ text model.poll.winner ]
             ]
-          , div [class "fv-main-code w-8 text-right" ] [ text "\"" ]
+          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , renderTimeline model
 
-      , div [ class "fv-main-code" ] [ text "}" ]
+      , div [ class "fv-code" ] [ text "}" ]
 
       , div
-          [ class "fv-main-code text-center w-full my-3" ] 
+          [ class "fv-break" ] 
           [ text "--" ]
       
       , div
-          [ class "fv-main-text mb-2" ]
+          [ class "fv-text mb-2" ]
           [ text "-- Submit a new vote into the poll." ]
         
       , div 
           [ class "flex justify-between" ]
           [ div [ class "w-8" ] [ text "" ]
           , button 
-            [ class "fv-main-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
+            [ class "fv-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
             , onClick GoToVote
             ] 
             [ text "Submit Vote" ]
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
+
+      , Shared.renderShareLinks 
+          ( model.apiAddress ++ "/poll/" ++ model.pollId ) 
+          "-- Share the poll results page." 
+          model.poll.title
+          ( "View my poll results: " ++ model.poll.title )
       ]
 
 type alias TimelineConfig = 
@@ -292,12 +299,12 @@ renderTimeline model =
               Nothing -> []
               Just getAt -> getAt
         in
-        [ div [ class "fv-main-code" ] [ text "," ]
+        [ div [ class "fv-code" ] [ text "," ]
         , div 
             [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
-            , h2 [ class "fv-main-header" ] [ text "Timeline" ]
-            , div [ class "fv-main-code w-8 text-right" ] [ text "=" ]
+            , h2 [ class "fv-header" ] [ text "Timeline" ]
+            , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
         , div 
@@ -309,10 +316,7 @@ renderTimeline model =
                 [ class "fv-nav-btn" 
                 , onClick DecrementStep
                 ] 
-                [ FeatherIcons.arrowLeft
-                  |> FeatherIcons.withSize 22
-                  |> FeatherIcons.withStrokeWidth 2
-                  |> FeatherIcons.toHtml [] ]
+                [ Shared.renderIcon FeatherIcons.arrowLeft ]
 
               , input 
                   [ class "flex-grow mx-2 fv-slider"
@@ -327,10 +331,7 @@ renderTimeline model =
                 [ class "fv-nav-btn" 
                 , onClick IncrementStep
                 ] 
-                [ FeatherIcons.arrowRight
-                  |> FeatherIcons.withSize 22
-                  |> FeatherIcons.withStrokeWidth 2
-                  |> FeatherIcons.toHtml [] ]
+                [ Shared.renderIcon FeatherIcons.arrowRight ]
               ]
             , div [ class "w-8" ] []
             ]
