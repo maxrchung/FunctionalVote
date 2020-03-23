@@ -209,6 +209,12 @@ view model =
             [ text "Submit Vote" ]
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
+
+      , Shared.renderShareLinks 
+          ( model.apiAddress ++ "/poll/" ++ model.pollId ) 
+          "-- Share the poll results page." 
+          model.poll.title
+          ( "View my poll results: " ++ model.poll.title )
       ]
 
 type alias TimelineConfig = 
