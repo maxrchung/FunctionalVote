@@ -94,10 +94,10 @@ defmodule FunctionalVote.Votes do
   defp validate_integer_ranks(choices) do
     try do
       Enum.map(choices, fn {k, v} -> 
-                          # Maintain backwards compatibility if others want to submit ranks as ints represented as strings
-                          v = if is_integer(v), do: v, else: String.to_integer(v)
-                          {k, v}
-                        end)
+        # Maintain backwards compatibility if others want to submit ranks as ints represented as strings
+        v = if is_integer(v), do: v, else: String.to_integer(v)
+        {k, v}
+      end)
     rescue
       ArgumentError ->
         IO.puts("[VoteCtx] Received a vote with a non-integer rank")
