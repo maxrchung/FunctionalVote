@@ -268,6 +268,8 @@ yAxis config round =
 
 row : TimelineConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg a
 row config scale ( choice, votes ) =
+  let choiceText = String.fromInt votes ++ " - " ++ choice
+  in
   Svg.g
     []
     [ Svg.rect
@@ -286,7 +288,7 @@ row config scale ( choice, votes ) =
           , SvgAttributes.textAnchor SvgTypes.AnchorStart
           , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
           ]
-          [ SvgCore.text <| truncateChoice choice ]
+          [ SvgCore.text <| truncateChoice choiceText ]
     ]
     
 choiceTextColor : Int -> Int -> String
