@@ -73,10 +73,12 @@ defmodule FunctionalVote.Votes do
           # No error
           IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
           Enum.each choices, fn {k, v} ->
+            # Maintain backwards compatibility if others want to submit ranks as ints represented as strings
+            v = if is_integer(v), do: v, else: String.to_integer(v)
             choice_map = %{"poll_id" => poll_id,
                            "user_id" => user_id,
                            "choice"  => k,
-                           "rank"    => String.to_integer(v)}
+                           "rank"    => v}
             %Votes{}
             |> Votes.changeset(choice_map)
             |> Repo.insert() # RETURN ENDPOINT
@@ -91,7 +93,11 @@ defmodule FunctionalVote.Votes do
 
   defp validate_integer_ranks(choices) do
     try do
-      Enum.map(choices, fn {k, v} -> {k, String.to_integer(v)} end)
+      Enum.map(choices, fn {k, v} -> 
+        # Maintain backwards compatibility if others want to submit ranks as ints represented as strings
+        v = if is_integer(v), do: v, else: String.to_integer(v)
+        {k, v}
+      end)
     rescue
       ArgumentError ->
         IO.puts("[VoteCtx] Received a vote with a non-integer rank")
