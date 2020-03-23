@@ -282,7 +282,7 @@ view model =
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
 
-      , Shared.renderShareLinks <| model.apiAddress ++ "/vote/" ++ model.pollId
+      , Shared.renderShareLinks ( model.apiAddress ++ "/vote/" ++ model.pollId ) "-- Share the vote submission page."
       ]
 
 renderOrderedChoice : Int -> Int -> Bool -> Int -> ( Int, String ) -> Html Msg
