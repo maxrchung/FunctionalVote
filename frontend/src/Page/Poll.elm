@@ -41,6 +41,21 @@ init key pollId apiAddress =
   let model = Model key pollId ( Poll "" "" [] ) apiAddress 0 0 True
   in ( model, getPollRequest model )
 
+reorderTallies : List ( List ( String, Int ) ) -> List ( List ( String, Int ) )
+reorderTallies tallies =
+  List.map reorderRounds tallies
+
+reorderRounds : List ( String, Int ) -> List ( String, Int )
+reorderRounds round =
+  List.sortWith compareEntries round
+
+compareEntries : ( String, Int ) -> ( String, Int ) -> Order
+compareEntries ( _, a ) ( _, b ) =
+  case compare a b of
+      LT -> GT
+      EQ -> EQ
+      GT -> LT
+
 
 
 -- UPDATE
@@ -58,14 +73,14 @@ update msg model =
       case result of
         Ok newPoll ->
           let
-              lastRound = 
-                case List.Extra.last newPoll.tallies of
-                   Nothing -> []
-                   Just last -> last
-              newXScaleMax = 
-                case List.head lastRound of
-                  Nothing -> 0
-                  Just head -> Tuple.second head
+            lastRound = 
+              case List.Extra.last newPoll.tallies of
+                  Nothing -> []
+                  Just last -> last
+            newXScaleMax = 
+              case List.head lastRound of
+                Nothing -> 0
+                Just head -> Tuple.second head
           in
           ( { model 
             | poll = newPoll
