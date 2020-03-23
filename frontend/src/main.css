@@ -154,6 +154,10 @@ a:hover {
   display: none;
 }
 
+.fv-break {
+  @apply fv-main-code text-center w-full my-3;
+}
+
 @tailwind utilities;
 
 /*

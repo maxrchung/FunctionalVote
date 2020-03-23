@@ -9,6 +9,7 @@ import Http
 import Http.Detailed
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Shared
 
 
 
@@ -236,8 +237,8 @@ view model =
           ( List.indexedMap ( renderOrderedChoice maxRank maxOrdered model.showError ) <| Dict.toList model.poll.orderedChoices )
 
       , div
-        [ class "fv-main-code text-center w-full py-1" ] 
-        [ text "--" ]
+          [ class "fv-break py-1" ] 
+          [ text "--" ]
 
       , div []
           ( List.indexedMap ( renderUnorderedChoice maxRank maxUnordered hasOrderedChoices model.showError ) <| model.poll.unorderedChoices )
@@ -263,7 +264,7 @@ view model =
           ]
 
       , div
-          [ class "fv-main-code text-center w-full my-3" ] 
+          [ class "fv-break" ] 
           [ text "--" ]
       
       , div

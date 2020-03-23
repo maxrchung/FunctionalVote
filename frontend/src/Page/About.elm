@@ -25,7 +25,7 @@ view =
       , text ") when we couldn’t easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."]
 
     , div
-      [ class "fv-main-code text-center w-full my-3" ] 
+      [ class "fv-break" ] 
       [ text "--" ]
 
     , h2 [ class "fv-main-header" ]

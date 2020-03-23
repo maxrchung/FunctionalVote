@@ -191,7 +191,7 @@ view model =
       , div [ class "fv-main-code" ] [ text "}" ]
 
       , div
-          [ class "fv-main-code text-center w-full my-3" ] 
+          [ class "fv-break" ] 
           [ text "--" ]
       
       , div
