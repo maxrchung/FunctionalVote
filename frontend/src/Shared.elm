@@ -8,9 +8,9 @@ import Html.Attributes exposing ( .. )
 renderShareLinks : String -> String -> String -> String -> Html a
 renderShareLinks url helpText title message =
   let
+    twitterUrl = "https://twitter.com/intent/tweet?text=" ++ message ++ title ++ "&via=FunctionalVote&url=" ++ url
     facebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" ++ url
-    twitterUrl = "https://twitter.com/intent/tweet?text=" ++ message ++ "&via=FunctionalVote&url=" ++ url
-    mailUrl = "mailto:?subject=Functional Vote - " ++ title ++ "&body=" ++ url
+    mailUrl = "mailto:?subject=Functional Vote - " ++ title ++ "&body=" ++ message ++ url
   in
   
   div []
@@ -48,30 +48,6 @@ renderShareLinks url helpText title message =
                     [ class "w-10" ] 
                     []
                 ]
-            
-            , div 
-                [ class "flex justify-between items-center mb-4" ]
-                [ div 
-                    [ class "text-blue-500" ] 
-                    [ renderIcon FeatherIcons.facebook ]
-
-                , div
-                    [ class "mx-2 flex-grow" ]
-                    [ input
-                        [ class "fv-input hover:bg-gray-900"
-                        , disabled True
-                        , value <| facebookUrl
-                        ]
-                        []
-                    ]
-
-                , a 
-                    [ class "fv-nav-btn text-orange-500 bg-gray-900 border-2 border-orange-500 hover:text-orange-500 hover:bg-orange-900"
-                    , href facebookUrl
-                    , target "_blank"
-                    ]
-                    [ renderIcon FeatherIcons.arrowRight ]
-                ]
 
             , div 
                 [ class "flex justify-between items-center mb-4" ]
@@ -92,6 +68,30 @@ renderShareLinks url helpText title message =
                 , a 
                     [ class "fv-nav-btn text-orange-500 bg-gray-900 border-2 border-orange-500 hover:text-orange-500 hover:bg-orange-900" 
                     , href <| twitterUrl
+                    , target "_blank"
+                    ]
+                    [ renderIcon FeatherIcons.arrowRight ]
+                ]
+
+            , div 
+                [ class "flex justify-between items-center mb-4" ]
+                [ div 
+                    [ class "text-blue-500" ] 
+                    [ renderIcon FeatherIcons.facebook ]
+
+                , div
+                    [ class "mx-2 flex-grow" ]
+                    [ input
+                        [ class "fv-input hover:bg-gray-900"
+                        , disabled True
+                        , value <| facebookUrl
+                        ]
+                        []
+                    ]
+
+                , a 
+                    [ class "fv-nav-btn text-orange-500 bg-gray-900 border-2 border-orange-500 hover:text-orange-500 hover:bg-orange-900"
+                    , href facebookUrl
                     , target "_blank"
                     ]
                     [ renderIcon FeatherIcons.arrowRight ]
