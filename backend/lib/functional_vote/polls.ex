@@ -84,8 +84,7 @@ defmodule FunctionalVote.Polls do
     _tallies_by_count = Enum.group_by(data,
                                      fn {round, _, _} -> round end,
                                      fn {_, choice, votes} -> {choice, votes} end)
-                        |> Enum.map(fn {k, v} -> {k, Map.new(v)} end)
-                        |> Map.new()
+                        |> Enum.map(fn {_k, v} -> Map.new(v) end)
   end
 
   @doc """
@@ -112,6 +111,10 @@ defmodule FunctionalVote.Polls do
     tallies_by_choice = Map.merge(tallies_by_choice, zero_tally_choices)
     IO.puts("[PollCtx] Votes going into round #{round}:")
     IO.inspect(tallies_by_choice)
+    if (round == 0) do
+      # Clear previous results for this poll_id as we are rerunning the algorithm
+      clear_rounds(poll_id)
+    end
     write_round(poll_id, tallies_by_choice, round)
     tallies_by_count = Enum.group_by(tallies_by_choice, fn {_, value} -> value end, fn {key, _} -> key end)
     num_users = Map.values(tallies_by_choice) |> Enum.sum()
@@ -128,10 +131,6 @@ defmodule FunctionalVote.Polls do
         {tallies_by_choice, winner} # BASE CASE ENDPOINT
       else
         # Eliminate loser (if there is a tie for last, randomly choose one)
-        if (round == 0) do
-          # Clear previous results for this poll_id as we are rerunning the algorithm
-          clear_rounds(poll_id)
-        end
         round = round + 1 # Round 1 = Tallies after first elimination
         loser = tallies_by_count[Map.keys(tallies_by_count) |> Enum.min()] |> Enum.random()
         eliminated = eliminated ++ [loser]
