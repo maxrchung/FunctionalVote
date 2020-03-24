@@ -84,7 +84,7 @@ body {
   @apply bg-blue-900;
 }
 .fv-input::placeholder {
-  @apply text-blue-100;
+  @apply text-blue-100 opacity-75;
 }
 .fv-input-error {
   @apply border-red-700;
