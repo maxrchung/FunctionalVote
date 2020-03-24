@@ -160,13 +160,22 @@ defmodule FunctionalVote.Polls do
   @return {irv_tallies, winner} - tallies for each round, final winner
   """
   def instant_runoff(votes, poll_id, write_winner \\ false) do
-    IO.puts("[PollCtx] Starting IRV algorithm with the following votes:")
-    IO.inspect(votes)
-    if map_size(votes) == 0 do
-      winner = get_poll_choices(poll_id) |> Enum.random()
-      irv_tallies = []
-      {irv_tallies, winner} # RETURN ENDPOINT
+    unless (write_winner) do
+      # Just read the winner and return raw_tallies and winner
+      winner = read_winner(poll_id)
+      if winner == nil do 
+        winner = get_poll_choices(poll_id) |> Enum.random()
+        IO.puts("[PollCtx] New poll, randomized winner to be #{winner}")
+        write_winner(poll_id, winner)
+        irv_tallies = []
+        {irv_tallies, winner} # RETURN ENDPOINT
+      else
+        irv_tallies = read_rounds(poll_id)
+        {irv_tallies, winner} # RETURN ENDPOINT
+      end
     else
+      IO.puts("[PollCtx] Starting IRV algorithm with the following votes:")
+      IO.inspect(votes)
       raw_tallies = Map.values(votes)
                     |> List.zip()
                     |> List.first()
@@ -175,16 +184,9 @@ defmodule FunctionalVote.Polls do
       tallies_by_count = Enum.group_by(raw_tallies, fn {_, value} -> value end, fn {key, _} -> key end)
       IO.puts("[PollCtx] Raw tallies by count:")
       IO.inspect(tallies_by_count)
-      unless (write_winner) do
-        # Just read the winner and return raw_tallies and winner
-        winner = read_winner(poll_id)
-        irv_tallies = read_rounds(poll_id)
-        {irv_tallies, winner} # RETURN ENDPOINT
-      else
         {_, winner} = instant_runoff_recurse(votes, poll_id, 0)
         irv_tallies = read_rounds(poll_id)
         {irv_tallies, winner} # RETURN ENDPOINT
-      end
     end
   end
 
