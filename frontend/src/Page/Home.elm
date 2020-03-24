@@ -187,7 +187,7 @@ renderChoice choicesLength showError index choice =
             []
 
         , if index == choicesLength - 1 then
-              div [ class "flex-shrink-0 ml-2 w-10" ] []
+              div [] []
             else
               button
                   [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
