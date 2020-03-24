@@ -155,7 +155,7 @@ view model =
       [] 
       [ div 
           [ class "fv-text" ]
-          [ text "-- View the poll results and see how results were calculated." ]
+          [ text "-- View the poll results and see how results were calculated. In case of ties, a winner is randomly decided." ]
 
       , div 
           [ class "flex justify-between" ]
