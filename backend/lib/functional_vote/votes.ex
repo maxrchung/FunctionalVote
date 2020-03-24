@@ -95,7 +95,9 @@ defmodule FunctionalVote.Votes do
   end
 
   defp validate_non_empty_choices(choices) do
-    if (choices == nil) do
+    if (choices == nil or map_size(choices) == 0) do
+      IO.puts("[VoteCtx] Received an empty vote")
+      IO.inspect(choices)
       :empty_choices_error
     end
   end
