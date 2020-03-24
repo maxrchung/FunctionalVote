@@ -74,7 +74,7 @@ update msg model =
 
     RemoveChoice index ->
       let newChoices = Array.Extra.removeAt index model.choices
-      in ( { model | choices = newChoices }, Cmd.none )
+      in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
