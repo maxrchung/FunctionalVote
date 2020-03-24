@@ -32,7 +32,7 @@ renderShareLinks url helpText title message =
                 [ class "flex justify-between items-center mb-4" ]
                 [ div 
                     [ class "text-blue-500" ] 
-                    [ renderIcon FeatherIcons.share ]
+                    [ renderIcon FeatherIcons.link ]
 
                 , div
                     [ class "mx-2 flex-grow" ]
@@ -70,7 +70,7 @@ renderShareLinks url helpText title message =
                     , href <| twitterUrl
                     , target "_blank"
                     ]
-                    [ renderIcon FeatherIcons.arrowRight ]
+                    [ renderIcon FeatherIcons.share ]
                 ]
 
             , div 
@@ -94,7 +94,7 @@ renderShareLinks url helpText title message =
                     , href facebookUrl
                     , target "_blank"
                     ]
-                    [ renderIcon FeatherIcons.arrowRight ]
+                    [ renderIcon FeatherIcons.share ]
                 ]
 
             , div 
@@ -118,7 +118,7 @@ renderShareLinks url helpText title message =
                     , href mailUrl
                     , target "_blank"
                     ]
-                    [ renderIcon FeatherIcons.arrowRight ]
+                    [ renderIcon FeatherIcons.share ]
                 ]
             ]
           

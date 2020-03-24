@@ -1,6 +1,7 @@
 module Page.Home exposing ( .. )
 
 import Browser.Navigation as Navigation
+import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
@@ -93,9 +94,11 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
+  let choicesLength = Array.length model.choices
+  in
   Html.form [ onSubmit MakePollRequest ]
       [ div [ class "fv-text" ]
-          [ text "-- Welcome to Functional Vote! Enter a question and choices below to create a new ranked-choice poll." ]
+          [ text "-- Welcome to Functional Vote! Enter a question and a few choices below to create a new ranked-choice poll." ]
       
       , div [ class "flex justify-between" ]
           [ h1 [ class "fv-code" ] [ text "poll" ]
@@ -129,7 +132,7 @@ view model =
 
       , div
           []
-          ( Array.toList <| Array.indexedMap ( renderChoice model.showError ) model.choices )
+          ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
 
       , div [ class "fv-code pb-2" ] [ text "]}" ]
       
@@ -149,8 +152,8 @@ view model =
           ]
       ]
 
-renderChoice : Bool -> Int -> String -> Html Msg
-renderChoice showError index choice =
+renderChoice : Int -> Bool -> Int -> String -> Html Msg
+renderChoice choicesLength showError index choice =
   let 
     placeholderValue = 
       if index == 0 then
@@ -163,16 +166,25 @@ renderChoice showError index choice =
         "\""
       else
         ",\""
-
   in
   div [ class "flex justify-between items-center py-2" ] 
     [ div [ class "fv-code w-8"] [ text startQuotation ]
-    , input [ class "fv-input"
-            , errorClass showError
-            , placeholder placeholderValue
-            , value choice
-            , onInput ( ChangeChoice index ) 
-            ] []
+
+    , input
+        [ class "fv-input"
+        , errorClass showError
+        , placeholder placeholderValue
+        , value choice
+        , onInput ( ChangeChoice index ) 
+        ] 
+        []
+
+    , button
+        [ class "flex-shrink-0 ml-2 fv-nav-btn bg-gray-900 border-2 border-blue-700 hover:bg-blue-900" ]
+        [ FeatherIcons.x
+            |> FeatherIcons.toHtml []
+        ]
+
     , div [ class "fv-code w-8 text-right"] [ text "\"" ]
     ]
   

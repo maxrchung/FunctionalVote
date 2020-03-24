@@ -342,7 +342,7 @@ renderSlider step tallies =
       , div 
         [ class "flex justify-between items-center mt-2 w-full" ]
         [ button 
-          [ class "fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900" 
+          [ class "fv-nav-btn bg-gray-900 border-2 border-blue-700 hover:bg-blue-900" 
           , onClick DecrementStep
           ]
           [ Shared.renderIcon FeatherIcons.arrowLeft ]
@@ -357,7 +357,7 @@ renderSlider step tallies =
             []
 
         , button 
-            [ class "fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900" 
+            [ class "fv-nav-btn bg-gray-900 border-2 border-blue-700 hover:bg-blue-900" 
             , onClick IncrementStep
             ]
             [ Shared.renderIcon FeatherIcons.arrowRight ]
