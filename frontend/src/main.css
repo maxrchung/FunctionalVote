@@ -60,7 +60,7 @@ body {
 }
 
 .fv-input {
-  @apply bg-gray-900 w-full p-2 rounded shadow-md border-2 border-blue-700 outline-none font-sans text-blue-100;
+  @apply bg-gray-900 w-full p-2 rounded shadow-md border-2 border-blue-500 outline-none font-sans text-blue-100;
 }
 .fv-input:focus {
   @apply bg-blue-900 shadow-lg;

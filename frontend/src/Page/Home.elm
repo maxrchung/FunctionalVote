@@ -1,5 +1,7 @@
 module Page.Home exposing ( .. )
 
+import Array
+import Array.Extra
 import Browser.Navigation as Navigation
 import FeatherIcons
 import Html exposing ( .. )
@@ -7,7 +9,6 @@ import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
 import Http.Detailed
-import Array
 import Json.Decode as Decode
 import Json.Encode as Encode
 
@@ -34,6 +35,7 @@ type Msg
   | ChangeChoice Int String
   | MakePollRequest
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
+  | RemoveChoice Int
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -69,6 +71,10 @@ update msg model =
                   "Unable to create poll. The website may be down for maintenace. Please try again later."
           in
           ( { model | showError = True, error = newError }, Cmd.none )
+
+    RemoveChoice index ->
+      let newChoices = Array.Extra.removeAt index model.choices
+      in ( { model | choices = newChoices }, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -170,19 +176,27 @@ renderChoice choicesLength showError index choice =
   div [ class "flex justify-between items-center py-2" ] 
     [ div [ class "fv-code w-8"] [ text startQuotation ]
 
-    , input
-        [ class "fv-input"
-        , errorClass showError
-        , placeholder placeholderValue
-        , value choice
-        , onInput ( ChangeChoice index ) 
-        ] 
-        []
+    , div [ class "flex justify-between items-center w-full" ]
+        [ input
+            [ class "fv-input"
+            , errorClass showError
+            , placeholder placeholderValue
+            , value choice
+            , onInput ( ChangeChoice index ) 
+            ] 
+            []
 
-    , button
-        [ class "flex-shrink-0 ml-2 fv-nav-btn bg-gray-900 border-2 border-blue-700 hover:bg-blue-900" ]
-        [ FeatherIcons.x
-            |> FeatherIcons.toHtml []
+        , if choicesLength < 4 then
+              div [] []
+            else
+              button
+                  [ class "flex-shrink-0 ml-2 fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900"
+                  , onClick <| RemoveChoice index
+                  , type_ "button"
+                  ]
+                  [ FeatherIcons.x
+                      |> FeatherIcons.toHtml []
+                  ]
         ]
 
     , div [ class "fv-code w-8 text-right"] [ text "\"" ]
