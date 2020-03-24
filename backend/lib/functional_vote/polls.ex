@@ -162,23 +162,29 @@ defmodule FunctionalVote.Polls do
   def instant_runoff(votes, poll_id, write_winner \\ false) do
     IO.puts("[PollCtx] Starting IRV algorithm with the following votes:")
     IO.inspect(votes)
-    raw_tallies = Map.values(votes)
-                  |> List.zip()
-                  |> List.first()
-                  |> Tuple.to_list()
-                  |> Enum.frequencies()
-    tallies_by_count = Enum.group_by(raw_tallies, fn {_, value} -> value end, fn {key, _} -> key end)
-    IO.puts("[PollCtx] Raw tallies by count:")
-    IO.inspect(tallies_by_count)
-    unless (write_winner) do
-      # Just read the winner and return raw_tallies and winner
-      winner = read_winner(poll_id)
-      irv_tallies = read_rounds(poll_id)
+    if map_size(votes) == 0 do
+      winner = get_poll_choices(poll_id) |> Enum.random()
+      irv_tallies = []
       {irv_tallies, winner} # RETURN ENDPOINT
     else
-      {_, winner} = instant_runoff_recurse(votes, poll_id, 0)
-      irv_tallies = read_rounds(poll_id)
-      {irv_tallies, winner} # RETURN ENDPOINT
+      raw_tallies = Map.values(votes)
+                    |> List.zip()
+                    |> List.first()
+                    |> Tuple.to_list()
+                    |> Enum.frequencies()
+      tallies_by_count = Enum.group_by(raw_tallies, fn {_, value} -> value end, fn {key, _} -> key end)
+      IO.puts("[PollCtx] Raw tallies by count:")
+      IO.inspect(tallies_by_count)
+      unless (write_winner) do
+        # Just read the winner and return raw_tallies and winner
+        winner = read_winner(poll_id)
+        irv_tallies = read_rounds(poll_id)
+        {irv_tallies, winner} # RETURN ENDPOINT
+      else
+        {_, winner} = instant_runoff_recurse(votes, poll_id, 0)
+        irv_tallies = read_rounds(poll_id)
+        {irv_tallies, winner} # RETURN ENDPOINT
+      end
     end
   end
 
@@ -227,15 +233,9 @@ defmodule FunctionalVote.Polls do
     IO.puts("[PollCtx] Get poll data")
     poll = Repo.get_by!(Poll, poll_id: poll_id)
     votes = Votes.get_votes(poll_id)
-    if (map_size(votes) == 0) do
-      IO.puts("[PollCtx] No votes in poll, returning empty tallies and winner")
-      calculated = %{tallies: [], winner: ""}
-      Map.merge(poll, calculated) # RETURN ENDPOINT
-    else
-      {irv_tallies, winner} = instant_runoff(votes, poll_id)
-      calculated = %{tallies: irv_tallies, winner: winner}
-      Map.merge(poll, calculated) # RETURN ENDPOINT
-    end
+    {irv_tallies, winner} = instant_runoff(votes, poll_id)
+    calculated = %{tallies: irv_tallies, winner: winner}
+    Map.merge(poll, calculated)
   end
 
   @doc """
