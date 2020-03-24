@@ -133,6 +133,9 @@ a:hover {
   -ms-user-select: none;
   user-select: none;
 }
+.fv-slider:focus {
+  @apply outline-none bg-blue-800;
+}
 .fv-slider::-webkit-slider-thumb {
   @apply appearance-none bg-blue-700 border-0 h-6 w-6 rounded-full shadow-lg;
 }
@@ -155,7 +158,6 @@ a:hover {
 .fv-slider::-moz-focus-outer {
   border: 0;
 }
-
 
 .fv-results .domain {
   stroke: #ED8936;
