@@ -35,17 +35,17 @@ renderShareLinks url helpText title message =
                     [ renderIcon FeatherIcons.link ]
 
                 , div
-                    [ class "mx-2 flex-grow" ]
+                    [ class "mx-2 w-full" ]
                     [ input
-                        [ class "fv-input hover:bg-gray-900"
+                        [ class "fv-input"
                         , disabled True
                         , value <| url
                         ]
                         []
                     ]
 
-                , button 
-                    [ class "w-10" ] 
+                , div 
+                    [ class "w-10 flex-shrink-0" ] 
                     []
                 ]
 
@@ -56,9 +56,9 @@ renderShareLinks url helpText title message =
                     [ renderIcon FeatherIcons.twitter ]
 
                 , div
-                    [ class "mx-2 flex-grow" ]
+                    [ class "mx-2 w-full" ]
                     [ input
-                        [ class "fv-input hover:bg-gray-900"
+                        [ class "fv-input"
                         , disabled True
                         , value twitterUrl
                         ]
@@ -66,7 +66,7 @@ renderShareLinks url helpText title message =
                     ]
 
                 , a 
-                    [ class "fv-nav-btn text-orange-500 bg-gray-900 border-2 border-orange-500 hover:text-orange-500 hover:bg-orange-900" 
+                    [ class "fv-nav-btn fv-nav-btn-orange" 
                     , href <| twitterUrl
                     , target "_blank"
                     ]
@@ -80,9 +80,9 @@ renderShareLinks url helpText title message =
                     [ renderIcon FeatherIcons.facebook ]
 
                 , div
-                    [ class "mx-2 flex-grow" ]
+                    [ class "mx-2 w-full" ]
                     [ input
-                        [ class "fv-input hover:bg-gray-900"
+                        [ class "fv-input"
                         , disabled True
                         , value <| facebookUrl
                         ]
@@ -90,7 +90,7 @@ renderShareLinks url helpText title message =
                     ]
 
                 , a 
-                    [ class "fv-nav-btn text-orange-500 bg-gray-900 border-2 border-orange-500 hover:text-orange-500 hover:bg-orange-900"
+                    [ class "fv-nav-btn fv-nav-btn-orange"
                     , href facebookUrl
                     , target "_blank"
                     ]
@@ -104,9 +104,9 @@ renderShareLinks url helpText title message =
                     [ renderIcon FeatherIcons.mail ]
 
                 , div
-                    [ class "mx-2 flex-grow" ]
+                    [ class "mx-2 w-full" ]
                     [ input
-                        [ class "fv-input hover:bg-gray-900"
+                        [ class "fv-input"
                         , disabled True
                         , value <| mailUrl
                         ]
@@ -114,7 +114,7 @@ renderShareLinks url helpText title message =
                     ]
 
                 , a 
-                    [ class "fv-nav-btn text-orange-500 bg-gray-900 border-2 border-orange-500 hover:text-orange-500 hover:bg-orange-900" 
+                    [ class "fv-nav-btn fv-nav-btn-orange" 
                     , href mailUrl
                     , target "_blank"
                     ]

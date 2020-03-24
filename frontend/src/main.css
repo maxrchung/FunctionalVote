@@ -24,7 +24,7 @@ body {
 }
 
 .fv-nav-btn {
-  @apply flex items-center justify-center h-10 w-10 bg-blue-800 rounded-full shadow font-sans font-bold text-xl text-blue-500;
+  @apply flex flex-shrink-0 items-center justify-center h-10 w-10 border-2 border-blue-500 rounded-full shadow font-sans font-bold text-xl text-blue-500;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -34,10 +34,25 @@ body {
   user-select: none;
 }
 .fv-nav-btn:focus {
-  @apply outline-none;
+  @apply outline-none bg-blue-700 shadow-md text-blue-500;
 }
 .fv-nav-btn:hover {
   @apply bg-blue-700 shadow-md text-blue-500;
+}
+.fv-nav-btn-orange {
+  @apply text-orange-500 border-orange-500;
+}
+.fv-nav-btn-orange:focus {
+  @apply text-orange-500 bg-orange-900;
+}
+.fv-nav-btn-orange:hover {
+  @apply text-orange-500 bg-orange-900;
+}
+.fv-nav-btn-blue:hover {
+  @apply bg-blue-900;
+}
+.fv-nav-btn-blue:focus {
+  @apply bg-blue-900;
 }
 
 .fv-nav-code {
@@ -95,7 +110,7 @@ body {
   user-select: none;
 }
 .fv-btn:focus {
-  @apply outline-none;
+  @apply outline-none bg-orange-700 shadow-md;
 }
 .fv-btn:hover {
   @apply bg-orange-700 shadow-md;
@@ -128,7 +143,7 @@ a:hover {
   @apply bg-blue-500;
 }
 .fv-slider::-moz-range-thumb {
-  @apply bg-blue-700 border-0 w-6 h-6 rounded-full shadow-lg;
+  @apply outline-none bg-blue-700 border-0 w-6 h-6 rounded-full shadow-lg;
 }
 .fv-slider::-moz-range-thumb:hover {
   @apply bg-blue-500;
@@ -136,6 +151,11 @@ a:hover {
 .fv-slider::-moz-range-thumb:focus {
   @apply bg-blue-500;
 }
+/* https://stackoverflow.com/a/21568066 */
+.fv-slider::-moz-focus-outer {
+  border: 0;
+}
+
 
 .fv-results .domain {
   stroke: #ED8936;

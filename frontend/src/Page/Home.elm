@@ -100,8 +100,6 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  let choicesLength = Array.length model.choices
-  in
   Html.form [ onSubmit MakePollRequest ]
       [ div [ class "fv-text" ]
           [ text "-- Welcome to Functional Vote! Enter a question and a few choices below to create a new ranked-choice poll." ]
@@ -136,10 +134,12 @@ view model =
           , div [ class "fv-code w-8 text-right" ] [text "=[" ]
           ]
 
-      , div
+      , let choicesLength = Array.length model.choices
+        in
+        div
           []
           ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
-
+    
       , div [ class "fv-code pb-2" ] [ text "]}" ]
       
       , div [ class "flex justify-between pb-1" ]
@@ -186,11 +186,11 @@ renderChoice choicesLength showError index choice =
             ] 
             []
 
-        , if choicesLength < 4 then
-              div [] []
+        , if index == choicesLength - 1 then
+              div [ class "flex-shrink-0 ml-2 w-10" ] []
             else
               button
-                  [ class "flex-shrink-0 ml-2 fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900"
+                  [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
                   , onClick <| RemoveChoice index
                   , type_ "button"
                   ]
