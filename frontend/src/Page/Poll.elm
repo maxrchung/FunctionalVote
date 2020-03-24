@@ -155,7 +155,7 @@ view model =
       [] 
       [ div 
           [ class "fv-text" ]
-          [ text "-- View the poll results and see how results were calculated." ]
+          [ text "-- View the poll results and see how results were calculated. In case of ties, a winner is randomly decided." ]
 
       , div 
           [ class "flex justify-between" ]
@@ -342,13 +342,13 @@ renderSlider step tallies =
       , div 
         [ class "flex justify-between items-center mt-2 w-full" ]
         [ button 
-          [ class "fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900" 
+          [ class "fv-nav-btn fv-nav-btn-blue" 
           , onClick DecrementStep
           ]
           [ Shared.renderIcon FeatherIcons.arrowLeft ]
 
         , input 
-            [ class "flex-grow mx-2 fv-slider"
+            [ class "fv-slider w-full mx-2"
             , type_ "range"
             , onInput ChangeStep
             , Html.Attributes.max <| String.fromInt <| List.length tallies - 1
@@ -357,7 +357,7 @@ renderSlider step tallies =
             []
 
         , button 
-            [ class "fv-nav-btn bg-gray-900 border-2 border-blue-500 hover:bg-blue-900" 
+            [ class "fv-nav-btn fv-nav-btn-blue" 
             , onClick IncrementStep
             ]
             [ Shared.renderIcon FeatherIcons.arrowRight ]

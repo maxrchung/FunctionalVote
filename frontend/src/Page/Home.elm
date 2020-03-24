@@ -1,12 +1,14 @@
 module Page.Home exposing ( .. )
 
+import Array
+import Array.Extra
 import Browser.Navigation as Navigation
+import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
 import Http.Detailed
-import Array
 import Json.Decode as Decode
 import Json.Encode as Encode
 
@@ -33,6 +35,7 @@ type Msg
   | ChangeChoice Int String
   | MakePollRequest
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
+  | RemoveChoice Int
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -69,6 +72,10 @@ update msg model =
           in
           ( { model | showError = True, error = newError }, Cmd.none )
 
+    RemoveChoice index ->
+      let newChoices = Array.Extra.removeAt index model.choices
+      in ( { model | choices = newChoices, showError = False }, Cmd.none )
+
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
   Http.post
@@ -95,7 +102,7 @@ view : Model -> Html Msg
 view model =
   Html.form [ onSubmit MakePollRequest ]
       [ div [ class "fv-text" ]
-          [ text "-- Welcome to Functional Vote! Enter a question and choices below to create a new ranked-choice poll." ]
+          [ text "-- Welcome to Functional Vote! Enter a question and a few choices below to create a new ranked-choice poll." ]
       
       , div [ class "flex justify-between" ]
           [ h1 [ class "fv-code" ] [ text "poll" ]
@@ -127,10 +134,12 @@ view model =
           , div [ class "fv-code w-8 text-right" ] [text "=[" ]
           ]
 
-      , div
+      , let choicesLength = Array.length model.choices
+        in
+        div
           []
-          ( Array.toList <| Array.indexedMap ( renderChoice model.showError ) model.choices )
-
+          ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
+    
       , div [ class "fv-code pb-2" ] [ text "]}" ]
       
       , div [ class "flex justify-between pb-1" ]
@@ -149,8 +158,8 @@ view model =
           ]
       ]
 
-renderChoice : Bool -> Int -> String -> Html Msg
-renderChoice showError index choice =
+renderChoice : Int -> Bool -> Int -> String -> Html Msg
+renderChoice choicesLength showError index choice =
   let 
     placeholderValue = 
       if index == 0 then
@@ -163,16 +172,33 @@ renderChoice showError index choice =
         "\""
       else
         ",\""
-
   in
   div [ class "flex justify-between items-center py-2" ] 
     [ div [ class "fv-code w-8"] [ text startQuotation ]
-    , input [ class "fv-input"
+
+    , div [ class "flex justify-between items-center w-full" ]
+        [ input
+            [ class "fv-input"
             , errorClass showError
             , placeholder placeholderValue
             , value choice
             , onInput ( ChangeChoice index ) 
-            ] []
+            ] 
+            []
+
+        , if index == choicesLength - 1 then
+              div [ class "flex-shrink-0 ml-2 w-10" ] []
+            else
+              button
+                  [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
+                  , onClick <| RemoveChoice index
+                  , type_ "button"
+                  ]
+                  [ FeatherIcons.x
+                      |> FeatherIcons.toHtml []
+                  ]
+        ]
+
     , div [ class "fv-code w-8 text-right"] [ text "\"" ]
     ]
   
