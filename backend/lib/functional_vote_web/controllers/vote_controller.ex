@@ -27,6 +27,8 @@ defmodule FunctionalVoteWeb.VoteController do
         end
       :id_error ->
         send_resp(conn, :unprocessable_entity, "Invalid poll ID")
+      :empty_choices_error ->
+        send_resp(conn, :unprocessable_entity, "Received no votes")
       :non_integer_rank_error ->
         send_resp(conn, :unprocessable_entity, "Received a vote with a non-integer rank")
       :available_choices_error ->

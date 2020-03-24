@@ -255,10 +255,10 @@ defmodule FunctionalVote.Polls do
     poll_id = StringGenerator.poll_id_of_length(8)
     IO.inspect(poll_id)
     if (attrs["title"] !== nil and String.trim(attrs["title"]) !== "") do
+      attrs = Map.update!(attrs, "choices",
+                &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
       if (attrs["choices"] === Enum.uniq(attrs["choices"])) do
-        attrs = Map.update!(attrs, "choices",
-                  &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
-                |> Map.put_new("poll_id", poll_id)
+        attrs = Map.put_new(attrs, "poll_id", poll_id)
         %Poll{}
         |> Poll.changeset(attrs)
         |> Repo.insert()

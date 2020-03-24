@@ -60,6 +60,9 @@ defmodule FunctionalVote.Votes do
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
       cond do
+        validate_non_empty_choices(choices) == :empty_choices_error ->
+          # Received empty choices list
+          :empty_choices_error # RETURN ENDPOINT
         validate_integer_ranks(choices) == :non_integer_rank_error ->
           # Received a vote with a non-integer rank
           :non_integer_rank_error # RETURN ENDPOINT
@@ -88,6 +91,12 @@ defmodule FunctionalVote.Votes do
       # Poll we are voting for does not exist
       IO.puts("[VoteCtx] poll_id #{poll_id} does not exist!")
       :id_error # RETURN ENDPOINT
+    end
+  end
+
+  defp validate_non_empty_choices(choices) do
+    if (choices == nil) do
+      :empty_choices_error
     end
   end
 
