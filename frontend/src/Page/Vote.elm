@@ -283,7 +283,7 @@ view model =
           ]
 
       , Shared.renderShareLinks 
-          ( model.apiAddress ++ "/vote/" ++ model.pollId ) 
+          ( "https://functionalvote.com/vote/" ++ model.pollId ) 
           "-- Share the vote submission page." 
           model.poll.title
           "Vote in my poll: "

@@ -227,7 +227,7 @@ view model =
           ]
 
       , Shared.renderShareLinks 
-          ( model.apiAddress ++ "/poll/" ++ model.pollId ) 
+          ( "https://functionalvote.com/poll/" ++ model.pollId ) 
           "-- Share the poll results page." 
           model.poll.title
           "View my poll results: "
