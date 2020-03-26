@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: nginx update and restart
+    - name: nginx update
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -21,4 +21,4 @@ jobs:
         script: |
           cd /home/ubuntu/FunctionalVote/production
           git pull
-          sudo systemctl restart nginx
+          sudo systemctl reload nginx
