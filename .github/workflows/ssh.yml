@@ -21,4 +21,4 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: whoami
+        script: /home/ubuntu/FunctionalVote/production/deploy.sh
