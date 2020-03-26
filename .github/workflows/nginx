@@ -1,0 +1,24 @@
+# Restarts NGINX if changes have been made to NGINX conf
+
+name: NGINX CD
+
+on:
+  push:
+    paths:
+    - production/functionalvote.conf
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: nginx update and restart
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/ubuntu/FunctionalVote/production
+          git pull
+          sudo systemctl restart nginx
