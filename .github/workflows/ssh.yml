@@ -22,6 +22,8 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
+          # Print commands that were run and exit with failure if error happens
+          set -ex
           home="/home/ubuntu/FunctionalVote"
           # Get new updates
           cd $home
