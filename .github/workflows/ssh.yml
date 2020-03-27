@@ -21,4 +21,26 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: /home/ubuntu/FunctionalVote/production/deploy.sh
+        script: |
+          home="/home/ubuntu/FunctionalVote"
+          
+          # Get new updates
+          cd $home
+          git pull
+
+          ### BACKEND ###
+          # Kill backend
+          pm2 stop phoenix_dev
+          # Run database migrations
+          cd $home/backend
+          mix ecto.migrate
+          # Start backend
+          pm2 start phoenix_dev
+
+          ### FRONTEND ###
+          # Build frontend files in production
+          cd $home/frontend
+          # Install packages if needed
+          npm install
+          # Build in production mode
+          npm run build
