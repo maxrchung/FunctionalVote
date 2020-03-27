@@ -23,9 +23,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           home="/home/ubuntu/FunctionalVote"
-          
           # Get new updates
           cd $home
+          git reset --hard
           git pull
 
           ### BACKEND ###
