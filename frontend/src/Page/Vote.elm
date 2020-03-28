@@ -1,5 +1,6 @@
 module Page.Vote exposing ( .. )
 
+import Animation
 import Browser.Navigation as Navigation
 import Dict
 import Html exposing ( .. )
@@ -22,6 +23,8 @@ type alias Model =
   , error : String
   , showError: Bool
   , isLoading: Bool
+  , fadeStyle: Animation.State
+  , fadeChoice: String
   }
 
 type alias Poll =
@@ -37,8 +40,26 @@ type alias PollResponse =
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
 init key pollId apiAddress = 
-  let model = Model key pollId ( Poll "" Dict.empty [] ) apiAddress "" False True
+  let 
+    model = 
+      { key = key
+      , pollId = pollId
+      , poll = Poll "" Dict.empty []
+      , apiAddress = apiAddress
+      , error = ""
+      , showError = False
+      , isLoading = True
+      , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
+      , fadeChoice = ""
+      }
   in ( model, getPollRequest model )
+
+
+
+-- SUBSCRIPTIONS
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Animation.subscription Animate [ model.fadeStyle ]
 
 
 
@@ -49,6 +70,7 @@ type Msg
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | GoToPoll
+  | Animate Animation.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -69,7 +91,17 @@ update msg model =
         oldPoll = model.poll
         ( newOrdered, newUnordered ) = changeRank rank choice oldPoll.orderedChoices oldPoll.unorderedChoices
         newPoll = { oldPoll | orderedChoices = newOrdered, unorderedChoices = newUnordered }
-      in ( { model | poll = newPoll, showError = False }, Cmd.none)
+        newFadeStyle =
+          Animation.interrupt
+            [ Animation.set
+                [ Animation.opacity 0
+                ]
+            , Animation.to
+                [ Animation.opacity 1
+                ]
+            ]
+            model.fadeStyle
+      in ( { model | poll = newPoll, showError = False, fadeStyle = newFadeStyle, fadeChoice = choice }, Cmd.none)
       
     SubmitVoteRequest ->
         ( model, submitVoteRequest model) 
@@ -92,6 +124,9 @@ update msg model =
     
     GoToPoll ->
       ( model, Navigation.load ( "/poll/" ++ model.pollId ) )
+
+    Animate animate ->
+      ( { model | fadeStyle = Animation.update animate model.fadeStyle } , Cmd.none )
 
 calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =
@@ -234,14 +269,14 @@ view model =
           ]
       
       , div []
-          ( List.indexedMap ( renderOrderedChoice maxRank maxOrdered model.showError ) <| Dict.toList model.poll.orderedChoices )
+          ( List.indexedMap ( renderOrdered maxRank maxOrdered model ) <| Dict.toList model.poll.orderedChoices )
 
       , div
-          [ class "fv-break py-1" ] 
+          [ class "fv-break py-1" ]
           [ text "--" ]
 
       , div []
-          ( List.indexedMap ( renderUnorderedChoice maxRank maxUnordered hasOrderedChoices model.showError ) <| model.poll.unorderedChoices )
+          ( List.indexedMap ( renderUnordered maxRank maxUnordered hasOrderedChoices model ) <| model.poll.unorderedChoices )
 
       , div [class "fv-code pb-2" ] [ text "]}" ]
         
@@ -289,16 +324,16 @@ view model =
           "Vote in my poll: "
       ]
 
-renderOrderedChoice : Int -> Int -> Bool -> Int -> ( Int, String ) -> Html Msg
-renderOrderedChoice maxRank maxIndex showError index ( rank, choice ) =
-  renderChoice maxRank maxIndex False showError index ( String.fromInt rank, choice )
+renderOrdered : Int -> Int -> Model -> Int -> ( Int, String ) -> Html Msg
+renderOrdered maxRank maxIndex model index ( rank, choice ) =
+  renderChoice maxRank maxIndex False model index ( String.fromInt rank, choice )
 
-renderUnorderedChoice : Int -> Int -> Bool -> Bool -> Int -> String -> Html Msg
-renderUnorderedChoice maxRank maxIndex hasOrderedChoices showError index choice  =
-  renderChoice maxRank maxIndex hasOrderedChoices showError index ( "--", choice )
+renderUnordered : Int -> Int -> Bool -> Model -> Int -> String -> Html Msg
+renderUnordered maxRank maxIndex hasOrderedChoices model index choice  =
+  renderChoice maxRank maxIndex hasOrderedChoices model index ( "--", choice )
 
-renderChoice : Int -> Int -> Bool -> Bool -> Int -> ( String, String ) -> Html Msg
-renderChoice maxRank maxIndex hasOrderedChoices showError index ( rank, choice ) =
+renderChoice : Int -> Int -> Bool -> Model -> Int -> ( String, String ) -> Html Msg
+renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
   div 
     [ class "flex justify-between items-center" ]
     [ div 
@@ -314,7 +349,7 @@ renderChoice maxRank maxIndex hasOrderedChoices showError index ( rank, choice )
         ]
         [ select 
             [ class "fv-input w-auto"
-            , errorClass showError
+            , errorClass model.showError
             , value rank
             , onInput ( ChangeRank choice ) 
             ]
@@ -335,7 +370,14 @@ renderChoice maxRank maxIndex hasOrderedChoices showError index ( rank, choice )
             [ text ",\"" ]
 
         , div 
-            [ class "fv-text text-blue-100 w-full" ]
+            ( List.concat
+                [ if model.fadeChoice == choice then
+                    Animation.render model.fadeStyle
+                  else
+                    []
+                , [ class "fv-text text-blue-100 w-full" ]
+                ]
+            )
             [ text choice ]
         ]
 
@@ -352,7 +394,7 @@ renderOption selectedRank rank  =
      Nothing ->
       option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
      Just selectedRankInt ->
-      option 
+      option
         [ value <| String.fromInt rank 
         , selected ( selectedRankInt == rank )
         ] 
