@@ -100,8 +100,8 @@ routeParser =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   case model.page of
-    VotePage ->
-      VoteMsg VotePage.subscriptions model
+    VotePage voteModel ->
+      Sub.map VoteMsg <| Vote.subscriptions voteModel
     _ ->
       Sub.none
 
