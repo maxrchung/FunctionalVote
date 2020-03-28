@@ -22,7 +22,7 @@ main =
   Browser.application
     { init = init
     , update = update
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = subscriptions
     , view = view
     , onUrlRequest = UrlRequested
     , onUrlChange = UrlChanged
@@ -96,6 +96,17 @@ routeParser =
 
 
 
+-- SUBSCRIPTIONS
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  case model.page of
+    VotePage ->
+      VoteMsg VotePage.subscriptions model
+    _ ->
+      Sub.none
+
+
+
 -- UPDATE
 type Msg 
   = UrlRequested Browser.UrlRequest
@@ -111,7 +122,7 @@ update msg model =
     UrlRequested urlRequest ->
       case urlRequest of
         Browser.Internal url ->
-          ( model, Navigation.pushUrl model.key (Url.toString url) )
+          ( model, Navigation.pushUrl model.key <| Url.toString url )
 
         Browser.External href ->
           ( model, Navigation.load href )

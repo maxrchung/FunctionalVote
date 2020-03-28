@@ -1,5 +1,6 @@
 module Page.Vote exposing ( .. )
 
+import Animation
 import Browser.Navigation as Navigation
 import Dict
 import Html exposing ( .. )
@@ -22,6 +23,7 @@ type alias Model =
   , error : String
   , showError: Bool
   , isLoading: Bool
+  , fadeStyle: Animation.State
   }
 
 type alias Poll =
@@ -37,8 +39,25 @@ type alias PollResponse =
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
 init key pollId apiAddress = 
-  let model = Model key pollId ( Poll "" Dict.empty [] ) apiAddress "" False True
+  let 
+    model = 
+      { key = key
+      , pollId = pollId
+      , poll = Poll "" Dict.empty []
+      , apiAddress = apiAddress
+      , error = ""
+      , showError = False
+      , isLoading = True
+      , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
+      }
   in ( model, getPollRequest model )
+
+
+
+-- SUBSCRIPTIONS
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Animation.subscription Animate [ model.fadeStyle ]
 
 
 
@@ -49,6 +68,8 @@ type Msg
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | GoToPoll
+  | FadeIn
+  | Animate Animation.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -92,6 +113,24 @@ update msg model =
     
     GoToPoll ->
       ( model, Navigation.load ( "/poll/" ++ model.pollId ) )
+
+    FadeIn ->
+      let
+        newFadeStyle =
+          Animation.interrupt
+            [ Animation.set
+                [ Animation.opacity 0
+                ]
+            , Animation.to
+                [ Animation.opacity 1
+                ]
+            ]
+            model.fadeStyle
+      in
+      ( { model | fadeStyle = newFadeStyle } , Cmd.none )
+
+    Animate animate ->
+      ( { model | fadeStyle = Animation.update animate model.fadeStyle } , Cmd.none )
 
 calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =
