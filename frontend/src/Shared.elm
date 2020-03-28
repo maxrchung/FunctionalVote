@@ -33,7 +33,7 @@ renderShareLinks url helpText title message =
                     , id "fv-share-link" ]
                     [ input
                         [ class "fv-share-link fv-input"
-                        , disabled True
+                        , readonly True
                         , value <| url
                         ]
                         []
@@ -63,7 +63,7 @@ renderShareLinks url helpText title message =
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
+                        , readonly True
                         , value twitterUrl
                         ]
                         []
@@ -85,7 +85,7 @@ renderShareLinks url helpText title message =
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
+                        , readonly True
                         , value <| facebookUrl
                         ]
                         []
@@ -107,7 +107,7 @@ renderShareLinks url helpText title message =
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
+                        , readonly True
                         , value <| mailUrl
                         ]
                         []
