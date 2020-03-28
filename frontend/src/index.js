@@ -12,4 +12,13 @@ Elm.Main.init({
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
 
-new ClipboardJS(".fv-share-copy");
+const removeShareText = () => {
+  const texts = document.getElementsByClassName('fv-share-text');
+  for (let text of texts) {
+    text.classList.remove('hidden');
+  }
+};
+
+const clipboard = new ClipboardJS(".fv-share-copy");
+clipboard.on('success', removeShareText);
+clipboard.on('error', removeShareText);
