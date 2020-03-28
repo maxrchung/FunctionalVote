@@ -14,13 +14,9 @@ renderShareLinks url helpText title message =
   in
   
   div []
-    [ div
-        [ class "fv-break" ] 
-        [ text "--" ]
+    [ div [ class "fv-break" ] [ text "--" ]
 
-    , div
-        [ class "fv-text mb-2" ]
-        [ text helpText ]
+    , div [ class "fv-text mb-2" ] [ text helpText ]
 
     , div
         [ class "flex justify-between" ]
@@ -30,36 +26,42 @@ renderShareLinks url helpText title message =
             [ class "w-full" ]
             [ div 
                 [ class "flex justify-between items-center mb-4" ]
-                [ div 
-                    [ class "text-blue-500" ] 
-                    [ renderIcon FeatherIcons.link ]
+                [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.link ]
 
                 , div
-                    [ class "mx-2 w-full" ]
+                    [ class "mx-2 w-full"
+                    , id "fv-share-link" ]
                     [ input
-                        [ class "fv-input"
-                        , disabled True
+                        [ class "fv-share-link fv-input"
                         , value <| url
                         ]
                         []
                     ]
 
-                , div 
-                    [ class "w-10 flex-shrink-0" ] 
-                    []
+                , button
+                    [ class "fv-nav-btn fv-nav-btn-orange fv-share-copy"
+                    , attribute "data-clipboard-target" ".fv-share-link"
+                    ]
+                    [ renderIcon FeatherIcons.clipboard ]
+                ]
+
+            , div 
+                [ class "fv-share-text flex justify-between items-center mb-4 -mt-3 hidden" ]
+                [ div [ class "invisible" ] [ renderIcon FeatherIcons.link ]
+
+                , div [ class "mx-2 w-full text-orange-500" ] [ text "-- Link copied" ]
+
+                , div [ class "w-10 mx-2" ] []
                 ]
 
             , div 
                 [ class "flex justify-between items-center mb-4" ]
-                [ div 
-                    [ class "text-blue-500" ] 
-                    [ renderIcon FeatherIcons.twitter ]
+                [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.twitter ]
 
                 , div
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
                         , value twitterUrl
                         ]
                         []
@@ -75,15 +77,12 @@ renderShareLinks url helpText title message =
 
             , div 
                 [ class "flex justify-between items-center mb-4" ]
-                [ div 
-                    [ class "text-blue-500" ] 
-                    [ renderIcon FeatherIcons.facebook ]
+                [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.facebook ]
 
                 , div
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
                         , value <| facebookUrl
                         ]
                         []
@@ -99,15 +98,12 @@ renderShareLinks url helpText title message =
 
             , div 
                 [ class "flex justify-between items-center" ]
-                [ div 
-                    [ class "text-blue-500" ] 
-                    [ renderIcon FeatherIcons.mail ]
+                [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.mail ]
 
                 , div
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
                         , value <| mailUrl
                         ]
                         []

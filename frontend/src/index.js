@@ -11,3 +11,13 @@ Elm.Main.init({
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+const showShareText = () => {
+  const texts = document.getElementsByClassName('fv-share-text');
+  for (let text of texts) {
+    text.classList.remove('hidden');
+  }
+};
+
+const clipboard = new ClipboardJS(".fv-share-copy");
+clipboard.on('success', showShareText);
