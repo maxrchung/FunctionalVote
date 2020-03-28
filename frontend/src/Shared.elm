@@ -35,18 +35,20 @@ renderShareLinks url helpText title message =
                     [ renderIcon FeatherIcons.link ]
 
                 , div
-                    [ class "mx-2 w-full" ]
+                    [ class "mx-2 w-full"
+                    , id "fv-share-link" ]
                     [ input
-                        [ class "fv-input"
-                        , disabled True
+                        [ class "fv-share-link fv-input"
                         , value <| url
                         ]
                         []
                     ]
 
-                , div 
-                    [ class "w-10 flex-shrink-0" ] 
-                    []
+                , button
+                    [ class "fv-nav-btn fv-nav-btn-orange fv-share-copy"
+                    , attribute "data-clipboard-target" ".fv-share-link"
+                    ]
+                    [ renderIcon FeatherIcons.clipboard ]
                 ]
 
             , div 
@@ -59,7 +61,6 @@ renderShareLinks url helpText title message =
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
                         , value twitterUrl
                         ]
                         []
@@ -83,7 +84,6 @@ renderShareLinks url helpText title message =
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
                         , value <| facebookUrl
                         ]
                         []
@@ -107,7 +107,6 @@ renderShareLinks url helpText title message =
                     [ class "mx-2 w-full" ]
                     [ input
                         [ class "fv-input"
-                        , disabled True
                         , value <| mailUrl
                         ]
                         []
