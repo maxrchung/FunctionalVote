@@ -23,6 +23,13 @@ body {
   @apply bg-gray-900 overflow-y-scroll h-screen;
 }
 
+a {
+  @apply text-blue-500;
+}
+a:hover {
+  @apply text-blue-100;
+}
+
 .fv-nav-btn {
   @apply flex flex-shrink-0 items-center justify-center h-10 w-10 border-2 border-blue-500 rounded-full shadow font-sans font-bold text-xl text-blue-500;
   -webkit-tap-highlight-color: transparent;
@@ -100,7 +107,7 @@ body {
 }
 
 .fv-btn {
-  @apply w-full py-2 bg-orange-500 rounded-full shadow-lg font-sans font-bold text-2xl text-orange-100;
+  @apply w-full py-2 bg-orange-500 rounded-full shadow-lg font-sans font-bold text-2xl text-orange-100 text-center;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -115,13 +122,16 @@ body {
 .fv-btn:hover {
   @apply bg-orange-700 shadow-md;
 }
+.fv-btn-blank {
+  @apply bg-gray-900 text-orange-500 border-2 border-orange-500;
+}
+.fv-btn-blank:focus {
+  @apply text-orange-500;
+}
+.fv-btn-blank:hover {
+  @apply text-orange-500;
+}
 
-a {
-  @apply text-blue-500;
-}
-a:hover {
-  @apply text-blue-100;
-}
 
 .fv-slider {
   @apply appearance-none rounded-full bg-blue-900 h-2 shadow-lg cursor-pointer outline-none;

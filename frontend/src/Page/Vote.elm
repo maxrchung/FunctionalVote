@@ -69,7 +69,6 @@ type Msg
   | ChangeRank String String
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
-  | GoToPoll
   | Animate Animation.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -122,9 +121,6 @@ update msg model =
           in
           ( { model | showError = True, error = newError }, Cmd.none )
     
-    GoToPoll ->
-      ( model, Navigation.load ( "/poll/" ++ model.pollId ) )
-
     Animate animate ->
       ( { model | fadeStyle = Animation.update animate model.fadeStyle } , Cmd.none )
 
@@ -309,9 +305,9 @@ view model =
       , div 
           [ class "flex justify-between" ]
           [ div [ class "w-8" ] [ text "" ]
-          , button 
-            [ class "fv-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
-            , onClick GoToPoll
+          , a 
+            [ class "fv-btn fv-btn-blank mb-2"
+            , href <| "/poll/" ++ model.pollId
             ] 
             [ text "View Results" ]
           , div [ class "w-8 text-right" ] [ text "" ]
