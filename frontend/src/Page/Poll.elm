@@ -46,7 +46,6 @@ init key pollId apiAddress =
 -- UPDATE
 type Msg 
   = GetPollResponse ( Result Http.Error Poll )
-  | GoToVote
   | DecrementStep
   | IncrementStep
   | ChangeStep String
@@ -79,9 +78,6 @@ update msg model =
 
         Err _ ->
           ( model, Navigation.pushUrl model.key "/error" )
-
-    GoToVote ->
-      ( model, Navigation.load ( "/vote/" ++ model.pollId ) )
 
     DecrementStep ->
       let
@@ -157,26 +153,26 @@ view model =
           [ class "fv-text" ]
           [ text "-- View the poll results and see how results were calculated. In case of ties, a winner is randomly decided." ]
 
-      , div 
+      , div
           [ class "flex justify-between" ]
           [ h1 [ class "fv-code" ] [ text "results" ]
           , div [ class "fv-code" ] [ text "={" ]
           ]
 
-      , div 
+      , div
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
           , h2 [ class "fv-header" ] [ text "Question" ]
           , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
-      , div 
+      , div
           [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8"] [ text "\"" ]
-          , div 
+          , div
             [ class "flex justify-center w-full"]
-            [ h1 
-              [ class "fv-text text-blue-100 text-left" ] 
+            [ h1
+              [ class "fv-text text-blue-100 text-left" ]
               [ text model.poll.title ]
             ]
           , div [class "fv-code w-8 text-right" ] [ text "\"" ]
@@ -184,19 +180,19 @@ view model =
 
       , div [ class "fv-code" ] [ text "," ]
 
-      , div 
+      , div
           [ class "flex justify-between items-center" ]
           [ div [ class "w-8" ] []
           , h2 [ class "fv-header" ] [ text "Winner" ]
           , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
-      , div 
+      , div
           [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8"] [ text "\"" ]
           , div 
             [ class "flex justify-center w-full"]
-            [ h1 
+            [ h1
               [ class "fv-text text-blue-100 text-left" ] 
               [ text model.poll.winner ]
             ]
@@ -208,7 +204,7 @@ view model =
       , div [ class "fv-code" ] [ text "}" ]
 
       , div
-          [ class "fv-break" ] 
+          [ class "fv-break" ]
           [ text "--" ]
       
       , div
@@ -218,16 +214,16 @@ view model =
       , div 
           [ class "flex justify-between" ]
           [ div [ class "w-8" ] [ text "" ]
-          , button 
-            [ class "fv-btn mb-2 bg-gray-900 text-orange-500 border-2 border-orange-500"
-            , onClick GoToVote
-            ] 
+          , a
+            [ class "fv-btn fv-btn-blank mb-2"
+            , href <| "/vote/" ++ model.pollId
+            ]
             [ text "Submit Vote" ]
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
 
-      , Shared.renderShareLinks 
-          ( "https://functionalvote.com/poll/" ++ model.pollId ) 
+      , Shared.renderShareLinks
+          ( "https://functionalvote.com/poll/" ++ model.pollId )
           "-- Share the poll results page." 
           model.poll.title
           "View my poll results: "
