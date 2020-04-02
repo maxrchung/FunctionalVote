@@ -114,7 +114,11 @@ update msg model =
             model.step
           else
             model.step - 1
-        newTransition = updateTransition model.transition newStep model.poll.tallies
+        newTransition =
+          if newStep == model.step then
+            model.transition
+          else
+            updateTransition model.transition newStep model.poll.tallies
       in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     IncrementStep ->
@@ -124,7 +128,11 @@ update msg model =
             model.step
           else
             model.step + 1
-        newTransition = updateTransition model.transition newStep model.poll.tallies
+        newTransition =
+          if newStep == model.step then
+            model.transition
+          else
+            updateTransition model.transition newStep model.poll.tallies
       in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     ChangeStep stepString ->
@@ -138,8 +146,8 @@ update msg model =
         newTransition = updateTransition model.transition newStep model.poll.tallies
       in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
-    Tick t ->
-      let newTransition = Transition.step t model.transition
+    Tick tick ->
+      let newTransition = Transition.step tick model.transition
       in ( { model | transition = newTransition } , Cmd.none )
 
 updateTransition : Transition.Transition ( List ( String, Float ) ) -> Int -> List ( List ( String, Float ) ) -> Transition.Transition ( List ( String, Float ) )
@@ -150,7 +158,7 @@ updateTransition oldTransition newStep tallies =
       case List.Extra.getAt newStep tallies of
          Nothing -> []
          Just getAt -> getAt
-  in Transition.for 600 ( interpolateRound currValue newRound )
+  in Transition.for 500 ( interpolateRound currValue newRound )
 
 interpolateRound : List ( String, Float ) -> List ( String, Float ) -> Interpolation.Interpolator ( List ( String, Float ) )
 interpolateRound from to =
@@ -185,10 +193,10 @@ getPollDecoder =
 
 reorderTallies : List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
 reorderTallies tallies =
-  List.map reorderRounds tallies
+  List.map reorderRound tallies
 
-reorderRounds : List ( String, Float ) -> List ( String, Float )
-reorderRounds round =
+reorderRound : List ( String, Float ) -> List ( String, Float )
+reorderRound round =
   List.sortWith compareEntries round
 
 compareEntries : ( String, Float ) -> ( String, Float ) -> Order
@@ -300,8 +308,7 @@ initResults round xScaleMax =
   let
     height = 
         100 + 30 * List.length round - 1
-  in
-  ResultsConfig 375 ( toFloat height ) 30 xScaleMax
+  in ResultsConfig 375 ( toFloat height ) 30 xScaleMax
 
 xScale : ResultsConfig -> ContinuousScale Float
 xScale config =
@@ -335,15 +342,15 @@ row config scale ( choice, votes ) =
         ]
         []
     , Svg.text_
-          [ SvgAttributes.class 
-              [ choiceTextColor votes config.xScaleMax
-              , "fill-current text-sm" ]
-          , SvgInPx.x <| config.padding / 4
-          , SvgInPx.y <| Scale.convert scale choice + ( Scale.bandwidth scale / 2 )
-          , SvgAttributes.textAnchor SvgTypes.AnchorStart
-          , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
-          ]
-          [ SvgCore.text <| truncateChoice choiceText ]
+        [ SvgAttributes.class 
+            [ choiceTextColor votes config.xScaleMax
+            , "fill-current text-sm" ]
+        , SvgInPx.x <| config.padding / 4
+        , SvgInPx.y <| Scale.convert scale choice + ( Scale.bandwidth scale / 2 )
+        , SvgAttributes.textAnchor SvgTypes.AnchorStart
+        , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
+        ]
+        [ SvgCore.text <| truncateChoice choiceText ]
     ]
     
 choiceTextColor : Float -> Float -> String
@@ -416,6 +423,9 @@ renderSlider step tallies =
 
 renderChart : ResultsConfig -> List ( String, Float ) -> SvgCore.Svg a
 renderChart config round =
+  let
+    reordered = reorderRound round      
+  in
   Svg.svg
     [ SvgAttributes.class [ "fv-results" ]
     , SvgAttributes.viewBox 0 0 config.width ( config.height - config.padding / 2 )
@@ -426,7 +436,7 @@ renderChart config round =
         [ SvgAttributes.transform [ SvgTypes.Translate ( config.padding - 1 ) config.padding ]
         , SvgAttributes.class [ "y-axis" ]
         ]
-        [ yAxis config round ]
+        [ yAxis config reordered ]
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate config.padding config.padding ] ] <|
-        List.map ( row config <| yScale config round ) round
+        List.map ( row config <| yScale config reordered ) reordered
     ]
