@@ -74,7 +74,6 @@ type Msg
   | IncrementStep
   | ChangeStep String
   | Tick Int
-  | StartTransition ( List ( String, Int ) )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -107,23 +106,23 @@ update msg model =
 
     DecrementStep ->
       let
-          newStep =
-            if model.step == 0 then
-              model.step
-            else
-              model.step - 1
-      in
-      ( { model | step = newStep }, Cmd.none )
+        newStep =
+          if model.step == 0 then
+            model.step
+          else
+            model.step - 1
+        newTransition = updateTransition newStep model
+      in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     IncrementStep ->
       let
-          newStep =
-            if model.step == List.length model.poll.tallies - 1 then
-              model.step
-            else
-              model.step + 1
-      in
-      ( { model | step = newStep }, Cmd.none )
+        newStep =
+          if model.step == List.length model.poll.tallies - 1 then
+            model.step
+          else
+            model.step + 1
+        newTransition = updateTransition newStep model
+      in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     ChangeStep stepString ->
       let
@@ -133,18 +132,22 @@ update msg model =
               0
             Just stepInt ->
               stepInt
-      in
-      ( { model | step = newStep }, Cmd.none )
+        newTransition = updateTransition newStep model
+      in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     Tick t ->
       let newTransition = Transition.step t model.transition
       in ( { model | transition = newTransition } , Cmd.none )
 
-    StartTransition newRound ->
-        let 
-          oldRound = Transition.value model.transition
-          newTransition = Transition.for 600 ( interpolateRound oldRound newRound )
-        in ( { model | transition = newTransition } , Cmd.none )
+updateTransition : Int -> Model -> Transition.Transition ( List ( String, Int ) )
+updateTransition newStep model =
+  let 
+    currValue = Transition.value model.transition
+    newRound = 
+      case List.Extra.getAt newStep model.poll.tallies of
+         Nothing -> []
+         Just getAt -> getAt
+  in Transition.for 600 ( interpolateRound currValue newRound )
 
 interpolateRound : List ( String, Int ) -> List ( String, Int ) -> Interpolation.Interpolator ( List ( String, Int ) )
 interpolateRound from to =
@@ -252,7 +255,7 @@ view model =
           , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , renderResults model.step model.xScaleMax model.poll.tallies
+      , renderResults model.step model.xScaleMax model.poll.tallies <| Transition.value model.transition
 
       , div [ class "fv-code" ] [ text "}" ]
 
@@ -354,18 +357,12 @@ truncateChoice choice =
   else
     choice
 
-renderResults : Int -> Int -> List ( List ( String, Int ) ) -> Html Msg
-renderResults step xScaleMax tallies =
+renderResults : Int -> Int -> List ( List ( String, Int ) ) -> List ( String, Int ) -> Html Msg
+renderResults step xScaleMax tallies transition =
   div []
     ( if List.isEmpty tallies then
         []
       else
-        let
-          round = 
-            case List.Extra.getAt step tallies of
-              Nothing -> []
-              Just getAt -> getAt
-        in
         [ div [ class "fv-code" ] [ text "," ]
         , div 
             [ class "flex justify-between items-center" ]
@@ -375,7 +372,7 @@ renderResults step xScaleMax tallies =
             ]
 
         , renderSlider step tallies
-        , renderChart ( initResults round xScaleMax ) round
+        , renderChart ( initResults transition xScaleMax ) transition
         ]
     )
 
