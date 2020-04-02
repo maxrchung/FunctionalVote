@@ -25,20 +25,23 @@ jobs:
           # Print commands that were run and exit with failure if error happens
           set -ex
           home="/home/ubuntu/FunctionalVote"
-          # Get new updates
+          # Clean up any untracked files, revert any modified files, and get new updates
           cd $home
           git clean -xfdf
           git reset --hard
           git pull
 
           ### BACKEND ###
-          # Kill backend
-          pm2 stop phoenix_dev
-          # Run database migrations
           cd $home/backend
+          # Kill backend
+          pm2 stop phoenix
+          # Initial setup
+          mix deps.get --only prod
+          mix compile
+          # Run database migrations
           mix ecto.migrate
           # Start backend
-          pm2 start phoenix_dev
+          pm2 start phoenix
 
           ### FRONTEND ###
           # Build frontend files in production
