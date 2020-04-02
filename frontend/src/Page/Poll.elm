@@ -29,15 +29,15 @@ type alias Model =
   , poll : Poll
   , apiAddress : String
   , step : Int
-  , xScaleMax : Int
+  , xScaleMax : Float
   , isLoading : Bool
-  , transition : Transition.Transition ( List ( String, Int ) )
+  , transition : Transition.Transition ( List ( String, Float ) )
   }
 
 type alias Poll =
   { title : String
   , winner : String
-  , tallies : List ( List ( String, Int ) )
+  , tallies : List ( List ( String, Float ) )
   }
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
@@ -139,7 +139,7 @@ update msg model =
       let newTransition = Transition.step t model.transition
       in ( { model | transition = newTransition } , Cmd.none )
 
-updateTransition : Int -> Model -> Transition.Transition ( List ( String, Int ) )
+updateTransition : Int -> Model -> Transition.Transition ( List ( String, Float ) )
 updateTransition newStep model =
   let 
     currValue = Transition.value model.transition
@@ -149,7 +149,7 @@ updateTransition newStep model =
          Just getAt -> getAt
   in Transition.for 600 ( interpolateRound currValue newRound )
 
-interpolateRound : List ( String, Int ) -> List ( String, Int ) -> Interpolation.Interpolator ( List ( String, Int ) )
+interpolateRound : List ( String, Float ) -> List ( String, Float ) -> Interpolation.Interpolator ( List ( String, Float ) )
 interpolateRound from to =
   Interpolation.list
     { add = \( toChoice, toTallies ) -> interpolateEntries ( toChoice, 0 ) ( toChoice, toTallies )
@@ -161,9 +161,9 @@ interpolateRound from to =
     from
     to
 
-interpolateEntries : ( String, Int ) -> ( String, Int ) -> Interpolation.Interpolator ( String, Int )
+interpolateEntries : ( String, Float ) -> ( String, Float ) -> Interpolation.Interpolator ( String, Float )
 interpolateEntries ( _, fromTallies ) ( toChoice, toTallies ) =
-  Interpolation.map ( Tuple.pair toChoice ) ( Interpolation.int fromTallies toTallies )
+  Interpolation.map ( Tuple.pair toChoice ) ( Interpolation.float fromTallies toTallies )
 
 
 getPollRequest : Model -> Cmd Msg
@@ -178,17 +178,17 @@ getPollDecoder =
   Decode.map3 Poll
     ( Decode.at ["data", "title" ] Decode.string )
     ( Decode.at ["data", "winner"] Decode.string )
-    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.int )
+    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
 
-reorderTallies : List ( List ( String, Int ) ) -> List ( List ( String, Int ) )
+reorderTallies : List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
 reorderTallies tallies =
   List.map reorderRounds tallies
 
-reorderRounds : List ( String, Int ) -> List ( String, Int )
+reorderRounds : List ( String, Float ) -> List ( String, Float )
 reorderRounds round =
   List.sortWith compareEntries round
 
-compareEntries : ( String, Int ) -> ( String, Int ) -> Order
+compareEntries : ( String, Float ) -> ( String, Float ) -> Order
 compareEntries ( _, a ) ( _, b ) =
   case compare a b of
       LT -> GT
@@ -289,10 +289,10 @@ type alias ResultsConfig =
   { width: Float
   , height: Float
   , padding: Float
-  , xScaleMax: Int
+  , xScaleMax: Float
   }
 
-initResults : List ( String, Int ) -> Int -> ResultsConfig
+initResults : List ( String, Float ) -> Float -> ResultsConfig
 initResults round xScaleMax =
   let
     height = 
@@ -302,9 +302,9 @@ initResults round xScaleMax =
 
 xScale : ResultsConfig -> ContinuousScale Float
 xScale config =
-  Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, toFloat config.xScaleMax )
+  Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, config.xScaleMax )
 
-yScale : ResultsConfig -> List ( String, Int ) -> BandScale String
+yScale : ResultsConfig -> List ( String, Float ) -> BandScale String
 yScale config round =
   List.map Tuple.first round
     |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.height - 2 * config.padding )
@@ -313,21 +313,21 @@ xAxis : ResultsConfig -> SvgCore.Svg a
 xAxis config =
   Axis.top [ Axis.tickCount 8 ] <| xScale config
 
-yAxis : ResultsConfig -> List ( String, Int ) -> SvgCore.Svg a
+yAxis : ResultsConfig -> List ( String, Float ) -> SvgCore.Svg a
 yAxis config round =
   -- List.map so that empty string is shown as ticks
   Axis.left [] <| Scale.toRenderable identity <| yScale config round
 
-row : ResultsConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg a
+row : ResultsConfig -> BandScale String -> ( String, Float ) -> SvgCore.Svg a
 row config scale ( choice, votes ) =
-  let choiceText = String.fromInt votes ++ " - " ++ choice
+  let choiceText = String.fromFloat votes ++ " - " ++ choice
   in
   Svg.g
     []
     [ Svg.rect
         [ SvgAttributes.class [ "text-blue-900 fill-current" ] 
         , SvgInPx.y <| Scale.convert scale choice
-        , SvgInPx.width <| Scale.convert ( xScale config ) <| toFloat votes
+        , SvgInPx.width <| Scale.convert ( xScale config ) votes
         , SvgInPx.height <| Scale.bandwidth scale
         ]
         []
@@ -343,7 +343,7 @@ row config scale ( choice, votes ) =
           [ SvgCore.text <| truncateChoice choiceText ]
     ]
     
-choiceTextColor : Int -> Int -> String
+choiceTextColor : Float -> Float -> String
 choiceTextColor votes xScaleMax =
   if votes == xScaleMax then
     "text-blue-100"
@@ -357,7 +357,7 @@ truncateChoice choice =
   else
     choice
 
-renderResults : Int -> Int -> List ( List ( String, Int ) ) -> List ( String, Int ) -> Html Msg
+renderResults : Int -> Float -> List ( List ( String, Float ) ) -> List ( String, Float ) -> Html Msg
 renderResults step xScaleMax tallies transition =
   div []
     ( if List.isEmpty tallies then
@@ -376,7 +376,7 @@ renderResults step xScaleMax tallies transition =
         ]
     )
 
-renderSlider : Int -> List ( List ( String, Int ) ) -> Html Msg
+renderSlider : Int -> List ( List ( String, Float ) ) -> Html Msg
 renderSlider step tallies =
   -- Only show slider if there's at least 2 elements
   if List.length ( List.take 2 tallies ) < 2 then
@@ -411,7 +411,7 @@ renderSlider step tallies =
       , div [ class "w-8" ] []
       ]
 
-renderChart : ResultsConfig -> List ( String, Int ) -> SvgCore.Svg a
+renderChart : ResultsConfig -> List ( String, Float ) -> SvgCore.Svg a
 renderChart config round =
   Svg.svg
     [ SvgAttributes.class [ "fv-results" ]
