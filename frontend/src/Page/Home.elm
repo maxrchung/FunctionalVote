@@ -193,6 +193,7 @@ renderChoice choicesLength showError index choice =
                   [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
                   , onClick <| RemoveChoice index
                   , type_ "button"
+                  , tabindex -1
                   ]
                   [ FeatherIcons.x
                       |> FeatherIcons.toHtml []
