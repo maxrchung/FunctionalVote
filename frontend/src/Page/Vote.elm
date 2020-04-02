@@ -16,26 +16,26 @@ import Shared
 
 -- MODEL
 type alias Model = 
-  { key: Navigation.Key
-  , pollId: String
-  , poll: Poll
-  , apiAddress: String
+  { key : Navigation.Key
+  , pollId : String
+  , poll : Poll
+  , apiAddress : String
   , error : String
-  , showError: Bool
-  , isLoading: Bool
-  , fadeStyle: Animation.State
-  , fadeChoice: String
+  , showError : Bool
+  , isLoading : Bool
+  , fadeStyle : Animation.State
+  , fadeChoice : String
   }
 
 type alias Poll =
-  { title: String
-  , orderedChoices: Dict.Dict Int String
-  , unorderedChoices: List String
+  { title : String
+  , orderedChoices : Dict.Dict Int String
+  , unorderedChoices : List String
   }
 
 type alias PollResponse =
-  { title: String
-  , choices: List String
+  { title : String
+  , choices : List String
   }
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )

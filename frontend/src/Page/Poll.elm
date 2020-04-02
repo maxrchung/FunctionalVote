@@ -1,16 +1,19 @@
 module Page.Poll exposing ( .. )
 
 import Axis
+import Browser.Events
 import Browser.Navigation as Navigation
 import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
+import Interpolation
 import Json.Decode as Decode
 import List.Extra
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
 import Shared
+import Transition
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
 import TypedSvg.Attributes.InPx as SvgInPx
@@ -21,25 +24,46 @@ import TypedSvg.Types as SvgTypes
 
 -- MODEL
 type alias Model = 
-  { key: Navigation.Key
-  , pollId: String
-  , poll: Poll
-  , apiAddress: String
-  , step: Int
-  , xScaleMax: Int
-  , isLoading: Bool
+  { key : Navigation.Key
+  , pollId : String
+  , poll : Poll
+  , apiAddress : String
+  , step : Int
+  , xScaleMax : Int
+  , isLoading : Bool
+  , transition : Transition.Transition ( List ( String, Int ) )
   }
 
 type alias Poll =
-  { title: String
-  , winner: String
-  , tallies: List ( List ( String, Int ) )
+  { title : String
+  , winner : String
+  , tallies : List ( List ( String, Int ) )
   }
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
 init key pollId apiAddress = 
-  let model = Model key pollId ( Poll "" "" [] ) apiAddress 0 0 True
+  let 
+    model = 
+      { key = key
+      , pollId = pollId
+      , poll = Poll "" "" []
+      , apiAddress = apiAddress
+      , step = 0
+      , xScaleMax = 0
+      , isLoading = True
+      , transition = Transition.constant []
+      }
   in ( model, getPollRequest model )
+
+
+
+-- SUBSCRIPTIONS
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    if Transition.isComplete model.transition then
+        Sub.none
+    else
+        Browser.Events.onAnimationFrameDelta ( round >> Tick )
 
 
 
@@ -49,6 +73,8 @@ type Msg
   | DecrementStep
   | IncrementStep
   | ChangeStep String
+  | Tick Int
+  | StartTransition ( List ( String, Int ) )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -109,6 +135,33 @@ update msg model =
               stepInt
       in
       ( { model | step = newStep }, Cmd.none )
+
+    Tick t ->
+      let newTransition = Transition.step t model.transition
+      in ( { model | transition = newTransition } , Cmd.none )
+
+    StartTransition newRound ->
+        let 
+          oldRound = Transition.value model.transition
+          newTransition = Transition.for 600 ( interpolateRound oldRound newRound )
+        in ( { model | transition = newTransition } , Cmd.none )
+
+interpolateRound : List ( String, Int ) -> List ( String, Int ) -> Interpolation.Interpolator ( List ( String, Int ) )
+interpolateRound from to =
+  Interpolation.list
+    { add = \( toChoice, toTallies ) -> interpolateEntries ( toChoice, 0 ) ( toChoice, toTallies )
+    , remove = \( fromChoice, fromTallies ) -> interpolateEntries ( fromChoice, fromTallies ) ( fromChoice, 0 )
+    , change = interpolateEntries
+    , id = \( choice, _ ) -> choice
+    , combine = Interpolation.combineParallel
+    }
+    from
+    to
+
+interpolateEntries : ( String, Int ) -> ( String, Int ) -> Interpolation.Interpolator ( String, Int )
+interpolateEntries ( _, fromTallies ) ( toChoice, toTallies ) =
+  Interpolation.map ( Tuple.pair toChoice ) ( Interpolation.int fromTallies toTallies )
+
 
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
