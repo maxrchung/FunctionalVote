@@ -27,6 +27,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         envs: MIX_ENV,SECRET_KEY_BASE,DATABASE_URL
         script: |
+          echo "MIX_ENV=$MIX_ENV"
+
           # Print commands that were run and exit with failure if error happens
           set -ex
           home="/home/ubuntu/FunctionalVote"
