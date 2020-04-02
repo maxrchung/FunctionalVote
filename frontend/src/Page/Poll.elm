@@ -82,7 +82,9 @@ update msg model =
       case result of
         Ok response ->
           let
-            newPoll = { response | tallies = reorderTallies response.tallies}
+            removedEmpty = removeEmpty response.tallies
+            removedDuplicate = removeDuplicate removedEmpty
+            newPoll = { response | tallies = reorderTallies removedDuplicate }
             lastRound = 
               case List.Extra.last newPoll.tallies of
                   Nothing -> []
@@ -190,6 +192,28 @@ getPollDecoder =
     ( Decode.at ["data", "title" ] Decode.string )
     ( Decode.at ["data", "winner"] Decode.string )
     ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
+
+removeEmpty : List ( List ( String, Float ) ) -> List ( List ( String, Float ) ) 
+removeEmpty tallies =
+  List.map removeEmptyEntries tallies
+
+removeEmptyEntries : List ( String, Float ) -> List ( String, Float )
+removeEmptyEntries round =
+  List.filter (\( _, tallies ) -> tallies > 0) round
+
+removeDuplicate : List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
+removeDuplicate tallies =
+  List.foldr removeDuplicateFold [] tallies
+
+removeDuplicateFold : List ( String, Float ) -> List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
+removeDuplicateFold round list =
+  case List.head list of
+    Nothing -> round :: list
+    Just head ->
+      if List.length round == List.length head then
+        list
+      else
+        round :: list
 
 reorderTallies : List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
 reorderTallies tallies =
