@@ -27,6 +27,7 @@ jobs:
           home="/home/ubuntu/FunctionalVote"
           # Get new updates
           cd $home
+          git clean -xfdf
           git reset --hard
           git pull
 

@@ -17,18 +17,18 @@ config :functional_vote, FunctionalVote.Repo,
 # with webpack to recompile .js and .css sources.
 config :functional_vote, FunctionalVoteWeb.Endpoint,
   http: [port: 4000]
-  # debug_errors: true,
-  # code_reloader: true,
-  # check_origin: false,
-  # watchers: [
-  #   node: [
-  #     "node_modules/webpack/bin/webpack.js",
-  #     "--mode",
-  #     "development",
-  #     "--watch-stdin",
-  #     cd: Path.expand("../assets", __DIR__)
-  #   ]
-  # ]
+  debug_errors: true,
+  code_reloader: true,
+  check_origin: false,
+  watchers: [
+    node: [
+      "node_modules/webpack/bin/webpack.js",
+      "--mode",
+      "development",
+      "--watch-stdin",
+      cd: Path.expand("../assets", __DIR__)
+    ]
+  ]
 
 # ## SSL Support
 #
