@@ -33,12 +33,14 @@ jobs:
           git pull
 
           ### BACKEND ###
+          export DATABASE_URL=${{ secrets.DATABASE_URL }}
+          export SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
           cd $home/backend
           # Kill backend
           pm2 stop phoenix
           # Initial setup
           mix deps.get --only prod
-          MIX_ENV=prod DATABASE_URL=${{ secrets.DATABASE_URL }} SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} mix compile
+          MIX_ENV=prod mix compile
           # Run database migrations
           MIX_ENV=prod mix ecto.migrate
           # Start backend
