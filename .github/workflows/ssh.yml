@@ -12,15 +12,16 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    env:
-      MIX_ENV: prod
-      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: ssh deploy
       uses: appleboy/ssh-action@master
+      env:
+      MIX_ENV: prod
+      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      envs: MIX_ENV,SECRET_KEY_BASE,DATABASE_URL
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
