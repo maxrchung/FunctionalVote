@@ -37,9 +37,9 @@ jobs:
           pm2 stop phoenix
           # Initial setup
           mix deps.get --only prod
-          mix compile
+          MIX_ENV=prod mix compile
           # Run database migrations
-          mix ecto.migrate
+          MIX_ENV=prod mix ecto.migrate
           # Start backend
           pm2 start phoenix
 
