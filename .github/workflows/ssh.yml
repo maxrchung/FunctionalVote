@@ -17,14 +17,10 @@ jobs:
     steps:
     - name: ssh deploy
       uses: appleboy/ssh-action@master
-      env:
-        SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        envs: SECRET_KEY_BASE,DATABASE_URL
         script: |
 
           # Print commands that were run and exit with failure if error happens
@@ -42,7 +38,7 @@ jobs:
           pm2 stop phoenix
           # Initial setup
           mix deps.get --only prod
-          MIX_ENV=prod mix compile
+          MIX_ENV=prod DATABASE_URL=${{ secrets.DATABASE_URL }} SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} mix compile
           # Run database migrations
           MIX_ENV=prod mix ecto.migrate
           # Start backend
