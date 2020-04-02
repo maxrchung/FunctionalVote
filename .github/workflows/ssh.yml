@@ -18,7 +18,7 @@ jobs:
     - name: ssh deploy
       uses: appleboy/ssh-action@master
       env:
-        MIX_ENV: prod
+        MIX_ENV: "prod"
         SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
       with:
