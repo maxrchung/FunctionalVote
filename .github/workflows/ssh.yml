@@ -21,11 +21,11 @@ jobs:
         MIX_ENV: prod
         SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      envs: MIX_ENV,SECRET_KEY_BASE,DATABASE_URL
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        envs: MIX_ENV,SECRET_KEY_BASE,DATABASE_URL
         script: |
           # Print commands that were run and exit with failure if error happens
           set -ex
