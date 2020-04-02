@@ -91,12 +91,15 @@ update msg model =
               case List.head lastRound of
                 Nothing -> 0
                 Just head -> Tuple.second head
+            newStep = List.length newPoll.tallies - 1
+            newTransition = updateTransition model.transition newStep newPoll.tallies
           in
           ( { model 
             | poll = newPoll
-            , step = List.length newPoll.tallies - 1 
+            , step = newStep
             , xScaleMax = newXScaleMax
             , isLoading = False
+            , transition = newTransition
             }
           , Cmd.none 
           )
@@ -111,7 +114,7 @@ update msg model =
             model.step
           else
             model.step - 1
-        newTransition = updateTransition newStep model
+        newTransition = updateTransition model.transition newStep model.poll.tallies
       in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     IncrementStep ->
@@ -121,7 +124,7 @@ update msg model =
             model.step
           else
             model.step + 1
-        newTransition = updateTransition newStep model
+        newTransition = updateTransition model.transition newStep model.poll.tallies
       in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     ChangeStep stepString ->
@@ -132,19 +135,19 @@ update msg model =
               0
             Just stepInt ->
               stepInt
-        newTransition = updateTransition newStep model
+        newTransition = updateTransition model.transition newStep model.poll.tallies
       in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     Tick t ->
       let newTransition = Transition.step t model.transition
       in ( { model | transition = newTransition } , Cmd.none )
 
-updateTransition : Int -> Model -> Transition.Transition ( List ( String, Float ) )
-updateTransition newStep model =
+updateTransition : Transition.Transition ( List ( String, Float ) ) -> Int -> List ( List ( String, Float ) ) -> Transition.Transition ( List ( String, Float ) )
+updateTransition oldTransition newStep tallies =
   let 
-    currValue = Transition.value model.transition
+    currValue = Transition.value oldTransition
     newRound = 
-      case List.Extra.getAt newStep model.poll.tallies of
+      case List.Extra.getAt newStep tallies of
          Nothing -> []
          Just getAt -> getAt
   in Transition.for 600 ( interpolateRound currValue newRound )
@@ -320,7 +323,7 @@ yAxis config round =
 
 row : ResultsConfig -> BandScale String -> ( String, Float ) -> SvgCore.Svg a
 row config scale ( choice, votes ) =
-  let choiceText = String.fromFloat votes ++ " - " ++ choice
+  let choiceText = String.fromInt ( round votes ) ++ " - " ++ choice
   in
   Svg.g
     []
