@@ -32,8 +32,8 @@ main =
 
 -- MODEL
 type alias Model = 
-  { key: Navigation.Key
-  , apiAddress: String
+  { key : Navigation.Key
+  , apiAddress : String
   , page : Page
   }
 
@@ -102,6 +102,8 @@ subscriptions model =
   case model.page of
     VotePage voteModel ->
       Sub.map VoteMsg <| Vote.subscriptions voteModel
+    PollPage pageModel ->
+      Sub.map PollMsg <| Poll.subscriptions pageModel
     _ ->
       Sub.none
 

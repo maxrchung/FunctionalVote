@@ -68,7 +68,7 @@ update msg model =
                 Http.Detailed.BadStatus _ body ->
                   body
                 _ ->
-                  "Unable to create poll. The website may be down for maintenace. Please try again later."
+                  "Unable to create poll. The website may be down for maintenance. Please try again later."
           in
           ( { model | showError = True, error = newError }, Cmd.none )
 
@@ -193,6 +193,7 @@ renderChoice choicesLength showError index choice =
                   [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
                   , onClick <| RemoveChoice index
                   , type_ "button"
+                  , tabindex -1
                   ]
                   [ FeatherIcons.x
                       |> FeatherIcons.toHtml []

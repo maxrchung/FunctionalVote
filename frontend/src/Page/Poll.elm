@@ -1,16 +1,19 @@
 module Page.Poll exposing ( .. )
 
 import Axis
+import Browser.Events
 import Browser.Navigation as Navigation
 import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
+import Interpolation
 import Json.Decode as Decode
 import List.Extra
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
 import Shared
+import Transition
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
 import TypedSvg.Attributes.InPx as SvgInPx
@@ -21,25 +24,46 @@ import TypedSvg.Types as SvgTypes
 
 -- MODEL
 type alias Model = 
-  { key: Navigation.Key
-  , pollId: String
-  , poll: Poll
-  , apiAddress: String
-  , step: Int
-  , xScaleMax: Int
-  , isLoading: Bool
+  { key : Navigation.Key
+  , pollId : String
+  , poll : Poll
+  , apiAddress : String
+  , step : Int
+  , xScaleMax : Float
+  , isLoading : Bool
+  , transition : Transition.Transition ( List ( String, Float ) )
   }
 
 type alias Poll =
-  { title: String
-  , winner: String
-  , tallies: List ( List ( String, Int ) )
+  { title : String
+  , winner : String
+  , tallies : List ( List ( String, Float ) )
   }
 
 init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
 init key pollId apiAddress = 
-  let model = Model key pollId ( Poll "" "" [] ) apiAddress 0 0 True
+  let 
+    model = 
+      { key = key
+      , pollId = pollId
+      , poll = Poll "" "" []
+      , apiAddress = apiAddress
+      , step = 0
+      , xScaleMax = 0
+      , isLoading = True
+      , transition = Transition.constant []
+      }
   in ( model, getPollRequest model )
+
+
+
+-- SUBSCRIPTIONS
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    if Transition.isComplete model.transition then
+        Sub.none
+    else
+        Browser.Events.onAnimationFrameDelta ( round >> Tick )
 
 
 
@@ -49,6 +73,7 @@ type Msg
   | DecrementStep
   | IncrementStep
   | ChangeStep String
+  | Tick Int
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -57,7 +82,9 @@ update msg model =
       case result of
         Ok response ->
           let
-            newPoll = { response | tallies = reorderTallies response.tallies}
+            removedEmpty = removeEmpty response.tallies
+            removedDuplicate = removeDuplicate removedEmpty
+            newPoll = { response | tallies = reorderTallies removedDuplicate }
             lastRound = 
               case List.Extra.last newPoll.tallies of
                   Nothing -> []
@@ -66,12 +93,15 @@ update msg model =
               case List.head lastRound of
                 Nothing -> 0
                 Just head -> Tuple.second head
+            newStep = List.length newPoll.tallies - 1
+            newTransition = updateTransition model.transition newStep newPoll.tallies
           in
           ( { model 
             | poll = newPoll
-            , step = List.length newPoll.tallies - 1 
+            , step = newStep
             , xScaleMax = newXScaleMax
             , isLoading = False
+            , transition = newTransition
             }
           , Cmd.none 
           )
@@ -81,23 +111,31 @@ update msg model =
 
     DecrementStep ->
       let
-          newStep =
-            if model.step == 0 then
-              model.step
-            else
-              model.step - 1
-      in
-      ( { model | step = newStep }, Cmd.none )
+        newStep =
+          if model.step == 0 then
+            model.step
+          else
+            model.step - 1
+        newTransition =
+          if newStep == model.step then
+            model.transition
+          else
+            updateTransition model.transition newStep model.poll.tallies
+      in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     IncrementStep ->
       let
-          newStep =
-            if model.step == List.length model.poll.tallies - 1 then
-              model.step
-            else
-              model.step + 1
-      in
-      ( { model | step = newStep }, Cmd.none )
+        newStep =
+          if model.step == List.length model.poll.tallies - 1 then
+            model.step
+          else
+            model.step + 1
+        newTransition =
+          if newStep == model.step then
+            model.transition
+          else
+            updateTransition model.transition newStep model.poll.tallies
+      in ( { model | step = newStep, transition = newTransition }, Cmd.none )
 
     ChangeStep stepString ->
       let
@@ -107,8 +145,39 @@ update msg model =
               0
             Just stepInt ->
               stepInt
-      in
-      ( { model | step = newStep }, Cmd.none )
+        newTransition = updateTransition model.transition newStep model.poll.tallies
+      in ( { model | step = newStep, transition = newTransition }, Cmd.none )
+
+    Tick tick ->
+      let newTransition = Transition.step tick model.transition
+      in ( { model | transition = newTransition } , Cmd.none )
+
+updateTransition : Transition.Transition ( List ( String, Float ) ) -> Int -> List ( List ( String, Float ) ) -> Transition.Transition ( List ( String, Float ) )
+updateTransition oldTransition newStep tallies =
+  let 
+    currValue = Transition.value oldTransition
+    newRound = 
+      case List.Extra.getAt newStep tallies of
+         Nothing -> []
+         Just getAt -> getAt
+  in Transition.for 500 ( interpolateRound currValue newRound )
+
+interpolateRound : List ( String, Float ) -> List ( String, Float ) -> Interpolation.Interpolator ( List ( String, Float ) )
+interpolateRound from to =
+  Interpolation.list
+    { add = \( toChoice, toTallies ) -> interpolateEntries ( toChoice, 0 ) ( toChoice, toTallies )
+    , remove = \( fromChoice, fromTallies ) -> interpolateEntries ( fromChoice, fromTallies ) ( fromChoice, 0 )
+    , change = interpolateEntries
+    , id = \( choice, _ ) -> choice
+    , combine = Interpolation.combineParallel
+    }
+    from
+    to
+
+interpolateEntries : ( String, Float ) -> ( String, Float ) -> Interpolation.Interpolator ( String, Float )
+interpolateEntries ( _, fromTallies ) ( toChoice, toTallies ) =
+  Interpolation.map ( Tuple.pair toChoice ) ( Interpolation.float fromTallies toTallies )
+
 
 getPollRequest : Model -> Cmd Msg
 getPollRequest model =
@@ -122,17 +191,39 @@ getPollDecoder =
   Decode.map3 Poll
     ( Decode.at ["data", "title" ] Decode.string )
     ( Decode.at ["data", "winner"] Decode.string )
-    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.int )
+    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
 
-reorderTallies : List ( List ( String, Int ) ) -> List ( List ( String, Int ) )
+removeEmpty : List ( List ( String, Float ) ) -> List ( List ( String, Float ) ) 
+removeEmpty tallies =
+  List.map removeEmptyEntries tallies
+
+removeEmptyEntries : List ( String, Float ) -> List ( String, Float )
+removeEmptyEntries round =
+  List.filter (\( _, tallies ) -> tallies > 0) round
+
+removeDuplicate : List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
+removeDuplicate tallies =
+  List.foldr removeDuplicateFold [] tallies
+
+removeDuplicateFold : List ( String, Float ) -> List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
+removeDuplicateFold round list =
+  case List.head list of
+    Nothing -> round :: list
+    Just head ->
+      if List.length round == List.length head then
+        list
+      else
+        round :: list
+
+reorderTallies : List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
 reorderTallies tallies =
-  List.map reorderRounds tallies
+  List.map reorderRound tallies
 
-reorderRounds : List ( String, Int ) -> List ( String, Int )
-reorderRounds round =
+reorderRound : List ( String, Float ) -> List ( String, Float )
+reorderRound round =
   List.sortWith compareEntries round
 
-compareEntries : ( String, Int ) -> ( String, Int ) -> Order
+compareEntries : ( String, Float ) -> ( String, Float ) -> Order
 compareEntries ( _, a ) ( _, b ) =
   case compare a b of
       LT -> GT
@@ -199,7 +290,7 @@ view model =
           , div [class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , renderResults model.step model.xScaleMax model.poll.tallies
+      , renderResults model.step model.xScaleMax model.poll.tallies <| Transition.value model.transition
 
       , div [ class "fv-code" ] [ text "}" ]
 
@@ -233,22 +324,21 @@ type alias ResultsConfig =
   { width: Float
   , height: Float
   , padding: Float
-  , xScaleMax: Int
+  , xScaleMax: Float
   }
 
-initResults : List ( String, Int ) -> Int -> ResultsConfig
+initResults : List ( String, Float ) -> Float -> ResultsConfig
 initResults round xScaleMax =
   let
     height = 
         100 + 30 * List.length round - 1
-  in
-  ResultsConfig 375 ( toFloat height ) 30 xScaleMax
+  in ResultsConfig 375 ( toFloat height ) 30 xScaleMax
 
 xScale : ResultsConfig -> ContinuousScale Float
 xScale config =
-  Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, toFloat config.xScaleMax )
+  Scale.linear ( 0, config.width - 2 * config.padding ) ( 0, config.xScaleMax )
 
-yScale : ResultsConfig -> List ( String, Int ) -> BandScale String
+yScale : ResultsConfig -> List ( String, Float ) -> BandScale String
 yScale config round =
   List.map Tuple.first round
     |> Scale.band { defaultBandConfig | paddingInner = 0.2, paddingOuter = 0.2 } ( 0, config.height - 2 * config.padding )
@@ -257,37 +347,37 @@ xAxis : ResultsConfig -> SvgCore.Svg a
 xAxis config =
   Axis.top [ Axis.tickCount 8 ] <| xScale config
 
-yAxis : ResultsConfig -> List ( String, Int ) -> SvgCore.Svg a
+yAxis : ResultsConfig -> List ( String, Float ) -> SvgCore.Svg a
 yAxis config round =
   -- List.map so that empty string is shown as ticks
   Axis.left [] <| Scale.toRenderable identity <| yScale config round
 
-row : ResultsConfig -> BandScale String -> ( String, Int ) -> SvgCore.Svg a
+row : ResultsConfig -> BandScale String -> ( String, Float ) -> SvgCore.Svg a
 row config scale ( choice, votes ) =
-  let choiceText = String.fromInt votes ++ " - " ++ choice
+  let choiceText = String.fromInt ( round votes ) ++ " - " ++ choice
   in
   Svg.g
     []
     [ Svg.rect
         [ SvgAttributes.class [ "text-blue-900 fill-current" ] 
         , SvgInPx.y <| Scale.convert scale choice
-        , SvgInPx.width <| Scale.convert ( xScale config ) <| toFloat votes
+        , SvgInPx.width <| Scale.convert ( xScale config ) votes
         , SvgInPx.height <| Scale.bandwidth scale
         ]
         []
     , Svg.text_
-          [ SvgAttributes.class 
-              [ choiceTextColor votes config.xScaleMax
-              , "fill-current text-sm" ]
-          , SvgInPx.x <| config.padding / 4
-          , SvgInPx.y <| Scale.convert scale choice + ( Scale.bandwidth scale / 2 )
-          , SvgAttributes.textAnchor SvgTypes.AnchorStart
-          , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
-          ]
-          [ SvgCore.text <| truncateChoice choiceText ]
+        [ SvgAttributes.class 
+            [ choiceTextColor votes config.xScaleMax
+            , "fill-current text-sm" ]
+        , SvgInPx.x <| config.padding / 4
+        , SvgInPx.y <| Scale.convert scale choice + ( Scale.bandwidth scale / 2 )
+        , SvgAttributes.textAnchor SvgTypes.AnchorStart
+        , SvgAttributes.dominantBaseline SvgTypes.DominantBaselineMiddle
+        ]
+        [ SvgCore.text <| truncateChoice choiceText ]
     ]
     
-choiceTextColor : Int -> Int -> String
+choiceTextColor : Float -> Float -> String
 choiceTextColor votes xScaleMax =
   if votes == xScaleMax then
     "text-blue-100"
@@ -301,18 +391,12 @@ truncateChoice choice =
   else
     choice
 
-renderResults : Int -> Int -> List ( List ( String, Int ) ) -> Html Msg
-renderResults step xScaleMax tallies =
+renderResults : Int -> Float -> List ( List ( String, Float ) ) -> List ( String, Float ) -> Html Msg
+renderResults step xScaleMax tallies transition =
   div []
     ( if List.isEmpty tallies then
         []
       else
-        let
-          round = 
-            case List.Extra.getAt step tallies of
-              Nothing -> []
-              Just getAt -> getAt
-        in
         [ div [ class "fv-code" ] [ text "," ]
         , div 
             [ class "flex justify-between items-center" ]
@@ -322,11 +406,11 @@ renderResults step xScaleMax tallies =
             ]
 
         , renderSlider step tallies
-        , renderChart ( initResults round xScaleMax ) round
+        , renderChart ( initResults transition xScaleMax ) transition
         ]
     )
 
-renderSlider : Int -> List ( List ( String, Int ) ) -> Html Msg
+renderSlider : Int -> List ( List ( String, Float ) ) -> Html Msg
 renderSlider step tallies =
   -- Only show slider if there's at least 2 elements
   if List.length ( List.take 2 tallies ) < 2 then
@@ -361,8 +445,11 @@ renderSlider step tallies =
       , div [ class "w-8" ] []
       ]
 
-renderChart : ResultsConfig -> List ( String, Int ) -> SvgCore.Svg a
+renderChart : ResultsConfig -> List ( String, Float ) -> SvgCore.Svg a
 renderChart config round =
+  let
+    reordered = reorderRound round      
+  in
   Svg.svg
     [ SvgAttributes.class [ "fv-results" ]
     , SvgAttributes.viewBox 0 0 config.width ( config.height - config.padding / 2 )
@@ -373,7 +460,7 @@ renderChart config round =
         [ SvgAttributes.transform [ SvgTypes.Translate ( config.padding - 1 ) config.padding ]
         , SvgAttributes.class [ "y-axis" ]
         ]
-        [ yAxis config round ]
+        [ yAxis config reordered ]
     , Svg.g [ SvgAttributes.transform [ SvgTypes.Translate config.padding config.padding ] ] <|
-        List.map ( row config <| yScale config round ) round
+        List.map ( row config <| yScale config reordered ) reordered
     ]
