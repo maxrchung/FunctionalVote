@@ -68,7 +68,7 @@ update msg model =
                 Http.Detailed.BadStatus _ body ->
                   body
                 _ ->
-                  "Unable to create poll. The website may be down for maintenace. Please try again later."
+                  "Unable to create poll. The website may be down for maintenance. Please try again later."
           in
           ( { model | showError = True, error = newError }, Cmd.none )
 
