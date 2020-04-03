@@ -218,18 +218,9 @@ defmodule FunctionalVote.Polls do
   def get_poll!(poll_id), do: Repo.get_by!(Poll, poll_id: poll_id)
 
   @doc """
-  Gets poll data.
+  Gets poll data for use in IRV.
 
   Raises `Ecto.NoResultsError` if the Poll does not exist.
-
-  ## Examples
-
-      iex> get_poll!(123)
-      %Poll{}
-
-      iex> get_poll!(456)
-      ** (Ecto.NoResultsError)
-
   """
   def get_poll_data!(poll_id) do
     IO.puts("[PollCtx] Get poll data")
@@ -249,17 +240,18 @@ defmodule FunctionalVote.Polls do
       {:ok, %Poll{}}
 
       iex> create_poll(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+      :duplicate_choices_error
+      :title_error
 
   """
   def create_poll(attrs \\ %{}) do
     IO.puts("[PollCtx] Create poll")
-    poll_id = StringGenerator.poll_id_of_length(8)
-    IO.inspect(poll_id)
     if (attrs["title"] !== nil and String.trim(attrs["title"]) !== "") do
       attrs = Map.update!(attrs, "choices",
                 &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
       if (attrs["choices"] === Enum.uniq(attrs["choices"])) do
+        poll_id = StringGenerator.poll_id_of_length(8)
+        IO.inspect(poll_id)
         attrs = Map.put_new(attrs, "poll_id", poll_id)
         %Poll{}
         |> Poll.changeset(attrs)
@@ -271,6 +263,8 @@ defmodule FunctionalVote.Polls do
       :title_error
     end
   end
+
+### Template code currently not used
 
   @doc """
   Updates a poll.
