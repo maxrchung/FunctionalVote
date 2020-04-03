@@ -8,7 +8,8 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-
+    env:
+      MIX_EXS: backend/mix.exs
     steps:
     - uses: actions/checkout@v2
     - name: Setup elixir
@@ -18,11 +19,7 @@ jobs:
         otp-version: 22.2 # Define the OTP version [required]
     - name: Install Dependencies
       run: mix deps.get
-      env:
-        MIX_EXS: backend/mix.exs
     - name: Test Compilation
       run: mix compile
-      env:
-        MIX_EXS: backend/mix.exs
-    # - name: Run Unit Tests
-    #   run: mix test
+    - name: Run Unit Tests
+      run: mix test

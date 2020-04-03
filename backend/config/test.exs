@@ -4,7 +4,7 @@ use Mix.Config
 config :functional_vote, FunctionalVote.Repo,
   username: "postgres",
   password: "postgres",
-  database: "functional_vote_test",
+  database: "functional_vote_dev",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
