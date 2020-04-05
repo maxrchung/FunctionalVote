@@ -43,8 +43,12 @@ defmodule FunctionalVote.Votes do
 
   @param attrs : contains "poll_id" and "choices" (map of choices and ranks)
   @return {:ok}
-  @return {:choices_error} Invalid choices provided (does not match choices of poll)
+  @return {:empty_choices_error} No votes provided
   @return {:id_error} Invalid poll ID provided
+  @return {:non_integer_rank_error} Vote with non-integer rank provided
+  @return {:available_choices_error} Choice does not exist in poll
+  @return {:duplicate_rank_error} Vote with duplicate ranks
+  
   """
   def create_vote(attrs \\ %{}) do
     poll_id = attrs["poll_id"]
@@ -117,7 +121,7 @@ defmodule FunctionalVote.Votes do
     end
   end
 
-  def validate_duplicate_ranks(choices) do
+  defp validate_duplicate_ranks(choices) do
     if Map.values(choices) !== Enum.uniq(Map.values(choices)) do
       IO.puts("[VoteCtx] Received votes with duplicate ranks:")
       IO.inspect(choices)
@@ -134,6 +138,8 @@ defmodule FunctionalVote.Votes do
       :available_choices_error
     end
   end
+
+### Template code currently not used
 
   @doc """
   Updates a vote.
