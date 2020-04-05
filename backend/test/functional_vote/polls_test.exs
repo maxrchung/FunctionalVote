@@ -1,5 +1,5 @@
 defmodule FunctionalVote.PollsTest do
-  use FunctionalVote.DataCase
+  use FunctionalVote.DataCase, async: true
 
   alias FunctionalVote.Polls
 
