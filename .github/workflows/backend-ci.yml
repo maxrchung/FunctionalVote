@@ -8,6 +8,15 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       MIX_EXS: backend/mix.exs
     steps:
@@ -19,9 +28,5 @@ jobs:
         otp-version: 22.2 # Define the OTP version [required]
     - name: Install Dependencies
       run: mix deps.get
-    - name: Test Compilation
-      run: mix compile
-    - name: Create Ecto DB Repo
-      run: mix ecto.create
     - name: Run Unit Tests
       run: mix test
