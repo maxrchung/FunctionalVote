@@ -17,15 +17,16 @@ defmodule FunctionalVote.VotesTest do
   describe "votes" do
 
     test "create_vote/1 with valid data", context do
+      # All choices with sequential ranks
       attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => 1, "b" => 2, "c" => 3}}
       assert :ok = Votes.create_vote(attrs)
       assert %{0 => ["a", "b", "c"]} = Votes.get_votes(context.poll_id)
-
+      # Some choices with sequential ranks
       attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => 2, "b" => 1}}
       assert :ok = Votes.create_vote(attrs)
       assert %{0 => ["a", "b", "c"], 1 => ["b", "a"]} = Votes.get_votes(context.poll_id)
-
-      attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => 0, "b" => 4}}
+      # Some choices with skipping and negative ranks passed as strings
+      attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => "-1", "b" => "4"}}
       assert :ok = Votes.create_vote(attrs)
       assert %{0 => ["a", "b", "c"], 1 => ["b", "a"]} = Votes.get_votes(context.poll_id)
     end

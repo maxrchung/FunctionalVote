@@ -22,5 +22,7 @@ jobs:
       run: mix deps.get
     - name: Test Compilation
       run: mix compile
+    - name: Create Ecto DB Repo
+      run: mix ecto.create
     - name: Run Unit Tests
       run: mix test
