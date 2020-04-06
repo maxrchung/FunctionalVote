@@ -30,7 +30,6 @@ type alias Model =
   , apiAddress : String
   , step : Int
   , xScaleMax : Float
-  , isLoading : Bool
   , transition : Transition.Transition ( List ( String, Float ) )
   }
 
@@ -50,7 +49,6 @@ init key pollId apiAddress =
       , apiAddress = apiAddress
       , step = 0
       , xScaleMax = 0
-      , isLoading = True
       , transition = Transition.constant []
       }
   in ( model, getPollRequest model )
@@ -100,7 +98,6 @@ update msg model =
             | poll = newPoll
             , step = newStep
             , xScaleMax = newXScaleMax
-            , isLoading = False
             , transition = newTransition
             }
           , Cmd.none 
@@ -235,90 +232,87 @@ compareEntries ( _, a ) ( _, b ) =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  if model.isLoading then
-    div [] []
-  else
-    div 
-      [] 
-      [ div 
-          [ class "fv-text" ]
-          [ text "-- View the poll results and see how results were calculated. In case of ties, a winner is randomly decided." ]
+  div
+    [] 
+    [ div 
+        [ class "fv-text" ]
+        [ text "-- View the poll results and see how results were calculated. In case of ties, a winner is randomly decided." ]
 
-      , div
-          [ class "flex justify-between" ]
-          [ h1 [ class "fv-code" ] [ text "results" ]
-          , div [ class "fv-code" ] [ text "={" ]
+    , div
+        [ class "flex justify-between" ]
+        [ h1 [ class "fv-code" ] [ text "results" ]
+        , div [ class "fv-code" ] [ text "={" ]
+        ]
+
+    , div
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-header" ] [ text "Question" ]
+        , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+        ]
+
+    , div
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-code w-8"] [ text "\"" ]
+        , div
+          [ class "flex justify-center w-full"]
+          [ h1
+            [ class "fv-text text-blue-100 text-left" ]
+            [ text model.poll.title ]
           ]
+        , div [class "fv-code w-8 text-right" ] [ text "\"" ]
+        ]
 
-      , div
-          [ class "flex justify-between items-center" ]
-          [ div [ class "w-8" ] []
-          , h2 [ class "fv-header" ] [ text "Question" ]
-          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+    , div [ class "fv-code" ] [ text "," ]
+
+    , div
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] []
+        , h2 [ class "fv-header" ] [ text "Winner" ]
+        , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+        ]
+
+    , div
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-code w-8"] [ text "\"" ]
+        , div 
+          [ class "flex justify-center w-full"]
+          [ h1
+            [ class "fv-text text-blue-100 text-left" ] 
+            [ text model.poll.winner ]
           ]
+        , div [class "fv-code w-8 text-right" ] [ text "\"" ]
+        ]
 
-      , div
-          [ class "flex justify-between items-center" ]
-          [ div [ class "fv-code w-8"] [ text "\"" ]
-          , div
-            [ class "flex justify-center w-full"]
-            [ h1
-              [ class "fv-text text-blue-100 text-left" ]
-              [ text model.poll.title ]
-            ]
-          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
-          ]
+    , renderResults model.step model.xScaleMax model.poll.tallies <| Transition.value model.transition
 
-      , div [ class "fv-code" ] [ text "," ]
+    , div [ class "fv-code" ] [ text "}" ]
 
-      , div
-          [ class "flex justify-between items-center" ]
-          [ div [ class "w-8" ] []
-          , h2 [ class "fv-header" ] [ text "Winner" ]
-          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
-          ]
-
-      , div
-          [ class "flex justify-between items-center" ]
-          [ div [ class "fv-code w-8"] [ text "\"" ]
-          , div 
-            [ class "flex justify-center w-full"]
-            [ h1
-              [ class "fv-text text-blue-100 text-left" ] 
-              [ text model.poll.winner ]
-            ]
-          , div [class "fv-code w-8 text-right" ] [ text "\"" ]
-          ]
-
-      , renderResults model.step model.xScaleMax model.poll.tallies <| Transition.value model.transition
-
-      , div [ class "fv-code" ] [ text "}" ]
-
-      , div
-          [ class "fv-break" ]
-          [ text "--" ]
+    , div
+        [ class "fv-break" ]
+        [ text "--" ]
+    
+    , div
+        [ class "fv-text mb-2" ]
+        [ text "-- Submit a new vote into the poll." ]
       
-      , div
-          [ class "fv-text mb-2" ]
-          [ text "-- Submit a new vote into the poll." ]
-        
-      , div 
-          [ class "flex justify-between" ]
-          [ div [ class "w-8" ] [ text "" ]
-          , a
-            [ class "fv-btn fv-btn-blank mb-2"
-            , href <| "/vote/" ++ model.pollId
-            ]
-            [ text "Submit Vote" ]
-          , div [ class "w-8 text-right" ] [ text "" ]
+    , div 
+        [ class "flex justify-between" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , a
+          [ class "fv-btn fv-btn-blank mb-2"
+          , href <| "/vote/" ++ model.pollId
           ]
+          [ text "Submit Vote" ]
+        , div [ class "w-8 text-right" ] [ text "" ]
+        ]
 
-      , Shared.renderShareLinks
-          ( "https://functionalvote.com/poll/" ++ model.pollId )
-          "-- Share the poll results page." 
-          model.poll.title
-          "View my poll results: "
-      ]
+    , Shared.renderShareLinks
+        ( "https://functionalvote.com/poll/" ++ model.pollId )
+        "-- Share the poll results page." 
+        model.poll.title
+        "View my poll results: "
+    ]
 
 type alias ResultsConfig = 
   { width: Float
