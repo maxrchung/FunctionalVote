@@ -1,0 +1,50 @@
+name: Backend CD
+
+on:
+  push:
+    branches: [ master ]
+    paths: [ backend/** ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - name: ssh deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Print commands that were run and exit with failure if error happens
+          set -ex
+          home="/home/ubuntu/FunctionalVote"
+          
+          # Clean up any untracked files, revert any modified files, and get new updates
+          cd $home
+          git clean -xfdf
+          git reset --hard
+          git pull
+
+          ### BACKEND ###
+          export DATABASE_URL=${{ secrets.DATABASE_URL }}
+          export SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
+          cd $home/backend
+          
+          # Kill backend
+          pm2 stop phoenix
+          
+          # Initial setup
+          mix deps.get --only prod
+          MIX_ENV=prod mix compile
+          
+          # Run database migrations
+          MIX_ENV=prod mix ecto.migrate
+          
+          # Start backend
+          pm2 start phoenix
