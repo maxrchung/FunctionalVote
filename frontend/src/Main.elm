@@ -42,7 +42,7 @@ type Page
   | VotePage Vote.Model
   | PollPage Poll.Model
   | AboutPage
-  | ErrorPage Error.Model
+  | ErrorPage
 
 type Route 
   = HomeRoute
@@ -82,8 +82,7 @@ initPage url key apiAddress =
           ( AboutPage, Cmd.none )
     
     Nothing ->
-      let ( model, cmd ) = Error.init key
-      in ( ErrorPage model, Cmd.map ErrorMsg cmd )
+      ( ErrorPage, Cmd.none )
 
 routeParser : Parser.Parser ( Route -> a ) a
 routeParser =
@@ -116,7 +115,6 @@ type Msg
   | HomeMsg Home.Msg
   | VoteMsg Vote.Msg
   | PollMsg Poll.Msg
-  | ErrorMsg Error.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -154,13 +152,6 @@ update msg model =
           in ( { model | page = PollPage newModel }, Cmd.map PollMsg cmd )
         _ -> ( model, Cmd.none )
 
-    ErrorMsg errorMsg ->
-      case model.page of
-        ErrorPage oldModel -> 
-          let ( newModel, cmd ) = Error.update errorMsg oldModel
-          in ( { model | page = ErrorPage newModel }, Cmd.map ErrorMsg cmd )
-        _ -> ( model, Cmd.none )
-
 
 
 -- VIEW
@@ -177,7 +168,7 @@ view model =
           "Functional Vote - View a Poll"
         AboutPage ->
           "Functional Vote - About"
-        ErrorPage _ ->
+        ErrorPage ->
           "Functional Vote - Error" 
   in
   { title = pageTitle
@@ -197,8 +188,8 @@ renderBody model =
           [ Html.map PollMsg ( Poll.view pollModel ) ]
         AboutPage ->
           [ About.view ]
-        ErrorPage errorModel ->
-          [ Html.map ErrorMsg ( Error.view errorModel ) ]
+        ErrorPage ->
+          [ Error.view ]
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
       [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]
