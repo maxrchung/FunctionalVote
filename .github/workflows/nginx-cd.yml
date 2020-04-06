@@ -7,7 +7,7 @@ on:
     paths: [ production/functionalvote.conf ]
 
 jobs:
-  build:
+  nginx-cd:
     runs-on: ubuntu-latest
 
     steps:
