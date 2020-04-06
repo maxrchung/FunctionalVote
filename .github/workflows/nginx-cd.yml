@@ -3,11 +3,13 @@ name: NGINX CD
 
 on:
   push:
-    branches: [ master ]
-    paths: [ production/functionalvote.conf ]
+    branches: 
+    - master
+    paths: 
+    - production/functionalvote.conf
 
 jobs:
-  nginx-cd:
+  cd:
     runs-on: ubuntu-latest
 
     steps:
