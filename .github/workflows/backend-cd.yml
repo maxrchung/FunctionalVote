@@ -27,7 +27,6 @@ jobs:
           
           # Clean up any untracked files, revert any modified files, and get new updates
           cd $home
-          git clean -xfdf
           git reset --hard
           git pull
 
