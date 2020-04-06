@@ -16,7 +16,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - name: ssh deploy
+    - name: frontend cd
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
