@@ -1,4 +1,4 @@
-# Restarts NGINX if changes have been made to NGINX conf
+# Reloads NGINX if changes have been made to NGINX conf
 
 name: NGINX CD
 
