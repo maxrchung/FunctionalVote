@@ -14,6 +14,7 @@ const paths = require('../config/paths');
 const getClientEnvironment = require('./env');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -348,6 +349,12 @@ module.exports = {
     }),
     // Copies the public folder to the build folder
     new CopyPlugin([{ from: './public/', to: './' }]),
+    // Apply gzip compression so NGINX can serve the static compressed files
+    new CompressionPlugin({
+        cache: true,
+        // Try and compress all files, probably better for NGINX serving this
+        minRatio: 1
+    }),
     // Generate a service worker script that will precache, and keep up to date,
     // the HTML & assets that are part of the Webpack build.
     new workboxPlugin.GenerateSW({
