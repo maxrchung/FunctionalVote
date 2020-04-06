@@ -1,12 +1,10 @@
 # Reloads NGINX if changes have been made to NGINX conf
-
 name: NGINX CD
 
 on:
   push:
     branches: [ master ]
-    paths:
-    - production/functionalvote.conf
+    paths: [ production/functionalvote.conf ]
 
 jobs:
   build:
@@ -20,6 +18,15 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /home/ubuntu/FunctionalVote/production
+
+          # Print commands that were run and exit with failure if error happens
+          set -ex
+          home="/home/ubuntu/FunctionalVote"
+          # Revert any modified files and get new updates
+          cd $home
+          git reset --hard
           git pull
+          
+          # NGINX
+          cd $home/production
           sudo systemctl reload nginx
