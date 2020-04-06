@@ -4,6 +4,7 @@ name: NGINX CD
 
 on:
   push:
+    branches: [ master ]
     paths:
     - production/functionalvote.conf
 
