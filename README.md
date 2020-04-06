@@ -1,6 +1,7 @@
-![Node.js CI](https://github.com/maxrchung/FunctionalVote/workflows/Node.js%20CI/badge.svg)
-![Elixir CI](https://github.com/maxrchung/FunctionalVote/workflows/Elixir%20CI/badge.svg)
-![SSH CD](https://github.com/maxrchung/FunctionalVote/workflows/SSH%20CD/badge.svg)
+![Frontend CI](https://github.com/maxrchung/FunctionalVote/workflows/Frontend%20CI/badge.svg)
+![Backend CI](https://github.com/maxrchung/FunctionalVote/workflows/Backend%20CI/badge.svg)
+![Frontend CD](https://github.com/maxrchung/FunctionalVote/workflows/Frontend%20CD/badge.svg)
+![Backend CD](https://github.com/maxrchung/FunctionalVote/workflows/Backend%20CD/badge.svg)
 ![NGINX CD](https://github.com/maxrchung/FunctionalVote/workflows/NGINX%20CD/badge.svg)
 
 # Functional Vote
