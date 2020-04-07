@@ -14,6 +14,9 @@ jobs:
         # Docker image
         image: postgres:12
         ports: ['5432:5432']
+        env:
+          # Password for the test database
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -22,8 +25,6 @@ jobs:
     env:
       # Run from the backend directory
       MIX_EXS: backend/mix.exs
-      # Password for the test database
-      POSTGRES_PASSWORD: postgres
     steps:
     - uses: actions/checkout@v2
     - name: Setup elixir
