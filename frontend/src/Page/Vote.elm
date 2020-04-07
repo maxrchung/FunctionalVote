@@ -8,7 +8,6 @@ import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
 import Http.Detailed
-import Json.Decode as Decode
 import Json.Encode as Encode
 import Page.Error
 import Shared
@@ -34,31 +33,22 @@ type alias Poll =
   , unorderedChoices : List String
   }
 
-type alias PollResponse =
-  { title : String
-  , choices : List String
-  }
-
 type LoadingState 
-  = Loading
-  | Loaded
+  = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
-init key pollId apiAddress = 
-  let 
-    model = 
-      { key = key
-      , pollId = pollId
-      , poll = Poll "" Dict.empty []
-      , apiAddress = apiAddress
-      , error = ""
-      , showError = False
-      , loadingState = Loading
-      , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
-      , fadeChoice = ""
-      }
-  in ( model, getPollRequest model )
+init : Navigation.Key -> String -> String -> List String -> String -> LoadingState -> Model
+init key apiAddress title choices pollId loadingState = 
+  { key = key
+  , pollId = pollId
+  , poll = Poll title Dict.empty choices
+  , apiAddress = apiAddress
+  , error = ""
+  , showError = False
+  , loadingState = loadingState
+  , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
+  , fadeChoice = ""
+  }
 
 
 
@@ -71,8 +61,7 @@ subscriptions model =
 
 -- UPDATE
 type Msg 
-  = GetPollResponse ( Result Http.Error PollResponse )
-  | ChangeRank String String
+  = ChangeRank String String
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | Animate Animation.Msg
@@ -80,17 +69,6 @@ type Msg
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    GetPollResponse result ->
-      case result of
-        Ok pollResponse ->
-          let 
-            unorderedChoices = pollResponse.choices
-            newPoll = Poll pollResponse.title Dict.empty unorderedChoices
-          in ( { model | poll = newPoll, loadingState = Loaded }, Cmd.none )
-
-        Err _ ->
-          ( { model | loadingState = Error }, Cmd.none )
-
     ChangeRank choice rank ->
       let
         oldPoll = model.poll
@@ -181,19 +159,6 @@ updateChoices index canFill maxRank rank ordered newOrdered newUnordered =
         else
           updateChoicesHelp ( Dict.insert ( index + 1 ) choice newOrdered ) newUnordered
 
-getPollRequest : Model -> Cmd Msg
-getPollRequest model =
-  Http.get
-    { url = model.apiAddress ++ "/poll/" ++ model.pollId
-    , expect = Http.expectJson GetPollResponse getPollDecoder
-    }
-
-getPollDecoder : Decode.Decoder PollResponse
-getPollDecoder =
-  Decode.map2 PollResponse
-    ( Decode.field "data" <| Decode.field "title" <| Decode.string )
-    ( Decode.field "data" <| Decode.field "choices" <| Decode.list Decode.string )
-
 submitVoteRequest : Model -> Cmd Msg
 submitVoteRequest model =
   Http.post
@@ -223,8 +188,6 @@ buildSubmissionChoices rank choice choices =
 view : Model -> Html Msg
 view model =
   case model.loadingState of
-    Loading ->
-      div [] []
     Error ->
       Page.Error.view
     Loaded ->

@@ -23,9 +23,9 @@ type alias Model =
   , choices : Array.Array String
   , apiAddress: String }
 
-init : Navigation.Key -> String -> ( Model, Cmd Msg )
+init : Navigation.Key -> String -> Model
 init key apiAddress = 
-  ( Model key "" False "" (Array.fromList ["", ""]) apiAddress, Cmd.none )
+  Model key "" False "" (Array.fromList ["", ""]) apiAddress
 
 
 
