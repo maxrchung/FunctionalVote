@@ -41,25 +41,36 @@ type alias Poll =
   , tallies : List ( List ( String, Float ) )
   }
 
-type LoadingState 
-  = Loading
-  | Loaded
+type LoadingState
+  = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
-init key pollId apiAddress = 
+init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> LoadingState -> Model
+init key apiAddress title winner tallies pollId loadingState  = 
   let 
-    model = 
-      { key = key
-      , pollId = pollId
-      , poll = Poll "" "" []
-      , apiAddress = apiAddress
-      , step = 0
-      , xScaleMax = 0
-      , loadingState = Loading
-      , transition = Transition.constant []
-      }
-  in ( model, getPollRequest model )
+    removedEmpty = removeEmpty tallies
+    removedDuplicate = removeDuplicate removedEmpty
+    newPoll = Poll title winner ( reorderTallies removedDuplicate )
+    lastRound = 
+      case List.Extra.last newPoll.tallies of
+          Nothing -> []
+          Just last -> last
+    newXScaleMax = 
+      case List.head lastRound of
+        Nothing -> 0
+        Just head -> Tuple.second head
+    newStep = List.length newPoll.tallies - 1
+    newTransition = updateTransition ( Transition.constant [] ) newStep newPoll.tallies
+  in
+  { key = key
+  , pollId = pollId
+  , poll = newPoll
+  , apiAddress = apiAddress
+  , step = newStep
+  , xScaleMax = newXScaleMax
+  , loadingState = loadingState
+  , transition =  newTransition
+  }
 
 
 
@@ -75,8 +86,7 @@ subscriptions model =
 
 -- UPDATE
 type Msg 
-  = GetPollResponse ( Result Http.Error Poll )
-  | DecrementStep
+  = DecrementStep
   | IncrementStep
   | ChangeStep String
   | Tick Int
@@ -84,37 +94,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    GetPollResponse result ->
-      case result of
-        Ok response ->
-          let
-            removedEmpty = removeEmpty response.tallies
-            removedDuplicate = removeDuplicate removedEmpty
-            newPoll = { response | tallies = reorderTallies removedDuplicate }
-            lastRound = 
-              case List.Extra.last newPoll.tallies of
-                  Nothing -> []
-                  Just last -> last
-            newXScaleMax = 
-              case List.head lastRound of
-                Nothing -> 0
-                Just head -> Tuple.second head
-            newStep = List.length newPoll.tallies - 1
-            newTransition = updateTransition model.transition newStep newPoll.tallies
-          in
-          ( { model 
-            | poll = newPoll
-            , step = newStep
-            , xScaleMax = newXScaleMax
-            , loadingState = Loaded
-            , transition = newTransition
-            }
-          , Cmd.none 
-          )
-
-        Err _ ->
-          ( { model | loadingState = Error }, Cmd.none )
-
     DecrementStep ->
       let
         newStep =
@@ -184,21 +163,6 @@ interpolateEntries : ( String, Float ) -> ( String, Float ) -> Interpolation.Int
 interpolateEntries ( _, fromTallies ) ( toChoice, toTallies ) =
   Interpolation.map ( Tuple.pair toChoice ) ( Interpolation.float fromTallies toTallies )
 
-
-getPollRequest : Model -> Cmd Msg
-getPollRequest model =
-  Http.get
-    { url = model.apiAddress ++ "/poll/" ++ model.pollId
-    , expect = Http.expectJson GetPollResponse getPollDecoder
-    }
-
-getPollDecoder : Decode.Decoder Poll
-getPollDecoder =
-  Decode.map3 Poll
-    ( Decode.at ["data", "title" ] Decode.string )
-    ( Decode.at ["data", "winner"] Decode.string )
-    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
-
 removeEmpty : List ( List ( String, Float ) ) -> List ( List ( String, Float ) ) 
 removeEmpty tallies =
   List.map removeEmptyEntries tallies
@@ -242,8 +206,6 @@ compareEntries ( _, a ) ( _, b ) =
 view : Model -> Html Msg
 view model =
   case model.loadingState of
-    Loading ->
-      div [] []
     Error ->
       Page.Error.view
     Loaded ->

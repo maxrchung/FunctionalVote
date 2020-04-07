@@ -57,7 +57,14 @@ type Route
 type alias VoteResponse =
   { title : String
   , choices : List String
-  , id: String
+  , pollId: String
+  }
+
+type alias PollResponse =
+  { title : String
+  , winner : String
+  , tallies : List ( List ( String, Float ) )
+  , pollId: String
   }
 
 init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
@@ -84,8 +91,7 @@ initPage page url key apiAddress =
           ( page, getVoteRequest apiAddress pollId )
 
         PollRoute pollId ->
-          let ( model, cmd ) = Poll.init key pollId apiAddress
-          in ( PollPage model, Cmd.map PollMsg cmd )
+          ( page, getPollRequest apiAddress pollId )
 
         AboutRoute ->
           ( AboutPage, Cmd.none )
@@ -116,6 +122,21 @@ getVoteDecoder =
     ( Decode.at ["data", "choices" ] <| Decode.list Decode.string )
     ( Decode.at ["data", "poll_id"] Decode.string )
 
+getPollRequest : String -> String -> Cmd Msg
+getPollRequest apiAddress pollId =
+  Http.get
+    { url = apiAddress ++ "/poll/" ++ pollId
+    , expect = Http.expectJson GetPollResponse getPollDecoder
+    }
+
+getPollDecoder : Decode.Decoder PollResponse
+getPollDecoder =
+  Decode.map4 PollResponse
+    ( Decode.at ["data", "title" ] Decode.string )
+    ( Decode.at ["data", "winner"] Decode.string )
+    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
+    ( Decode.at ["data", "poll_id"] Decode.string )
+
 
 
 -- SUBSCRIPTIONS
@@ -139,6 +160,7 @@ type Msg
   | VoteMsg Vote.Msg
   | PollMsg Poll.Msg
   | GetVoteResponse ( Result Http.Error VoteResponse )
+  | GetPollResponse ( Result Http.Error PollResponse )
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -179,12 +201,22 @@ update msg model =
     GetVoteResponse result ->
       case result of
         Ok response ->
-          let voteModel = Vote.init model.key model.apiAddress response.title response.choices response.id Vote.Loaded
+          let voteModel = Vote.init model.key model.apiAddress response.title response.choices response.pollId Vote.Loaded
           in ( { model | page = VotePage voteModel }, Cmd.none )
 
         Err _ ->
           let voteModel = Vote.init model.key model.apiAddress "" [] "" Vote.Error
           in ( { model | page = VotePage voteModel }, Cmd.none )
+
+    GetPollResponse result ->
+      case result of
+        Ok response ->
+          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
+          in ( { model | page = PollPage pollModel }, Cmd.none )
+
+        Err _ ->
+          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
+          in ( { model | page = PollPage pollModel }, Cmd.none )
 
 
 
