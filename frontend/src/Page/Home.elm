@@ -23,9 +23,9 @@ type alias Model =
   , choices : Array.Array String
   , apiAddress: String }
 
-init : Navigation.Key -> String -> ( Model, Cmd Msg )
+init : Navigation.Key -> String -> Model
 init key apiAddress = 
-  ( Model key "" False "" (Array.fromList ["", ""]) apiAddress, Cmd.none )
+  Model key "" False "" ( Array.fromList ["", ""] ) apiAddress
 
 
 
@@ -102,7 +102,7 @@ view : Model -> Html Msg
 view model =
   Html.form [ onSubmit MakePollRequest ]
       [ div [ class "fv-text" ]
-          [ text "-- Welcome to Functional Vote. Enter a question and a few choices below to create a new ranked-choice poll." ]
+          [ text "-- Welcome to Functional Vote! Enter a question and a few choices below to create a new ranked-choice poll." ]
       
       , div [ class "flex justify-between" ]
           [ h1 [ class "fv-code" ] [ text "poll" ]

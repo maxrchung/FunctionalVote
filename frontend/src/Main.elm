@@ -6,6 +6,9 @@ import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
+import Http
+import Http.Detailed
+import Json.Decode as Decode
 import Page.Home as Home
 import Page.Vote as Vote
 import Page.Poll as Poll
@@ -43,12 +46,26 @@ type Page
   | PollPage Poll.Model
   | AboutPage
   | ErrorPage
+  | NoPage
 
 type Route 
   = HomeRoute
   | VoteRoute String
   | PollRoute String
   | AboutRoute
+
+type alias VoteResponse =
+  { title : String
+  , choices : List String
+  , pollId: String
+  }
+
+type alias PollResponse =
+  { title : String
+  , winner : String
+  , tallies : List ( List ( String, Float ) )
+  , pollId: String
+  }
 
 init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
 init environment url key = 
@@ -58,25 +75,23 @@ init environment url key =
         "https://FunctionalVote.com:4001"
       else
         "http://localhost:4000"
-    ( page, cmd ) = initPage url key apiAddress
-  in ( Model key apiAddress page, cmd)
+    ( page, cmd ) = initPage NoPage url key apiAddress
+  in ( Model key apiAddress page, cmd )
 
-initPage : Url.Url -> Navigation.Key -> String -> ( Page, Cmd Msg )
-initPage url key apiAddress =
+initPage : Page -> Url.Url -> Navigation.Key -> String -> ( Page, Cmd Msg )
+initPage page url key apiAddress =
   case Parser.parse routeParser url of
     Just route ->
       case route of
         HomeRoute ->
-          let ( model, cmd ) = Home.init key apiAddress
-          in ( HomePage model , Cmd.map HomeMsg cmd )
+          let model = Home.init key apiAddress
+          in ( HomePage model , Cmd.none )
 
         VoteRoute pollId ->
-          let ( model, cmd ) = Vote.init key pollId apiAddress
-          in ( VotePage model, Cmd.map VoteMsg cmd )
+          ( page, getVoteRequest apiAddress pollId )
 
         PollRoute pollId ->
-          let ( model, cmd ) = Poll.init key pollId apiAddress
-          in ( PollPage model, Cmd.map PollMsg cmd )
+          ( page, getPollRequest apiAddress pollId )
 
         AboutRoute ->
           ( AboutPage, Cmd.none )
@@ -92,6 +107,35 @@ routeParser =
     , Parser.map PollRoute ( Parser.s "poll" </> Parser.string )
     , Parser.map AboutRoute ( Parser.s "about" )
     ]
+
+getVoteRequest : String -> String -> Cmd Msg
+getVoteRequest apiAddress pollId =
+  Http.get
+    { url = apiAddress ++ "/poll/" ++ pollId
+    , expect = Http.expectJson GetVoteResponse getVoteDecoder
+    }
+
+getVoteDecoder : Decode.Decoder VoteResponse
+getVoteDecoder =
+  Decode.map3 VoteResponse
+    ( Decode.at ["data", "title" ] Decode.string )
+    ( Decode.at ["data", "choices" ] <| Decode.list Decode.string )
+    ( Decode.at ["data", "poll_id"] Decode.string )
+
+getPollRequest : String -> String -> Cmd Msg
+getPollRequest apiAddress pollId =
+  Http.get
+    { url = apiAddress ++ "/poll/" ++ pollId
+    , expect = Http.expectJson GetPollResponse getPollDecoder
+    }
+
+getPollDecoder : Decode.Decoder PollResponse
+getPollDecoder =
+  Decode.map4 PollResponse
+    ( Decode.at ["data", "title" ] Decode.string )
+    ( Decode.at ["data", "winner"] Decode.string )
+    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
+    ( Decode.at ["data", "poll_id"] Decode.string )
 
 
 
@@ -115,6 +159,8 @@ type Msg
   | HomeMsg Home.Msg
   | VoteMsg Vote.Msg
   | PollMsg Poll.Msg
+  | GetVoteResponse ( Result Http.Error VoteResponse )
+  | GetPollResponse ( Result Http.Error PollResponse )
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -128,7 +174,7 @@ update msg model =
           ( model, Navigation.load href )
 
     UrlChanged url ->
-      let ( page, cmd ) = initPage url model.key model.apiAddress
+      let ( page, cmd ) = initPage model.page url model.key model.apiAddress
       in ( { model | page = page }, cmd)
 
     HomeMsg homeMsg ->
@@ -152,6 +198,26 @@ update msg model =
           in ( { model | page = PollPage newModel }, Cmd.map PollMsg cmd )
         _ -> ( model, Cmd.none )
 
+    GetVoteResponse result ->
+      case result of
+        Ok response ->
+          let voteModel = Vote.init model.key model.apiAddress response.title response.choices response.pollId Vote.Loaded
+          in ( { model | page = VotePage voteModel }, Cmd.none )
+
+        Err _ ->
+          let voteModel = Vote.init model.key model.apiAddress "" [] "" Vote.Error
+          in ( { model | page = VotePage voteModel }, Cmd.none )
+
+    GetPollResponse result ->
+      case result of
+        Ok response ->
+          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
+          in ( { model | page = PollPage pollModel }, Cmd.none )
+
+        Err _ ->
+          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
+          in ( { model | page = PollPage pollModel }, Cmd.none )
+
 
 
 -- VIEW
@@ -169,7 +235,9 @@ view model =
         AboutPage ->
           "Functional Vote - About"
         ErrorPage ->
-          "Functional Vote - Error" 
+          "Functional Vote - Error"
+        NoPage ->
+          "Functional Vote"
   in
   { title = pageTitle
   , body = renderBody model
@@ -190,6 +258,8 @@ renderBody model =
           [ About.view ]
         ErrorPage ->
           [ Error.view ]
+        NoPage ->
+          [ div [] [] ]
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
       [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]
