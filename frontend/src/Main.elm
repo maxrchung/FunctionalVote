@@ -274,15 +274,6 @@ renderBody model =
         , div [ class "flex flex-row items-center justify-center" ]
           [ div [ class "fv-nav-code justify-start w-5" ]
               [ text "[" ]
-            
-          , a 
-              [ class "fv-nav-btn"
-              , href "/about"
-              ]
-              [ Shared.renderIcon FeatherIcons.helpCircle ]
-
-          , div [ class "fv-nav-code justify-center w-6" ]
-            [ text "," ]
 
           , a
               [ class "fv-nav-btn"
