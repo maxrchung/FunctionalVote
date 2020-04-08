@@ -15,6 +15,8 @@ const getClientEnvironment = require('./env');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const CompressionPlugin = require('compression-webpack-plugin');
+const SitemapPlugin = require('sitemap-webpack-plugin').default;
+const RobotstxtPlugin = require('robotstxt-webpack-plugin');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -354,6 +356,11 @@ module.exports = {
         cache: true,
         // Try and compress all files, probably better for NGINX serving this
         minRatio: 1
+    }),
+    new SitemapPlugin("https://functionalvote.com", ["/", "/about"]),
+    new RobotstxtPlugin({
+        sitemap: "https://functionalvote.com/sitemap.xml",
+        host: "https://functionalvote.com"
     }),
     // Generate a service worker script that will precache, and keep up to date,
     // the HTML & assets that are part of the Webpack build.
