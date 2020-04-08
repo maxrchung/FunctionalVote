@@ -7,9 +7,7 @@ import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
-import Http
 import Interpolation
-import Json.Decode as Decode
 import List.Extra
 import Page.Error
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )

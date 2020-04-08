@@ -7,12 +7,10 @@ import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
-import Http.Detailed
 import Json.Decode as Decode
 import Page.Home as Home
 import Page.Vote as Vote
 import Page.Poll as Poll
-import Page.About as About
 import Page.Error as Error
 import Shared
 import Url
@@ -44,7 +42,6 @@ type Page
   = HomePage Home.Model
   | VotePage Vote.Model
   | PollPage Poll.Model
-  | AboutPage
   | ErrorPage
   | NoPage
 
@@ -52,7 +49,6 @@ type Route
   = HomeRoute
   | VoteRoute String
   | PollRoute String
-  | AboutRoute
 
 type alias VoteResponse =
   { title : String
@@ -93,9 +89,6 @@ initPage page url key apiAddress =
         PollRoute pollId ->
           ( page, getPollRequest apiAddress pollId )
 
-        AboutRoute ->
-          ( AboutPage, Cmd.none )
-    
     Nothing ->
       ( ErrorPage, Cmd.none )
 
@@ -105,7 +98,6 @@ routeParser =
     [ Parser.map HomeRoute Parser.top
     , Parser.map VoteRoute ( Parser.s "vote" </> Parser.string )
     , Parser.map PollRoute ( Parser.s "poll" </> Parser.string )
-    , Parser.map AboutRoute ( Parser.s "about" )
     ]
 
 getVoteRequest : String -> String -> Cmd Msg
@@ -239,8 +231,6 @@ view model =
           "Functional Vote - Vote in a Poll"
         PollPage _ ->
           "Functional Vote - View a Poll"
-        AboutPage ->
-          "Functional Vote - About"
         ErrorPage ->
           "Functional Vote - Error"
         NoPage ->
@@ -261,8 +251,6 @@ renderBody model =
           [ Html.map VoteMsg ( Vote.view voteModel ) ]
         PollPage pollModel ->
           [ Html.map PollMsg ( Poll.view pollModel ) ]
-        AboutPage ->
-          [ About.view ]
         ErrorPage ->
           [ Error.view ]
         NoPage ->
