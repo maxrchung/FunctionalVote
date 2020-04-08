@@ -168,7 +168,14 @@ update msg model =
     UrlRequested urlRequest ->
       case urlRequest of
         Browser.Internal url ->
-          ( model, Navigation.pushUrl model.key <| Url.toString url )
+          case model.page of
+            -- Don't reload home page if we are currently on it
+            HomePage _ ->
+              if url.path /= "/" then
+                ( model, Navigation.pushUrl model.key <| Url.toString url )
+              else
+                ( model, Cmd.none )
+            _ -> ( model, Navigation.pushUrl model.key <| Url.toString url )
 
         Browser.External href ->
           ( model, Navigation.load href )
@@ -274,15 +281,6 @@ renderBody model =
         , div [ class "flex flex-row items-center justify-center" ]
           [ div [ class "fv-nav-code justify-start w-5" ]
               [ text "[" ]
-            
-          , a 
-              [ class "fv-nav-btn"
-              , href "/about"
-              ]
-              [ Shared.renderIcon FeatherIcons.helpCircle ]
-
-          , div [ class "fv-nav-code justify-center w-6" ]
-            [ text "," ]
 
           , a
               [ class "fv-nav-btn"

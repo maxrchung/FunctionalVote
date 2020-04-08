@@ -357,7 +357,7 @@ module.exports = {
         // Try and compress all files, probably better for NGINX serving this
         minRatio: 1
     }),
-    new SitemapPlugin("https://functionalvote.com", ["/", "/about"]),
+    new SitemapPlugin("https://functionalvote.com", ["/"]),
     new RobotstxtPlugin({
         sitemap: "https://functionalvote.com/sitemap.xml",
         host: "https://functionalvote.com"
