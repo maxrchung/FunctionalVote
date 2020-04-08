@@ -16,20 +16,25 @@ renderShareLinks url helpText title message =
   div []
     [ div [ class "fv-break" ] [ text "--" ]
 
-    , div [ class "fv-text mb-2" ] [ text helpText ]
+    , div [ class "fv-text" ] [ text helpText ]
+
+    , div [ class "flex justify-between" ]
+        [ div [ class "fv-code" ] [ text "links" ]
+        , div [ class "fv-code" ] [ text "=" ]
+        ]
 
     , div
-        [ class "flex justify-between" ]
-        [ div [ class "w-8" ] [ text "" ]
+        [ class "flex justify-between items-center" ]
+        [ div [ class "w-8 fv-code" ] [ text "[" ]
 
         , div
             [ class "w-full" ]
-            [ div 
-                [ class "flex justify-between items-center mb-4" ]
+            [ div
+                [ class "flex justify-between items-center" ]
                 [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.link ]
 
                 , div
-                    [ class "mx-2 w-full"
+                    [ class "mx-2 w-full my-2"
                     , id "fv-share-link" ]
                     [ input
                         [ class "fv-share-link fv-input"
@@ -45,85 +50,110 @@ renderShareLinks url helpText title message =
                     ]
                     [ renderIcon FeatherIcons.clipboard ]
                 ]
-
-            , div 
-                [ class "fv-share-text flex justify-between items-center mb-4 -mt-3 hidden" ]
-                [ div [ class "invisible" ] [ renderIcon FeatherIcons.link ]
-
-                , div [ class "mx-2 w-full text-orange-500" ] [ text "-- Link copied" ]
-
-                , div [ class "w-10 mx-2" ] []
-                ]
-
-            , div 
-                [ class "flex justify-between items-center mb-4" ]
-                [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.twitter ]
-
-                , div
-                    [ class "mx-2 w-full" ]
-                    [ input
-                        [ class "fv-input"
-                        , readonly True
-                        , value twitterUrl
-                        ]
-                        []
-                    ]
-
-                , a 
-                    [ class "fv-nav-btn fv-nav-btn-orange" 
-                    , href <| twitterUrl
-                    , target "_blank"
-                    ]
-                    [ renderIcon FeatherIcons.share ]
-                ]
-
-            , div 
-                [ class "flex justify-between items-center mb-4" ]
-                [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.facebook ]
-
-                , div
-                    [ class "mx-2 w-full" ]
-                    [ input
-                        [ class "fv-input"
-                        , readonly True
-                        , value <| facebookUrl
-                        ]
-                        []
-                    ]
-
-                , a 
-                    [ class "fv-nav-btn fv-nav-btn-orange"
-                    , href facebookUrl
-                    , target "_blank"
-                    ]
-                    [ renderIcon FeatherIcons.share ]
-                ]
-
-            , div 
-                [ class "flex justify-between items-center" ]
-                [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.mail ]
-
-                , div
-                    [ class "mx-2 w-full" ]
-                    [ input
-                        [ class "fv-input"
-                        , readonly True
-                        , value <| mailUrl
-                        ]
-                        []
-                    ]
-
-                , a 
-                    [ class "fv-nav-btn fv-nav-btn-orange" 
-                    , href mailUrl
-                    , target "_blank"
-                    ]
-                    [ renderIcon FeatherIcons.share ]
-                ]
             ]
-          
-        , div [ class "w-8 text-right" ] [ text "" ]
+
+        , div [ class "w-8" ] []
         ]
+
+    , div
+        [ class "fv-share-text flex justify-between items-center hidden" ]
+        [ div [ class "w-8" ] [ text "" ]
+
+        , div 
+            [ class "w-full flex justify-between items-center -mt-1" ]
+            [ div [ class "invisible" ] [ renderIcon FeatherIcons.link ]
+
+            , div [ class "mx-2 w-full text-orange-500" ] [ text "-- Link copied" ]
+
+            , div [ class "w-10 mx-2" ] []
+            ]
+        , div [ class "w-8" ] []
+        ]
+
+    , div
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-code w-8" ] [ text "," ]
+        , div 
+            [ class "w-full flex justify-between items-center my-2" ]
+            [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.twitter ]
+
+            , div
+                [ class "mx-2 w-full" ]
+                [ input
+                    [ class "fv-input"
+                    , readonly True
+                    , value twitterUrl
+                    ]
+                    []
+                ]
+
+            , a 
+                [ class "fv-nav-btn fv-nav-btn-orange" 
+                , href <| twitterUrl
+                , target "_blank"
+                ]
+                [ renderIcon FeatherIcons.share ]
+            ]
+        , div [ class "w-8" ] []
+        ]
+
+    , div
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-code w-8" ] [ text "," ]
+
+        , div 
+            [ class "w-full flex justify-between items-center my-2" ]
+            [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.facebook ]
+
+            , div
+                [ class "mx-2 w-full" ]
+                [ input
+                    [ class "fv-input"
+                    , readonly True
+                    , value <| facebookUrl
+                    ]
+                    []
+                ]
+
+            , a 
+                [ class "fv-nav-btn fv-nav-btn-orange"
+                , href facebookUrl
+                , target "_blank"
+                ]
+                [ renderIcon FeatherIcons.share ]
+            ]
+        , div [ class "w-8" ] []
+        ]
+
+    , div
+        [ class "flex justify-between items-center" ]
+        [ div [ class "fv-code w-8" ] [ text "," ]
+
+        , div 
+            [ class "w-full flex justify-between items-center my-2" ]
+            [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.mail ]
+
+            , div
+                [ class "mx-2 w-full" ]
+                [ input
+                    [ class "fv-input"
+                    , readonly True
+                    , value <| mailUrl
+                    ]
+                    []
+                ]
+
+            , a 
+                [ class "fv-nav-btn fv-nav-btn-orange" 
+                , href mailUrl
+                , target "_blank"
+                ]
+                [ renderIcon FeatherIcons.share ]
+            ]
+        , div [ class "w-8" ] []
+        ]
+
+    , div [ class "fv-code" ] [ text "]" ]
     ]
 
 renderIcon : FeatherIcons.Icon -> Html a
