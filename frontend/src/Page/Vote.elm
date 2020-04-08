@@ -198,7 +198,7 @@ view model =
         hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices 
       in
       div []
-        [ div 
+        [ div
             [ class "fv-text" ]
             [ text "-- Submit a vote by selecting ranks to the left of each choice. Smaller numbers have higher preference." ]
 
@@ -220,7 +220,7 @@ view model =
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div 
               [ class "flex justify-center w-full"]
-              [ h1 
+              [ div
                 [ class "fv-text text-blue-100 text-left" ] 
                 [ text model.poll.title ]
               ]

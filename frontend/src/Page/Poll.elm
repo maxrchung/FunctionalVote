@@ -231,7 +231,7 @@ view model =
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div
               [ class "flex justify-center w-full"]
-              [ h1
+              [ div
                 [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.title ]
               ]
@@ -252,7 +252,7 @@ view model =
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div 
               [ class "flex justify-center w-full"]
-              [ h1
+              [ div
                 [ class "fv-text text-blue-100 text-left" ] 
                 [ text model.poll.winner ]
               ]

@@ -159,13 +159,23 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , div [ class "fv-text" ] [ text "-- Vote in our public polls by clicking a question." ]
+      , div [ class "fv-text" ] [ text "-- See some poll examples by clicking the questions below." ]
+
+      , div [ class "flex justify-between" ]
+        [ div [ class "fv-code" ] [ text "examples" ]
+        , div [ class "fv-code" ] [ text "=" ]
+        ]
+
+      , div [ class "flex justify-between" ]
+        [ div [ class "fv-code" ] [ text "examples" ]
+        , div [ class "fv-code" ] [ text "=" ]
+        ]
 
       , div [ class "fv-break" ] [ text "--" ]
 
       , div [ class "fv-code" ] [ text "{-" ]
 
-      , h1 [ class "fv-header mb-1" ]
+      , div [ class "fv-header mb-1" ]
         [ text "Why Functional Vote?" ]
 
       , div [ class "fv-text" ]
