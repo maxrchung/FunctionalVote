@@ -168,7 +168,14 @@ update msg model =
     UrlRequested urlRequest ->
       case urlRequest of
         Browser.Internal url ->
-          ( model, Navigation.pushUrl model.key <| Url.toString url )
+          case model.page of
+            -- Don't reload home page if we are currently on it
+            HomePage _ ->
+              if url.path /= "/" then
+                ( model, Navigation.pushUrl model.key <| Url.toString url )
+              else
+                ( model, Cmd.none )
+            _ -> ( model, Navigation.pushUrl model.key <| Url.toString url )
 
         Browser.External href ->
           ( model, Navigation.load href )
