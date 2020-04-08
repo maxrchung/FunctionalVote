@@ -183,7 +183,7 @@ view model =
         [ text "With traditional voting, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank options in order of their preference. If a voter's first option loses, that voter's second choice is counted instead, then third, and so forth." ]
 
       , div [ class "fv-text mb-6" ]
-        [ text "Ranked-choice voting is more fair than traditional voting because preferential ranking is much more flexible than a single vote cast in stone. Voters are incentivized to vote for their preferred, rather than popular, options." ]
+        [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular options." ]
 
       , div [ class "fv-text mb-6" ]
         [ text "There are many resources online that explain ranked-choice in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to the concept:" ]
