@@ -216,12 +216,12 @@ view model =
         , div
             [ class "flex justify-between" ]
             [ h1 [ class "fv-code" ] [ text "results" ]
-            , div [ class "fv-code" ] [ text "={" ]
+            , div [ class "fv-code" ] [ text "=" ]
             ]
 
         , div
             [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
+            [ div [ class "fv-code w-8" ] [ text "{" ]
             , h2 [ class "fv-header" ] [ text "Question" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]

@@ -102,16 +102,15 @@ view : Model -> Html Msg
 view model =
   Html.form 
     [ onSubmit MakePollRequest ]
-    [ div [ class "fv-text" ]
-        [ text "-- Welcome to Functional Vote! Enter a question and a few choices below to create a new ranked-choice poll." ]
+    [ div [ class "fv-text" ] [ text "-- Welcome to Functional Vote! Create a new ranked-choice poll by entering a question and a few choices." ]
     
     , div [ class "flex justify-between" ]
         [ h1 [ class "fv-code" ] [ text "poll" ]
-        , div [ class "fv-code" ] [ text "={" ]
+        , div [ class "fv-code" ] [ text "=" ]
         ]
     
     , div [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] []
+        [ div [ class "fv-code w-8" ] [ text "{" ]
         , h2 [ class "fv-header" ] [ text "Question" ]
         , div [ class "fv-code w-8 text-right" ] [ text "=" ]
         ]
@@ -132,7 +131,7 @@ view model =
     , div [ class "flex justify-between items-center" ]
         [ div [ class "w-8" ] [ text "" ]
         , h2 [ class "fv-header" ] [ text "Choices" ]
-        , div [ class "fv-code w-8 text-right" ] [text "=[" ]
+        , div [ class "fv-code w-8 text-right" ] [text "=" ]
         ]
 
       , let choicesLength = Array.length model.choices
@@ -157,6 +156,10 @@ view model =
           , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
           , div [ class "w-8 text-right" ] [ text "" ]
           ]
+
+      , div [ class "fv-break" ] [ text "--" ]
+
+      , div [ class "fv-text" ] [ text "-- Vote in our public polls by clicking a question." ]
 
       , div [ class "fv-break" ] [ text "--" ]
 
@@ -212,7 +215,7 @@ renderChoice choicesLength showError index choice =
     
     startQuotation = 
       if index == 0 then
-        "\""
+        "[\""
       else
         ",\""
   in

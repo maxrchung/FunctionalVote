@@ -205,12 +205,12 @@ view model =
         , div 
             [ class "flex justify-between" ]
             [ h1 [ class "fv-code" ] [ text "vote" ]
-            , div [ class "fv-code" ] [ text "={" ]
+            , div [ class "fv-code" ] [ text "=" ]
             ]
         
         , div 
             [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
+            [ div [ class "fv-code w-8" ] [ text "{" ]
             , h2 [ class "fv-header" ] [ text "Question" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
@@ -233,7 +233,7 @@ view model =
             [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
             , h2 [ class "fv-header" ] [ text "Ranks" ]
-            , div [ class "fv-code w-8 text-right" ] [ text "=[" ]
+            , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
         
         , div []
@@ -372,8 +372,8 @@ unorderedCommaText : Bool -> Int -> Html a
 unorderedCommaText hasOrderedChoices index = 
   if hasOrderedChoices || index > 0 then
     text ","
-  else 
-    text ""
+  else
+    text "["
 
 textColorClass : Int -> Attribute a
 textColorClass index = 
