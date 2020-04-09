@@ -25,6 +25,8 @@ jobs:
     env:
       # Run from the backend directory
       MIX_EXS: backend/mix.exs
+      # Use test.exs environment
+      MIX_ENV: test
     steps:
     - uses: actions/checkout@v2
     - name: Setup elixir
