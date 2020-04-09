@@ -264,7 +264,7 @@ view model =
 
         , div [ class "fv-code" ] [ text "}" ]
 
-        , div [ class "fv-break" ] [ text "--" ]
+        , div [ class "fv-break opacity-25" ] [ text "--" ]
         
         , div [ class "flex justify-between items-center mb-2" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
@@ -285,7 +285,7 @@ view model =
 
         , Shared.renderShareLinks
             ( "https://functionalvote.com/poll/" ++ model.pollId )
-            "Share this poll results page by copying the link or sharing the link through Twitter, Facebook, and email." 
+            "Share this poll results page by copying the link or sharing the link through social media." 
             model.poll.title
             "View my poll results: "
         ]
