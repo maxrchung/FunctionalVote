@@ -264,7 +264,7 @@ view model =
 
         , div [ class "fv-code" ] [ text "}" ]
 
-        , div [ class "fv-break opacity-25" ] [ text "--" ]
+        , div [ class "fv-break" ] [ text "--" ]
         
         , div [ class "flex justify-between items-center mb-2" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]

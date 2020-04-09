@@ -177,41 +177,36 @@ view model =
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
-          , a [ class "w-full text-center"
-              , href "/vote/bjDm9VD" 
-              ] [ text "Favorite color?" ]
+          , div [ class "w-full text-center" ]
+              [ a [ href "/vote/bjDm9VD" ] [ text "Favorite color?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ class "w-full text-center"
-              , href "/vote/TlR007Q" 
-              ] [ text "Favorite season of the year?" ]
+          , div [ class "w-full text-center" ]
+              [ a [ href "/vote/TlR007Q" ] [ text "Favorite season of the year?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ class "w-full text-center"
-              , href "/vote/oFDFtDwq" 
-              ] [ text "Pineapple on pizza?" ]
+          , div [ class "w-full text-center" ]
+              [ a [ href "/vote/oFDFtDwq" ] [ text "Pineapple on pizza?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ class "w-full text-center"
-              , href "/vote/Q2tobIMV" 
-              ] [ text "How do you pronounce GIF?" ]
+          , div [ class "w-full text-center" ]
+              [ a [ href "/vote/Q2tobIMV" ] [ text "How do you pronounce GIF?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ class "w-full text-center"
-              , href "/vote/DVmeUPww" 
-              ] [ text "How do you like your eggs?" ]
+          , div [ class "w-full text-center" ]
+              [ a [ href "/vote/DVmeUPww" ] [ text "How do you like your eggs?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
@@ -243,7 +238,7 @@ view model =
                   [ text "Why Ranked-Choice?"]
 
               , p [ class "fv-text mb-6" ]
-                [ text "In a traditional voting system, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter's first option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
+                [ text "In a traditional voting system, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
 
               , p [ class "fv-text mb-6" ]
                 [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
