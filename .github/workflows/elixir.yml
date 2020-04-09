@@ -22,11 +22,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    env:
-      # Run from the backend directory
-      MIX_EXS: backend/mix.exs
-      # Use test.exs environment
-      MIX_ENV: test
     steps:
     - uses: actions/checkout@v2
     - name: Setup elixir
@@ -36,5 +31,7 @@ jobs:
         otp-version: 22.2 # Define the OTP version [required]
     - name: Install Dependencies
       run: mix deps.get --only test
+      working-directory: ./backend
     - name: Run Unit Tests
       run: mix test
+      working-directory: ./backend
