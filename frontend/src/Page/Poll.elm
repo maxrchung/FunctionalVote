@@ -216,12 +216,12 @@ view model =
         , div
             [ class "flex justify-between" ]
             [ h1 [ class "fv-code" ] [ text "results" ]
-            , div [ class "fv-code" ] [ text "={" ]
+            , div [ class "fv-code" ] [ text "=" ]
             ]
 
         , div
             [ class "flex justify-between items-center" ]
-            [ div [ class "w-8" ] []
+            [ div [ class "fv-code w-8" ] [ text "{" ]
             , h2 [ class "fv-header" ] [ text "Question" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
@@ -231,7 +231,7 @@ view model =
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div
               [ class "flex justify-center w-full"]
-              [ h1
+              [ div
                 [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.title ]
               ]
@@ -252,7 +252,7 @@ view model =
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div 
               [ class "flex justify-center w-full"]
-              [ h1
+              [ div
                 [ class "fv-text text-blue-100 text-left" ] 
                 [ text model.poll.winner ]
               ]

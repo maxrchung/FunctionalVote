@@ -102,16 +102,15 @@ view : Model -> Html Msg
 view model =
   Html.form 
     [ onSubmit MakePollRequest ]
-    [ div [ class "fv-text" ]
-        [ text "-- Welcome to Functional Vote! Enter a question and a few choices below to create a new ranked-choice poll." ]
+    [ div [ class "fv-text" ] [ text "-- Welcome to Functional Vote! Create a new ranked-choice poll by entering a question and a few choices." ]
     
     , div [ class "flex justify-between" ]
         [ h1 [ class "fv-code" ] [ text "poll" ]
-        , div [ class "fv-code" ] [ text "={" ]
+        , div [ class "fv-code" ] [ text "=" ]
         ]
     
     , div [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] []
+        [ div [ class "fv-code w-8" ] [ text "{" ]
         , h2 [ class "fv-header" ] [ text "Question" ]
         , div [ class "fv-code w-8 text-right" ] [ text "=" ]
         ]
@@ -132,7 +131,7 @@ view model =
     , div [ class "flex justify-between items-center" ]
         [ div [ class "w-8" ] [ text "" ]
         , h2 [ class "fv-header" ] [ text "Choices" ]
-        , div [ class "fv-code w-8 text-right" ] [text "=[" ]
+        , div [ class "fv-code w-8 text-right" ] [text "=" ]
         ]
 
       , let choicesLength = Array.length model.choices
@@ -160,9 +159,50 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
+      , div [ class "fv-text" ] [ text "-- View poll examples by clicking the questions." ]
+
+      , div [ class "flex justify-between" ]
+        [ div [ class "fv-code" ] [ text "examples" ]
+        , div [ class "fv-code" ] [ text "=" ]
+        ]
+
+      , div [ class "flex justify-between items-center my-2" ]
+          [ div [ class "fv-code w-8" ] [ text "[\"" ]
+          , a [ href "/poll/bjDm9VD" ] [ text "Favorite color?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-2" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "/poll/TlR007Q" ] [ text "Favorite season of the year?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-2" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "/poll/oFDFtDwq" ] [ text "Pineapple on pizza?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-2" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "/poll/Q2tobIMV" ] [ text "How do you pronounce GIF?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-2" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "/poll/DVmeUPww" ] [ text "How do you like your eggs?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "fv-code" ] [ text "]" ]
+
+      , div [ class "fv-break" ] [ text "--" ]
+
       , div [ class "fv-code" ] [ text "{-" ]
 
-      , h1 [ class "fv-header mb-1" ]
+      , div [ class "fv-header mb-1" ]
         [ text "Why Functional Vote?" ]
 
       , div [ class "fv-text" ]
@@ -212,7 +252,7 @@ renderChoice choicesLength showError index choice =
     
     startQuotation = 
       if index == 0 then
-        "\""
+        "[\""
       else
         ",\""
   in
