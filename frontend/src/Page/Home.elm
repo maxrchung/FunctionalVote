@@ -159,38 +159,38 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , div [ class "fv-text" ] [ text "-- View poll examples by clicking the questions below." ]
+      , div [ class "fv-text" ] [ text "-- View poll examples by clicking the questions." ]
 
       , div [ class "flex justify-between" ]
         [ div [ class "fv-code" ] [ text "examples" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
 
-      , div [ class "flex justify-between items-center my-1" ]
+      , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
           , a [ href "/poll/bjDm9VD" ] [ text "Favorite color?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "flex justify-between items-center my-1" ]
+      , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
           , a [ href "/poll/TlR007Q" ] [ text "Favorite season of the year?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "flex justify-between items-center my-1" ]
+      , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
           , a [ href "/poll/oFDFtDwq" ] [ text "Pineapple on pizza?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "flex justify-between items-center my-1" ]
+      , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
           , a [ href "/poll/Q2tobIMV" ] [ text "How do you pronounce GIF?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
-      , div [ class "flex justify-between items-center my-1" ]
+      , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
           , a [ href "/poll/DVmeUPww" ] [ text "How do you like your eggs?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
