@@ -110,7 +110,7 @@ view model =
         ]
       
     , div [ class "flex justify-between" ]
-        [ h1 [ class "fv-code" ] [ text "poll" ]
+        [ h1 [ class "fv-code opacity-25" ] [ text "poll" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
     
@@ -166,12 +166,12 @@ view model =
 
       , div [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8" ] [ text "--" ]
-          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how ranked-choice voting works. Click a question and vote for your favorite preferences." ]
+          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how the voting process works. Click a question and vote for your favorite preferences." ]
           , div [ class "w-8" ] []
           ]
 
       , div [ class "flex justify-between" ]
-        [ div [ class "fv-code" ] [ text "examples" ]
+        [ div [ class "fv-code opacity-25" ] [ text "examples" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
 
@@ -239,7 +239,10 @@ view model =
                 [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
 
               , p [ class "fv-text mb-6" ]
-                [ text "There are many resources online that explain ranked-choice voting in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to the concept:" ]
+                [ text "There are many resources online that explain ranked-choice voting in greater detail. We particularly like "
+                , a [ href "https://www.youtube.com/user/CGPGrey" ] [ text "CGP Grey" ]
+                , text "'s video on this topic since that's how we were first introduced to the concept:" 
+                ]
 
               , div [ class "embed-responsive embed-responsive-16by9"]
                 [ iframe 

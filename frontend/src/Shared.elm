@@ -24,7 +24,7 @@ renderShareLinks url helpText title message =
     
 
     , div [ class "flex justify-between" ]
-        [ div [ class "fv-code" ] [ text "links" ]
+        [ div [ class "fv-code opacity-25" ] [ text "links" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
 

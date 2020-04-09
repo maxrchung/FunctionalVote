@@ -206,7 +206,7 @@ view model =
 
         , div 
             [ class "flex justify-between" ]
-            [ h1 [ class "fv-code" ] [ text "vote" ]
+            [ h1 [ class "fv-code opacity-25" ] [ text "vote" ]
             , div [ class "fv-code" ] [ text "=" ]
             ]
         
@@ -291,7 +291,7 @@ view model =
 
         , Shared.renderShareLinks 
             ( "https://functionalvote.com/vote/" ++ model.pollId ) 
-            "Share this vote submission page by copying the link or sending through Twitter, Facebook, and email." 
+            "Share this vote submission page by copying the link or sharing the link through Twitter, Facebook, and email." 
             model.poll.title
             "Vote in my poll: "
         ]
