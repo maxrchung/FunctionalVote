@@ -198,13 +198,15 @@ view model =
         hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices 
       in
       div []
-        [ div
-            [ class "fv-text" ]
-            [ text "-- Submit a vote by selecting ranks to the left of each choice. Smaller numbers have higher preference." ]
+        [ div [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8" ] [ text "--" ]
+            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of each choice. Smaller rank numbers have higher preference, and not all choices need to have a rank." ]
+            , div [ class "w-8" ] []
+            ]
 
         , div 
             [ class "flex justify-between" ]
-            [ h1 [ class "fv-code" ] [ text "vote" ]
+            [ h1 [ class "fv-code opacity-25" ] [ text "vote" ]
             , div [ class "fv-code" ] [ text "=" ]
             ]
         
@@ -248,46 +250,48 @@ view model =
 
         , div [class "fv-code pb-2" ] [ text "]}" ]
           
-        , div 
+        , div
             [ class "flex justify-between pb-1" ]
-            [ div [ class "w-8" ] [ text "" ]
-            , button 
+            [ div [ class "w-8" ] []
+            , button
                 [ class "fv-btn"
                 , onClick SubmitVoteRequest
-                ] 
-                [ text "Submit Vote" ] 
-            , div [ class "w-8 text-right" ] [ text "" ]
-            ]
-
-        , div 
-            [ class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
-            , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
-            , div [ class "w-8 text-right" ] [ text "" ]
+                ]
+                [ text "Submit Vote" ]
+            , div [ class "w-8" ] []
             ]
 
         , div
-            [ class "fv-break" ] 
-            [ text "--" ]
+            [ class "flex justify-between" ]
+            [ div [ class "fv-code w-8" ] [ errorComment model.error ]
+            , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ]
+            , div [ class "w-8" ] []
+            ]
+
+        , div [ class "fv-break" ] [ text "--" ]
         
-        , div
-            [ class "fv-text mb-2" ]
-            [ text "-- View the poll results." ]
+        , div [ class "flex justify-between items-center mb-2" ]
+            [ div [ class "fv-code w-8" ] [ text "--" ]
+            , p [ class "fv-text w-full" ] [ text "View the poll results page and see the current standings." ]
+            , div [ class "w-8" ] []
+            ]
+
+        
           
-        , div 
+        , div
             [ class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
+            [ div [ class "w-8" ] []
             , a 
               [ class "fv-btn fv-btn-blank mb-2"
               , href <| "/poll/" ++ model.pollId
               ] 
               [ text "View Results" ]
-            , div [ class "w-8 text-right" ] [ text "" ]
+            , div [ class "w-8" ] []
             ]
 
         , Shared.renderShareLinks 
             ( "https://functionalvote.com/vote/" ++ model.pollId ) 
-            "-- Share the vote submission page." 
+            "Share this vote submission page by copying the link or sharing the link through Twitter, Facebook, and email." 
             model.poll.title
             "Vote in my poll: "
         ]
@@ -400,9 +404,16 @@ errorClass showError =
   else
     class ""
 
+errorComment : String -> Html a
+errorComment error =
+  if String.isEmpty error then
+    text ""
+  else
+    text "--"
+
 errorText : String -> Html a
 errorText error =
   if String.isEmpty error then
     text ""
   else
-    text <| "-- " ++ error
+    text error

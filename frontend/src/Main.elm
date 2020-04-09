@@ -263,7 +263,7 @@ renderBody model =
             , href "/"
             ]
             [ text "fv" 
-            , div [ class "text-orange-500 font-mono opacity-25 text-sm" ] [ text "=" ]
+            , div [ class "text-orange-500 font-mono opacity-10 text-sm" ] [ text "=" ]
             ]
 
         , div [ class "flex flex-row items-center justify-center" ]

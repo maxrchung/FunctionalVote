@@ -102,10 +102,15 @@ view : Model -> Html Msg
 view model =
   Html.form 
     [ onSubmit MakePollRequest ]
-    [ div [ class "fv-text" ] [ text "-- Welcome to Functional Vote! Create a new ranked-choice poll by entering a question and a few choices." ]
-    
+    [ div [ class "flex justify-between items-center" ]
+        [ div [ class "fv-code w-8" ] [ text "--" ]
+        , p [ class "fv-text w-full" ] [ text "Welcome to Functional Vote! This website allows you to create and share polls that use ranked-choice voting. Create a new poll by entering a question and a few choices." ]
+
+        , div [ class "w-8" ] []
+        ]
+      
     , div [ class "flex justify-between" ]
-        [ h1 [ class "fv-code" ] [ text "poll" ]
+        [ h1 [ class "fv-code opacity-25" ] [ text "poll" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
     
@@ -119,7 +124,7 @@ view model =
         [ div [ class "fv-code w-8"] [ text "\"" ]
         , input [ class "fv-input"
                 , errorClass model.showError
-                , placeholder "-- Enter a question"
+                , placeholder "Enter a question"
                 , value model.title
                 , onInput ChangeTitle 
                 ] [] 
@@ -129,9 +134,9 @@ view model =
     , div [ class "fv-code" ] [ text "," ]
 
     , div [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] [ text "" ]
+        [ div [ class "w-8" ] []
         , h2 [ class "fv-header" ] [ text "Choices" ]
-        , div [ class "fv-code w-8 text-right" ] [text "=" ]
+        , div [ class "fv-code w-8 text-right" ] [ text "=" ]
         ]
 
       , let choicesLength = Array.length model.choices
@@ -143,56 +148,60 @@ view model =
       , div [ class "fv-code pb-2" ] [ text "]}" ]
       
       , div [ class "flex justify-between pb-1" ]
-          [ div [ class "w-8" ] [ text "" ]
+          [ div [ class "w-8" ] []
           , button 
               [ class "fv-btn"
               , type_ "submit"
               ] [ text "Create Poll" ] 
-          , div [ class "w-8 text-right" ] [ text "" ]
+          , div [ class "w-8" ] []
           ]
 
       , div [class "flex justify-between" ]
-          [ div [ class "w-8" ] [ text "" ]
+          [ div [ class "fv-code w-8" ] [ errorComment model.error ]
           , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
-          , div [ class "w-8 text-right" ] [ text "" ]
+          , div [ class "w-8" ] []
           ]
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , div [ class "fv-text" ] [ text "-- View poll examples by clicking the questions." ]
+      , div [ class "flex justify-between items-center" ]
+          [ div [ class "fv-code w-8" ] [ text "--" ]
+          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how the voting process works. Click a question and vote for your favorite preferences." ]
+          , div [ class "w-8" ] []
+          ]
 
       , div [ class "flex justify-between" ]
-        [ div [ class "fv-code" ] [ text "examples" ]
+        [ div [ class "fv-code opacity-25" ] [ text "examples" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
-          , a [ href "/poll/bjDm9VD" ] [ text "Favorite color?" ]
+          , a [ href "/vote/bjDm9VD" ] [ text "Favorite color?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/TlR007Q" ] [ text "Favorite season of the year?" ]
+          , a [ href "/vote/TlR007Q" ] [ text "Favorite season of the year?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/oFDFtDwq" ] [ text "Pineapple on pizza?" ]
+          , a [ href "/vote/oFDFtDwq" ] [ text "Pineapple on pizza?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/Q2tobIMV" ] [ text "How do you pronounce GIF?" ]
+          , a [ href "/vote/Q2tobIMV" ] [ text "How do you pronounce GIF?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/DVmeUPww" ] [ text "How do you like your eggs?" ]
+          , a [ href "/vote/DVmeUPww" ] [ text "How do you like your eggs?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
@@ -202,41 +211,51 @@ view model =
 
       , div [ class "fv-code" ] [ text "{-" ]
 
-      , div [ class "fv-header mb-1" ]
-        [ text "Why Functional Vote?" ]
+      , div [ class "flex" ]
+          [ div [ class "w-8" ] []
 
-      , div [ class "fv-text" ]
-        [ text "Functional Vote was started by us ("
-        , a [ href "https://github.com/maxrchung"
-            , target "_blank" ] [ text "Max" ]
-        , text " and "
-        , a [ href "https://github.com/Xenocidel"
-            , target "_blank" ] [ text "Aaron" ]
-        , text ") when we couldn't easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."]
+          , div [ class "w-full" ]
+              [ h2 [ class "fv-header mb-1" ]
+                  [ text "Why Functional Vote?" ]
 
-      , div [ class "fv-break" ] [ text "--" ]
+              , p [ class "fv-text" ]
+                [ text "Functional Vote was started by us ("
+                , a [ href "https://github.com/maxrchung"
+                    , target "_blank" ] [ text "Max" ]
+                , text " and "
+                , a [ href "https://github.com/Xenocidel"
+                    , target "_blank" ] [ text "Aaron" ]
+                , text ") when we couldn't easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."]
 
-      , h2 [ class "fv-header mb-1" ]
-        [ text "Why Ranked-Choice?"]
+              , div [ class "fv-break" ] [ text "--" ]
+                
+              , h2 [ class "fv-header mb-1" ]
+                  [ text "Why Ranked-Choice?"]
 
-      , div [ class "fv-text mb-6" ]
-        [ text "With traditional voting, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank options in order of their preference. If a voter's first option loses, that voter's second choice is counted instead, then third, and so forth." ]
+              , p [ class "fv-text mb-6" ]
+                [ text "In a traditional voting system, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter's first option does not gain enough collective votes to pass a certain threshold, that voter's second choice is counted instead, then third, and so forth." ]
 
-      , div [ class "fv-text mb-6" ]
-        [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular options." ]
+              , p [ class "fv-text mb-6" ]
+                [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
 
-      , div [ class "fv-text mb-6" ]
-        [ text "There are many resources online that explain ranked-choice in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to the concept:" ]
+              , p [ class "fv-text mb-6" ]
+                [ text "There are many resources online that explain ranked-choice voting in greater detail. We particularly like "
+                , a [ href "https://www.youtube.com/user/CGPGrey" ] [ text "CGP Grey" ]
+                , text "'s video on this topic since that's how we were first introduced to the concept:" 
+                ]
 
-      , div [ class "embed-responsive embed-responsive-16by9"]
-        [ iframe 
-          [ class "embed-responsive-item"
-          , src "https://www.youtube.com/embed/3Y3jE3B8HsE"
-          , attribute "frameborder" "none"
-          , attribute "allow" "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          , attribute "allowfullscreen" "true"
-          ] []
-        ]
+              , div [ class "embed-responsive embed-responsive-16by9"]
+                [ iframe 
+                  [ class "embed-responsive-item"
+                  , src "https://www.youtube.com/embed/3Y3jE3B8HsE"
+                  , attribute "frameborder" "none"
+                  , attribute "allow" "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  , attribute "allowfullscreen" "true"
+                  ] []
+                ]
+              ]
+          , div [ class "w-8" ] []
+          ]
 
       , div [ class "fv-code mt-2" ] [ text "-}" ]
       ]
@@ -246,9 +265,9 @@ renderChoice choicesLength showError index choice =
   let 
     placeholderValue = 
       if index == 0 then
-        "-- Enter a choice"
+        "Enter a choice"
       else
-        "-- Enter another choice"
+        "Enter another choice"
     
     startQuotation = 
       if index == 0 then
@@ -293,9 +312,16 @@ errorClass showError =
   else
     class ""
 
+errorComment : String -> Html a
+errorComment error =
+  if String.isEmpty error then
+    text ""
+  else
+    text "--"
+
 errorText : String -> Html a
 errorText error =
   if String.isEmpty error then
     text ""
   else
-    text <| "-- " ++ error
+    text error

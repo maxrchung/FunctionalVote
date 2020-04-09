@@ -207,15 +207,16 @@ view model =
     Error ->
       Page.Error.view
     Loaded ->
-      div 
-        [] 
-        [ div 
-            [ class "fv-text" ]
-            [ text "-- View the poll results and see how results were calculated. In case of ties, a winner is randomly decided." ]
+      div [] 
+        [ div [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8" ] [ text "--" ]
+            , p [ class "fv-text w-full" ] [ text "View the poll results and see how the winner is determined. In case of ties, a winner is randomly decided." ]
+            , div [ class "w-8" ] []
+            ]
 
         , div
             [ class "flex justify-between" ]
-            [ h1 [ class "fv-code" ] [ text "results" ]
+            [ h1 [ class "fv-code opacity-25" ] [ text "results" ]
             , div [ class "fv-code" ] [ text "=" ]
             ]
 
@@ -263,28 +264,28 @@ view model =
 
         , div [ class "fv-code" ] [ text "}" ]
 
-        , div
-            [ class "fv-break" ]
-            [ text "--" ]
+        , div [ class "fv-break" ] [ text "--" ]
         
-        , div
-            [ class "fv-text mb-2" ]
-            [ text "-- Submit a new vote into the poll." ]
+        , div [ class "flex justify-between items-center mb-2" ]
+            [ div [ class "fv-code w-8" ] [ text "--" ]
+            , p [ class "fv-text w-full" ] [ text "Submit a new vote into the poll." ]
+            , div [ class "w-8" ] []
+            ]
           
         , div 
             [ class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
+            [ div [ class "w-8" ] []
             , a
               [ class "fv-btn fv-btn-blank mb-2"
               , href <| "/vote/" ++ model.pollId
               ]
               [ text "Submit Vote" ]
-            , div [ class "w-8 text-right" ] [ text "" ]
+            , div [ class "w-8" ] []
             ]
 
         , Shared.renderShareLinks
             ( "https://functionalvote.com/poll/" ++ model.pollId )
-            "-- Share the poll results page." 
+            "Share this poll results page by copying the link or sharing the link through Twitter, Facebook, and email." 
             model.poll.title
             "View my poll results: "
         ]
