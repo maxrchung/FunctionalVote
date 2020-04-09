@@ -67,7 +67,7 @@ a:hover {
 }
 
 .fv-nav-code {
-  @apply flex items-center h-6 fv-code;
+  @apply fv-code flex items-center h-6 opacity-25;
 }
 
 .fv-header {
