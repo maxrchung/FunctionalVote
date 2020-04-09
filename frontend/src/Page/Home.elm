@@ -192,7 +192,7 @@ view model =
 
       , div [ class "flex justify-between items-center my-1" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "poll/DVmeUPww" ] [ text "How do you like your eggs?" ]
+          , a [ href "/poll/DVmeUPww" ] [ text "How do you like your eggs?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 

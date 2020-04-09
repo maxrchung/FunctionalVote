@@ -357,7 +357,19 @@ module.exports = {
         // Try and compress all files, probably better for NGINX serving this
         minRatio: 1
     }),
-    new SitemapPlugin("https://functionalvote.com", ["/"]),
+    new SitemapPlugin("https://functionalvote.com", [
+      "/",
+      "/vote/bjDm9VD",
+      "/vote/TlR007Q",
+      "/vote/oFDFtDwq",
+      "/vote/Q2tobIMV",
+      "/vote/DVmeUPww",
+      "/poll/bjDm9VD",
+      "/poll/TlR007Q",
+      "/poll/oFDFtDwq",
+      "/poll/Q2tobIMV",
+      "/poll/DVmeUPww"
+    ]),
     new RobotstxtPlugin({
         sitemap: "https://functionalvote.com/sitemap.xml",
         host: "https://functionalvote.com"
