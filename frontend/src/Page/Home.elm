@@ -102,7 +102,7 @@ view : Model -> Html Msg
 view model =
   Html.form 
     [ onSubmit MakePollRequest ]
-    [ p [ class "fv-text" ] [ text "-- Welcome to Functional Vote! Create a new ranked-choice poll by entering a question and a few choices." ]
+    [ p [ class "fv-text" ] [ text "-- Welcome to Functional Vote! This website allows you to create and share polls that use ranked-choice voting. Create a new poll by entering a question and a few choices." ]
     
     , div [ class "flex justify-between" ]
         [ h1 [ class "fv-code" ] [ text "poll" ]
@@ -159,7 +159,7 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , p [ class "fv-text" ] [ text "-- View poll examples by clicking the questions." ]
+      , p [ class "fv-text" ] [ text "-- Check out a few of our example polls to see how ranked-choice voting works. Click a question and vote for your favorite preferences." ]
 
       , div [ class "flex justify-between" ]
         [ div [ class "fv-code" ] [ text "examples" ]
@@ -220,13 +220,13 @@ view model =
         [ text "Why Ranked-Choice?"]
 
       , p [ class "fv-text mb-6" ]
-        [ text "With traditional voting, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank options in order of their preference. If a voter's first option loses, that voter's second choice is counted instead, then third, and so forth." ]
+        [ text "In a traditional voting system, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter's first option does not gain enough collective votes to pass a certain threshold, that voter's second choice is counted instead, then third, and so forth." ]
 
       , p [ class "fv-text mb-6" ]
-        [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular options." ]
+        [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
 
       , p [ class "fv-text mb-6" ]
-        [ text "There are many resources online that explain ranked-choice in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to the concept:" ]
+        [ text "There are many resources online that explain ranked-choice voting in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to the concept:" ]
 
       , div [ class "embed-responsive embed-responsive-16by9"]
         [ iframe 
