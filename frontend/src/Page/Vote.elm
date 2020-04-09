@@ -250,20 +250,20 @@ view model =
           
         , div
             [ class "flex justify-between pb-1" ]
-            [ div [ class "w-8" ] [ text "" ]
+            [ div [ class "w-8" ] []
             , button
                 [ class "fv-btn"
                 , onClick SubmitVoteRequest
                 ]
                 [ text "Submit Vote" ]
-            , div [ class "w-8 text-right" ] [ text "" ]
+            , div [ class "w-8 text-right" ] []
             ]
 
         , div
             [ class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
+            [ div [ class "w-8" ] []
             , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ]
-            , div [ class "w-8 text-right" ] [ text "" ]
+            , div [ class "w-8 text-right" ] []
             ]
 
         , div [ class "fv-break" ] [ text "--" ]
@@ -272,13 +272,13 @@ view model =
           
         , div
             [ class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
+            [ div [ class "w-8" ] []
             , a 
               [ class "fv-btn fv-btn-blank mb-2"
               , href <| "/poll/" ++ model.pollId
               ] 
               [ text "View Results" ]
-            , div [ class "w-8 text-right" ] [ text "" ]
+            , div [ class "w-8 text-right" ] []
             ]
 
         , Shared.renderShareLinks 

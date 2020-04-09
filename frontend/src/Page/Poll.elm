@@ -273,13 +273,13 @@ view model =
           
         , div 
             [ class "flex justify-between" ]
-            [ div [ class "w-8" ] [ text "" ]
+            [ div [ class "w-8" ] []
             , a
               [ class "fv-btn fv-btn-blank mb-2"
               , href <| "/vote/" ++ model.pollId
               ]
               [ text "Submit Vote" ]
-            , div [ class "w-8 text-right" ] [ text "" ]
+            , div [ class "w-8 text-right" ] []
             ]
 
         , Shared.renderShareLinks
