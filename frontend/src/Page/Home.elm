@@ -102,7 +102,7 @@ view : Model -> Html Msg
 view model =
   Html.form 
     [ onSubmit MakePollRequest ]
-    [ div [ class "fv-text" ] [ text "-- Welcome to Functional Vote! Create a new ranked-choice poll by entering a question and a few choices." ]
+    [ p [ class "fv-text" ] [ text "-- Welcome to Functional Vote! Create a new ranked-choice poll by entering a question and a few choices." ]
     
     , div [ class "flex justify-between" ]
         [ h1 [ class "fv-code" ] [ text "poll" ]
@@ -159,7 +159,7 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , div [ class "fv-text" ] [ text "-- View poll examples by clicking the questions." ]
+      , p [ class "fv-text" ] [ text "-- View poll examples by clicking the questions." ]
 
       , div [ class "flex justify-between" ]
         [ div [ class "fv-code" ] [ text "examples" ]
@@ -168,31 +168,31 @@ view model =
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
-          , a [ href "/poll/bjDm9VD" ] [ text "Favorite color?" ]
+          , a [ href "/vote/bjDm9VD" ] [ text "Favorite color?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/TlR007Q" ] [ text "Favorite season of the year?" ]
+          , a [ href "/vote/TlR007Q" ] [ text "Favorite season of the year?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/oFDFtDwq" ] [ text "Pineapple on pizza?" ]
+          , a [ href "/vote/oFDFtDwq" ] [ text "Pineapple on pizza?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/Q2tobIMV" ] [ text "How do you pronounce GIF?" ]
+          , a [ href "/vote/Q2tobIMV" ] [ text "How do you pronounce GIF?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "/poll/DVmeUPww" ] [ text "How do you like your eggs?" ]
+          , a [ href "/vote/DVmeUPww" ] [ text "How do you like your eggs?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
@@ -202,10 +202,10 @@ view model =
 
       , div [ class "fv-code" ] [ text "{-" ]
 
-      , div [ class "fv-header mb-1" ]
+      , h2 [ class "fv-header mb-1" ]
         [ text "Why Functional Vote?" ]
 
-      , div [ class "fv-text" ]
+      , p [ class "fv-text" ]
         [ text "Functional Vote was started by us ("
         , a [ href "https://github.com/maxrchung"
             , target "_blank" ] [ text "Max" ]
@@ -219,13 +219,13 @@ view model =
       , h2 [ class "fv-header mb-1" ]
         [ text "Why Ranked-Choice?"]
 
-      , div [ class "fv-text mb-6" ]
+      , p [ class "fv-text mb-6" ]
         [ text "With traditional voting, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank options in order of their preference. If a voter's first option loses, that voter's second choice is counted instead, then third, and so forth." ]
 
-      , div [ class "fv-text mb-6" ]
+      , p [ class "fv-text mb-6" ]
         [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular options." ]
 
-      , div [ class "fv-text mb-6" ]
+      , p [ class "fv-text mb-6" ]
         [ text "There are many resources online that explain ranked-choice in greater details. We particularly like CGP Grey's video on this topic since that's how we were first introduced to the concept:" ]
 
       , div [ class "embed-responsive embed-responsive-16by9"]

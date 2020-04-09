@@ -198,7 +198,7 @@ view model =
         hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices 
       in
       div []
-        [ div
+        [ p
             [ class "fv-text" ]
             [ text "-- Submit a vote by selecting ranks to the left of each choice. Smaller numbers have higher preference." ]
 
@@ -248,33 +248,29 @@ view model =
 
         , div [class "fv-code pb-2" ] [ text "]}" ]
           
-        , div 
+        , div
             [ class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] [ text "" ]
-            , button 
+            , button
                 [ class "fv-btn"
                 , onClick SubmitVoteRequest
-                ] 
-                [ text "Submit Vote" ] 
+                ]
+                [ text "Submit Vote" ]
             , div [ class "w-8 text-right" ] [ text "" ]
             ]
 
-        , div 
+        , div
             [ class "flex justify-between" ]
             [ div [ class "w-8" ] [ text "" ]
-            , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
+            , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ]
             , div [ class "w-8 text-right" ] [ text "" ]
             ]
 
-        , div
-            [ class "fv-break" ] 
-            [ text "--" ]
+        , div [ class "fv-break" ] [ text "--" ]
         
-        , div
-            [ class "fv-text mb-2" ]
-            [ text "-- View the poll results." ]
+        , p [ class "fv-text mb-2" ] [ text "-- View the poll results." ]
           
-        , div 
+        , div
             [ class "flex justify-between" ]
             [ div [ class "w-8" ] [ text "" ]
             , a 

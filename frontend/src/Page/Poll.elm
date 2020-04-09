@@ -209,7 +209,7 @@ view model =
     Loaded ->
       div 
         [] 
-        [ div 
+        [ p 
             [ class "fv-text" ]
             [ text "-- View the poll results and see how results were calculated. In case of ties, a winner is randomly decided." ]
 
@@ -267,7 +267,7 @@ view model =
             [ class "fv-break" ]
             [ text "--" ]
         
-        , div
+        , p
             [ class "fv-text mb-2" ]
             [ text "-- Submit a new vote into the poll." ]
           

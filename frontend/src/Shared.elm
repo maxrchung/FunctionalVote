@@ -16,7 +16,7 @@ renderShareLinks url helpText title message =
   div []
     [ div [ class "fv-break" ] [ text "--" ]
 
-    , div [ class "fv-text" ] [ text helpText ]
+    , p [ class "fv-text" ] [ text helpText ]
 
     , div [ class "flex justify-between" ]
         [ div [ class "fv-code" ] [ text "links" ]
