@@ -159,17 +159,44 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , div [ class "fv-text" ] [ text "-- See some poll examples by clicking the questions below." ]
+      , div [ class "fv-text" ] [ text "-- View poll examples by clicking the questions below." ]
 
       , div [ class "flex justify-between" ]
         [ div [ class "fv-code" ] [ text "examples" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
 
-      , div [ class "flex justify-between" ]
-        [ div [ class "fv-code" ] [ text "examples" ]
-        , div [ class "fv-code" ] [ text "=" ]
-        ]
+      , div [ class "flex justify-between items-center my-1" ]
+          [ div [ class "fv-code w-8" ] [ text "[\"" ]
+          , a [ href "" ] [ text "Favorite color?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-1" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "" ] [ text "Favorite season of the year?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-1" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "" ] [ text "Pineapple on pizza?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-1" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "" ] [ text "How do you pronounce GIF?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "flex justify-between items-center my-1" ]
+          [ div [ class "fv-code w-8" ] [ text ",\"" ]
+          , a [ href "" ] [ text "How do you like your eggs?" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
+          ]
+
+      , div [ class "fv-code" ] [ text "]" ]
 
       , div [ class "fv-break" ] [ text "--" ]
 
