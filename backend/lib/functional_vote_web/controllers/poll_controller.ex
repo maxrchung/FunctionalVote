@@ -21,10 +21,12 @@ defmodule FunctionalVoteWeb.PollController do
         |> put_status(:created)
         |> put_resp_header("location", Routes.poll_path(conn, :show, poll))
         |> show(%{"poll_id" => poll.poll_id})
+      :no_title_error ->
+        send_resp(conn, :unprocessable_entity, "No title provided")
+      :no_choices_error ->
+        send_resp(conn, :unprocessable_entity, "No choices provided")
       :duplicate_choices_error ->
         send_resp(conn, :unprocessable_entity, "Duplicate choices provided")
-      :title_error ->
-        send_resp(conn, :unprocessable_entity, "No title provided")
       _ ->
         send_resp(conn, :internal_server_error, "")
     end
