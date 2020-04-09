@@ -168,31 +168,31 @@ view model =
 
       , div [ class "flex justify-between items-center my-1" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
-          , a [ href "" ] [ text "Favorite color?" ]
+          , a [ href "/poll/bjDm9VD" ] [ text "Favorite color?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-1" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "" ] [ text "Favorite season of the year?" ]
+          , a [ href "/poll/TlR007Q" ] [ text "Favorite season of the year?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-1" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "" ] [ text "Pineapple on pizza?" ]
+          , a [ href "/poll/oFDFtDwq" ] [ text "Pineapple on pizza?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-1" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "" ] [ text "How do you pronounce GIF?" ]
+          , a [ href "/poll/Q2tobIMV" ] [ text "How do you pronounce GIF?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-1" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , a [ href "" ] [ text "How do you like your eggs?" ]
+          , a [ href "poll/DVmeUPww" ] [ text "How do you like your eggs?" ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
