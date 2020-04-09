@@ -279,7 +279,7 @@ view model =
               , href <| "/vote/" ++ model.pollId
               ]
               [ text "Submit Vote" ]
-            , div [ class "w-8 text-right" ] []
+            , div [ class "w-8" ] []
             ]
 
         , Shared.renderShareLinks
