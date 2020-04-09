@@ -63,7 +63,7 @@ a:hover {
 }
 
 .fv-nav-code {
-  @apply flex items-center h-6 opacity-25 font-mono text-sm text-orange-500;
+  @apply flex items-center h-6 opacity-10 font-mono text-sm text-orange-500;
 }
 
 .fv-header {
@@ -78,7 +78,7 @@ a:hover {
 }
 
 .fv-code {
-  @apply font-mono text-sm text-orange-500 opacity-25;
+  @apply font-mono text-sm text-orange-500 opacity-10;
 }
 
 .fv-input {
