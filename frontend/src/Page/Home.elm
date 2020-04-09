@@ -157,7 +157,7 @@ view model =
           ]
 
       , div [class "flex justify-between" ]
-          [ div [ class "fv-code w-8" ] []
+          [ div [ class "fv-code w-8" ] [ errorComment model.error ]
           , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
           , div [ class "w-8 text-right" ] []
           ]
@@ -308,6 +308,13 @@ errorClass showError =
     class "fv-input-error"
   else
     class ""
+
+errorComment : String -> Html a
+errorComment error =
+  if String.isEmpty error then
+    text ""
+  else
+    text "--"
 
 errorText : String -> Html a
 errorText error =
