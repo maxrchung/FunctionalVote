@@ -2,6 +2,7 @@ module Page.Vote exposing ( .. )
 
 import Animation
 import Browser.Navigation as Navigation
+import Browser.Dom as Dom
 import Dict
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
@@ -11,6 +12,7 @@ import Http.Detailed
 import Json.Encode as Encode
 import Page.Error
 import Shared
+import Task
 
 
 
@@ -65,6 +67,7 @@ type Msg
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | Animate Animation.Msg
+  | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -84,7 +87,16 @@ update msg model =
                 ]
             ]
             model.fadeStyle
-      in ( { model | poll = newPoll, showError = False, fadeStyle = newFadeStyle, fadeChoice = choice }, Cmd.none)
+        
+        focus =
+          if rank == "--" then
+            "unordered-" ++ ( String.fromInt <| List.length newUnordered - 1)
+          else
+            "ordered-" ++ rank
+      in 
+      ( { model | poll = newPoll, showError = False, fadeStyle = newFadeStyle, fadeChoice = choice }
+      , Task.attempt ( \_ -> NoOp ) ( Dom.focus focus )
+      )
       
     SubmitVoteRequest ->
         ( model, submitVoteRequest model) 
@@ -107,6 +119,9 @@ update msg model =
     
     Animate animate ->
       ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
+
+    NoOp ->
+      ( model, Cmd.none )
 
 calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =
@@ -275,8 +290,6 @@ view model =
             , p [ class "fv-text w-full" ] [ text "View the poll results page and see the current standings." ]
             , div [ class "w-8" ] []
             ]
-
-        
           
         , div
             [ class "flex justify-between" ]
@@ -306,6 +319,13 @@ renderUnordered maxRank maxIndex hasOrderedChoices model index choice  =
 
 renderChoice : Int -> Int -> Bool -> Model -> Int -> ( String, String ) -> Html Msg
 renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
+  let
+    selectIndex =
+      if rank == "--" then
+        "unordered-" ++ String.fromInt index
+      else
+        "ordered-" ++ rank
+  in
   div 
     [ class "flex justify-between items-center" ]
     [ div 
@@ -314,14 +334,15 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
       , text "(" 
       ]
 
-    , div 
-        [ class "flex items-center w-full p-2" 
+    , div
+        [ class "flex items-center w-full p-2"
         , textColorClass index
-        , borderClass index maxIndex 
+        , borderClass index maxIndex
         ]
         [ select 
             [ class "fv-input w-auto"
             , errorClass model.showError
+            , id selectIndex
             , value rank
             , onInput ( ChangeRank choice ) 
             ]
