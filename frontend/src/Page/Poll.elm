@@ -285,7 +285,7 @@ view model =
 
         , Shared.renderShareLinks
             ( "https://functionalvote.com/poll/" ++ model.pollId )
-            "Share this poll results page by copying the link or sharing the link through social media." 
+            "Share this poll results page by copying the link or sharing through social media." 
             model.poll.title
             "View my poll results: "
         ]

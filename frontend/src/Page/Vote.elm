@@ -304,7 +304,7 @@ view model =
 
         , Shared.renderShareLinks 
             ( "https://functionalvote.com/vote/" ++ model.pollId ) 
-            "Share this vote submission page by copying the link or sharing the link through social media." 
+            "Share this vote submission page by copying the link or sharing through social media." 
             model.poll.title
             "Vote in my poll: "
         ]

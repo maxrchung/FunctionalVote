@@ -62,13 +62,13 @@ renderShareLinks url helpText title message =
 
     , div
         [ class "fv-share-text flex justify-between items-center hidden" ]
-        [ div [ class "w-8" ] [ text "" ]
+        [ div [ class "fv-code w-8" ] [ text "--" ]
 
         , div 
             [ class "w-full flex justify-between items-center -mt-1" ]
             [ div [ class "invisible" ] [ renderIcon FeatherIcons.link ]
 
-            , div [ class "mx-2 w-full text-orange-500" ] [ text "-- Link copied" ]
+            , div [ class "mx-2 w-full text-orange-500" ] [ text "Link copied" ]
 
             , div [ class "w-10 mx-2" ] []
             ]
