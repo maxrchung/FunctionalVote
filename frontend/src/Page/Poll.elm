@@ -301,7 +301,7 @@ initResults : List ( String, Float ) -> Float -> ResultsConfig
 initResults round xScaleMax =
   let
     height = 
-        100 + 30 * List.length round - 1
+        55 + 2 * 6 + 30 * List.length round
   in ResultsConfig 375 ( toFloat height ) 30 xScaleMax
 
 xScale : ResultsConfig -> ContinuousScale Float
