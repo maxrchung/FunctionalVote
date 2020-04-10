@@ -30,10 +30,6 @@ a:hover {
   @apply text-blue-100;
 }
 
-.fv-code {
-  @apply font-mono text-sm text-orange-500 opacity-10;
-}
-
 .fv-nav-btn {
   @apply flex flex-shrink-0 items-center justify-center h-10 w-10 border-2 border-blue-500 rounded-full shadow font-sans font-bold text-xl text-blue-500;
   -webkit-tap-highlight-color: transparent;
@@ -66,8 +62,8 @@ a:hover {
   @apply bg-blue-900;
 }
 
-.fv-nav-code {
-  @apply fv-code flex items-center h-6 opacity-25;
+.fv-code {
+  @apply font-mono text-sm text-orange-500 opacity-10;
 }
 
 .fv-header {
@@ -131,7 +127,6 @@ a:hover {
 .fv-btn-blank:hover {
   @apply text-orange-500;
 }
-
 
 .fv-slider {
   @apply appearance-none rounded-full bg-blue-900 h-2 shadow-lg cursor-pointer outline-none;
