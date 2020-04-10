@@ -287,7 +287,7 @@ view model =
         
         , div [ class "flex justify-between items-center mb-2" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "View the poll results page and see the current standings." ]
+            , p [ class "fv-text w-full" ] [ text "View the poll results page to see the current standings." ]
             , div [ class "w-8" ] []
             ]
           

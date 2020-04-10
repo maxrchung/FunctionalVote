@@ -214,16 +214,19 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , div [ class "fv-code" ] [ text "{-" ]
+      , div [ class "flex justify-between items-center" ]
+          [ div [ class "fv-code w-8" ] [ text "{-" ]
+
+          , h2 [ class "fv-header mb-1" ]
+              [ text "Why Functional Vote?" ]
+
+          , div [ class "w-8" ] []
+          ]
 
       , div [ class "flex" ]
           [ div [ class "w-8" ] []
-
           , div [ class "w-full" ]
-              [ h2 [ class "fv-header mb-1" ]
-                  [ text "Why Functional Vote?" ]
-
-              , p [ class "fv-text" ]
+              [ p [ class "fv-text" ]
                 [ text "Functional Vote was started by us ("
                 , a [ href "https://github.com/maxrchung"
                     , target "_blank" ] [ text "Max" ]
