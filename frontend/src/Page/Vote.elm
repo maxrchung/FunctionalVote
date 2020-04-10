@@ -1,8 +1,8 @@
 module Page.Vote exposing ( .. )
 
 import Animation
-import Browser.Navigation as Navigation
 import Browser.Dom as Dom
+import Browser.Navigation as Navigation
 import Dict
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )

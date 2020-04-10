@@ -2,6 +2,7 @@ module Page.Home exposing ( .. )
 
 import Array
 import Array.Extra
+import Browser.Dom as Dom
 import Browser.Navigation as Navigation
 import FeatherIcons
 import Html exposing ( .. )
@@ -11,6 +12,7 @@ import Http
 import Http.Detailed
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Task
 
 
 
@@ -23,9 +25,11 @@ type alias Model =
   , choices : Array.Array String
   , apiAddress: String }
 
-init : Navigation.Key -> String -> Model
+init : Navigation.Key -> String -> ( Model, Cmd Msg )
 init key apiAddress = 
-  Model key "" False "" ( Array.fromList ["", ""] ) apiAddress
+  ( Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress
+  , Task.attempt ( \_ -> NoOp ) ( Dom.focus "question" )
+  )
 
 
 
@@ -36,6 +40,7 @@ type Msg
   | MakePollRequest
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
+  | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -75,6 +80,9 @@ update msg model =
     RemoveChoice index ->
       let newChoices = Array.Extra.removeAt index model.choices
       in ( { model | choices = newChoices, showError = False }, Cmd.none )
+
+    NoOp ->
+      ( model, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -122,12 +130,14 @@ view model =
 
     , div [ class "flex justify-between items-center py-2" ]
         [ div [ class "fv-code w-8"] [ text "\"" ]
-        , input [ class "fv-input"
-                , errorClass model.showError
-                , placeholder "Enter a question"
-                , value model.title
-                , onInput ChangeTitle 
-                ] [] 
+        , input
+            [ class "fv-input"
+            , errorClass model.showError
+            , id "question"
+            , placeholder "Enter a question"
+            , value model.title
+            , onInput ChangeTitle
+            ] []
         , div [class "fv-code w-8 text-right" ] [ text "\"" ]
         ]
 
@@ -141,8 +151,7 @@ view model =
 
       , let choicesLength = Array.length model.choices
         in
-        div
-          []
+        div []
           ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
     
       , div [ class "fv-code pb-2" ] [ text "]}" ]
@@ -156,7 +165,7 @@ view model =
           , div [ class "w-8" ] []
           ]
 
-      , div [class "flex justify-between" ]
+      , div [ class "flex justify-between" ]
           [ div [ class "fv-code w-8" ] [ errorComment model.error ]
           , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
           , div [ class "w-8" ] []
@@ -171,9 +180,9 @@ view model =
           ]
 
       , div [ class "flex justify-between" ]
-        [ div [ class "fv-code opacity-25" ] [ text "examples" ]
-        , div [ class "fv-code" ] [ text "=" ]
-        ]
+          [ div [ class "fv-code opacity-25" ] [ text "examples" ]
+          , div [ class "fv-code" ] [ text "=" ]
+          ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
@@ -225,6 +234,7 @@ view model =
 
       , div [ class "flex" ]
           [ div [ class "w-8" ] []
+
           , div [ class "w-full" ]
               [ p [ class "fv-text" ]
                 [ text "Functional Vote was started by us ("
@@ -233,7 +243,8 @@ view model =
                 , text " and "
                 , a [ href "https://github.com/Xenocidel"
                     , target "_blank" ] [ text "Aaron" ]
-                , text ") when we couldn't easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."]
+                , text ") when we couldn't easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."
+                ]
 
               , div [ class "fv-break" ] [ text "--" ]
                 
@@ -241,26 +252,26 @@ view model =
                   [ text "Why Ranked-Choice?"]
 
               , p [ class "fv-text mb-6" ]
-                [ text "In a traditional voting system, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
+                  [ text "In a traditional voting system, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
 
               , p [ class "fv-text mb-6" ]
-                [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
+                  [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
 
               , p [ class "fv-text mb-6" ]
-                [ text "There are many resources online that explain ranked-choice voting in greater detail. We particularly like "
-                , a [ href "https://www.youtube.com/user/CGPGrey" ] [ text "CGP Grey" ]
-                , text "'s video on this topic since that's how we were first introduced to the concept:" 
-                ]
+                  [ text "There are many resources online that explain ranked-choice voting in greater detail. We particularly like "
+                  , a [ href "https://www.youtube.com/user/CGPGrey" ] [ text "CGP Grey" ]
+                  , text "'s video on this topic since that's how we were first introduced to the concept:" 
+                  ]
 
               , div [ class "embed-responsive embed-responsive-16by9"]
-                [ iframe 
-                  [ class "embed-responsive-item"
-                  , src "https://www.youtube.com/embed/3Y3jE3B8HsE"
-                  , attribute "frameborder" "none"
-                  , attribute "allow" "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                  , attribute "allowfullscreen" "true"
-                  ] []
-                ]
+                  [ iframe 
+                    [ class "embed-responsive-item"
+                    , src "https://www.youtube.com/embed/3Y3jE3B8HsE"
+                    , attribute "frameborder" "none"
+                    , attribute "allow" "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    , attribute "allowfullscreen" "true"
+                    ] []
+                  ]
               ]
           , div [ class "w-8" ] []
           ]
@@ -300,14 +311,14 @@ renderChoice choicesLength showError index choice =
               div [] []
             else
               button
-                  [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
-                  , onClick <| RemoveChoice index
-                  , type_ "button"
-                  , tabindex -1
-                  ]
-                  [ FeatherIcons.x
-                      |> FeatherIcons.toHtml []
-                  ]
+                [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
+                , onClick <| RemoveChoice index
+                , type_ "button"
+                , tabindex -1
+                ]
+                [ FeatherIcons.x
+                    |> FeatherIcons.toHtml []
+                ]
         ]
 
     , div [ class "fv-code w-8 text-right"] [ text "\"" ]

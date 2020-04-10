@@ -80,8 +80,8 @@ initPage page url key apiAddress =
     Just route ->
       case route of
         HomeRoute ->
-          let model = Home.init key apiAddress
-          in ( HomePage model , Cmd.none )
+          let ( model, cmd ) = Home.init key apiAddress
+          in ( HomePage model , Cmd.map HomeMsg cmd )
 
         VoteRoute pollId ->
           ( page, getVoteRequest apiAddress pollId )
