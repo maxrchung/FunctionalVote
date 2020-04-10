@@ -226,7 +226,7 @@ view model =
     pageTitle =
       case model.page of
         HomePage _ -> 
-          "Functional Vote - Create a Poll"
+          "Functional Vote - Create a Ranked-Choice Poll"
         VotePage _ ->
           "Functional Vote - Vote in a Poll"
         PollPage _ ->

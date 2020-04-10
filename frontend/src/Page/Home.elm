@@ -112,7 +112,7 @@ view model =
     [ onSubmit MakePollRequest ]
     [ div [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "--" ]
-        , p [ class "fv-text w-full" ] [ text "Welcome to Functional Vote! This website allows you to create and share polls that use ranked-choice voting. Create a new poll by entering a question and a few choices." ]
+        , p [ class "fv-text w-full" ] [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use ranked-choice voting. Create a new poll by entering a question and a few choices." ]
 
         , div [ class "w-8" ] []
         ]
