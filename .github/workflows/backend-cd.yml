@@ -30,8 +30,6 @@ jobs:
           git pull
 
           ### BACKEND ###
-          export DATABASE_URL=${{ secrets.DATABASE_URL }}
-          export SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
           cd $home/backend
           
           # Kill backend
