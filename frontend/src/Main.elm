@@ -46,7 +46,7 @@ type Page
   | NoPage
 
 type Route
-  = HomeRoute
+  = HomeRoute ( Maybe String )
   | VoteRoute String
   | PollRoute String
 
@@ -79,23 +79,25 @@ initPage page url key apiAddress =
   case Parser.parse routeParser url of
     Just route ->
       case route of
-        HomeRoute ->
-          let ( model, cmd ) = Home.init key apiAddress
-          in ( HomePage model , Cmd.map HomeMsg cmd )
+        HomeRoute fragment ->
+          case fragment of
+            Just link ->
+              let ( model, cmd ) = Home.init key apiAddress link
+              in ( HomePage model , Cmd.map HomeMsg cmd )
+            Nothing ->
+              let ( model, cmd ) = Home.init key apiAddress ""
+              in ( HomePage model , Cmd.map HomeMsg cmd )
 
-        VoteRoute pollId ->
-          ( page, getVoteRequest apiAddress pollId )
+        VoteRoute pollId -> ( page, getVoteRequest apiAddress pollId )
 
-        PollRoute pollId ->
-          ( page, getPollRequest apiAddress pollId )
+        PollRoute pollId -> ( page, getPollRequest apiAddress pollId )
 
-    Nothing ->
-      ( ErrorPage, Cmd.none )
+    Nothing -> ( ErrorPage, Cmd.none )
 
 routeParser : Parser.Parser ( Route -> a ) a
 routeParser =
   Parser.oneOf
-    [ Parser.map HomeRoute Parser.top
+    [ Parser.map HomeRoute ( Parser.fragment identity )
     , Parser.map VoteRoute ( Parser.s "vote" </> Parser.string )
     , Parser.map PollRoute ( Parser.s "poll" </> Parser.string )
     ]
@@ -135,12 +137,9 @@ getPollDecoder =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   case model.page of
-    VotePage voteModel ->
-      Sub.map VoteMsg <| Vote.subscriptions voteModel
-    PollPage pageModel ->
-      Sub.map PollMsg <| Poll.subscriptions pageModel
-    _ ->
-      Sub.none
+    VotePage voteModel -> Sub.map VoteMsg <| Vote.subscriptions voteModel
+    PollPage pageModel -> Sub.map PollMsg <| Poll.subscriptions pageModel
+    _ -> Sub.none
 
 
 
@@ -160,14 +159,7 @@ update msg model =
     UrlRequested urlRequest ->
       case urlRequest of
         Browser.Internal url ->
-          case model.page of
-            -- Don't reload home page if we are currently on it
-            HomePage _ ->
-              if url.path /= "/" then
-                ( model, Navigation.pushUrl model.key <| Url.toString url )
-              else
-                ( model, Cmd.none )
-            _ -> ( model, Navigation.pushUrl model.key <| Url.toString url )
+          ( model, Navigation.pushUrl model.key <| Url.toString url )
 
         Browser.External href ->
           ( model, Navigation.load href )

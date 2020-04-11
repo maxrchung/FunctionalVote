@@ -25,10 +25,10 @@ type alias Model =
   , choices : Array.Array String
   , apiAddress: String }
 
-init : Navigation.Key -> String -> ( Model, Cmd Msg )
-init key apiAddress =
+init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
+init key apiAddress fragment =
   ( Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress
-  , Task.attempt ( \_ -> NoOp ) ( Dom.focus "question" )
+  , Task.attempt ( \_ -> ScrollTo fragment ) ( Dom.focus "question" )
   )
 
 
@@ -57,11 +57,9 @@ update msg model =
             Array.push "" updatedChoices
           else
             updatedChoices
-      in
-      ( { model | choices = newChoices, showError = False }, Cmd.none )
+      in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
-    MakePollRequest ->
-      ( model, makePollRequest model )
+    MakePollRequest -> ( model, makePollRequest model )
 
     MakePollResponse result ->
       case result of
@@ -75,8 +73,7 @@ update msg model =
                   body
                 _ ->
                   "Unable to create poll. The website may be down for maintenance. Please try again later."
-          in
-          ( { model | showError = True, error = newError }, Cmd.none )
+          in ( { model | showError = True, error = newError }, Cmd.none )
 
     RemoveChoice index ->
       let newChoices = Array.Extra.removeAt index model.choices
@@ -86,11 +83,10 @@ update msg model =
       ( model
       , Task.attempt
           ( \_ -> NoOp )
-          ( Dom.getElement tag |> Task.andThen (\info -> Dom.setViewport 0 info.element.y) )
+          ( Dom.getElement tag |> Task.andThen ( \info -> Dom.setViewport 0 info.element.y ) )
       )
 
-    NoOp ->
-      ( model, Cmd.none )
+    NoOp -> ( model, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -124,7 +120,7 @@ view model =
             [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use "
             , a
                 [ href "#ranked-choice"
-                , target "_self"
+                , onClick ( ScrollTo "ranked-choice" )
                 ]
                 [ text "ranked-choice voting" ]
             , text ". Create a new poll by entering a question and a few choices." ]
@@ -268,7 +264,7 @@ view model =
                   ]
                   [ text "Why Ranked-Choice?" ]
 
-              , p [ class "fv-text mb-6" ] [ text "In a traditional voting system, voters may only vote for a single choice out of many options. Ranked-choice voting, instead, allows voters to rank multiple options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
+              , p [ class "fv-text mb-6" ] [ text "In a traditional single vote system, voters may only select one out of many options. Ranked-choice voting, instead, allows voters to rank multiple options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
 
               , p [ class "fv-text mb-6" ] [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
 
