@@ -25,11 +25,15 @@ type alias Model =
   , choices : Array.Array String
   , apiAddress: String }
 
-init : Navigation.Key -> String -> String -> ( Model, Cmd Msg )
+init : Navigation.Key -> String -> Maybe String -> ( Model, Cmd Msg )
 init key apiAddress fragment =
-  ( Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress
-  , Task.attempt ( \_ -> ScrollTo fragment ) ( Dom.focus "question" )
-  )
+  let model = Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress
+  in
+  case fragment of
+    Just id ->
+      ( model, viewElement id )
+    Nothing ->
+      ( model, Task.attempt ( \_ -> NoOp ) ( Dom.focus "question" ) )
 
 
 
@@ -40,7 +44,7 @@ type Msg
   | MakePollRequest
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
-  | ScrollTo String
+  | ViewElement String
   | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -79,14 +83,17 @@ update msg model =
       let newChoices = Array.Extra.removeAt index model.choices
       in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
-    ScrollTo tag ->
-      ( model
-      , Task.attempt
-          ( \_ -> NoOp )
-          ( Dom.getElement tag |> Task.andThen ( \info -> Dom.setViewport 0 info.element.y ) )
-      )
+    ViewElement id -> ( model, viewElement id )
 
     NoOp -> ( model, Cmd.none )
+
+-- https://discourse.elm-lang.org/t/is-it-possible-to-restore-the-browser-default-behavior-on-fragment-links-without-ports/3614/6
+viewElement : String -> Cmd Msg
+viewElement id =
+  Task.attempt ( \_ -> NoOp )
+    ( Dom.getElement id
+        |> Task.andThen ( \info -> Dom.setViewport 0 info.element.y )
+    )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -120,7 +127,7 @@ view model =
             [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use "
             , a
                 [ href "#ranked-choice"
-                , onClick ( ScrollTo "ranked-choice" )
+                , onClick ( ViewElement "ranked-choice" )
                 ]
                 [ text "ranked-choice voting" ]
             , text ". Create a new poll by entering a question and a few choices." ]
