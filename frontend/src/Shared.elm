@@ -12,7 +12,7 @@ renderShareLinks url helpText title message =
     facebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" ++ url
     mailUrl = "mailto:?subject=Functional Vote - " ++ title ++ "&body=" ++ message ++ url
   in
-  
+
   div []
     [ div [ class "fv-break" ] [ text "--" ]
 
@@ -21,7 +21,7 @@ renderShareLinks url helpText title message =
         , p [ class "fv-text w-full" ] [ text helpText ]
         , div [ class "w-8" ] []
         ]
-    
+
 
     , div [ class "flex justify-between" ]
         [ div [ class "fv-code opacity-25" ] [ text "links" ]
@@ -64,7 +64,7 @@ renderShareLinks url helpText title message =
         [ class "fv-share-text flex justify-between items-center hidden" ]
         [ div [ class "fv-code w-8" ] [ text "--" ]
 
-        , div 
+        , div
             [ class "w-full flex justify-between items-center -mt-1" ]
             [ div [ class "invisible" ] [ renderIcon FeatherIcons.link ]
 
@@ -78,7 +78,7 @@ renderShareLinks url helpText title message =
     , div
         [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "," ]
-        , div 
+        , div
             [ class "w-full flex justify-between items-center my-2" ]
             [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.twitter ]
 
@@ -92,8 +92,8 @@ renderShareLinks url helpText title message =
                     []
                 ]
 
-            , a 
-                [ class "fv-nav-btn fv-nav-btn-orange" 
+            , a
+                [ class "fv-nav-btn fv-nav-btn-orange"
                 , href <| twitterUrl
                 , target "_blank"
                 ]
@@ -106,7 +106,7 @@ renderShareLinks url helpText title message =
         [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "," ]
 
-        , div 
+        , div
             [ class "w-full flex justify-between items-center my-2" ]
             [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.facebook ]
 
@@ -120,7 +120,7 @@ renderShareLinks url helpText title message =
                     []
                 ]
 
-            , a 
+            , a
                 [ class "fv-nav-btn fv-nav-btn-orange"
                 , href facebookUrl
                 , target "_blank"
@@ -134,7 +134,7 @@ renderShareLinks url helpText title message =
         [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "," ]
 
-        , div 
+        , div
             [ class "w-full flex justify-between items-center my-2" ]
             [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.mail ]
 
@@ -148,8 +148,8 @@ renderShareLinks url helpText title message =
                     []
                 ]
 
-            , a 
-                [ class "fv-nav-btn fv-nav-btn-orange" 
+            , a
+                [ class "fv-nav-btn fv-nav-btn-orange"
                 , href mailUrl
                 , target "_blank"
                 ]

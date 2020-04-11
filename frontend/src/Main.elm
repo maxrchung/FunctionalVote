@@ -19,7 +19,7 @@ import Url.Parser as Parser exposing ( (</>) )
 
 
 -- MAIN
-main = 
+main =
   Browser.application
     { init = init
     , update = update
@@ -32,7 +32,7 @@ main =
 
 
 -- MODEL
-type alias Model = 
+type alias Model =
   { key : Navigation.Key
   , apiAddress : String
   , page : Page
@@ -45,7 +45,7 @@ type Page
   | ErrorPage
   | NoPage
 
-type Route 
+type Route
   = HomeRoute
   | VoteRoute String
   | PollRoute String
@@ -64,9 +64,9 @@ type alias PollResponse =
   }
 
 init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init environment url key = 
-  let 
-    apiAddress = 
+init environment url key =
+  let
+    apiAddress =
       if environment == "production" then
         "https://FunctionalVote.com:4001"
       else
@@ -145,7 +145,7 @@ subscriptions model =
 
 
 -- UPDATE
-type Msg 
+type Msg
   = UrlRequested Browser.UrlRequest
   | UrlChanged Url.Url
   | HomeMsg Home.Msg
@@ -178,21 +178,21 @@ update msg model =
 
     HomeMsg homeMsg ->
       case model.page of
-        HomePage oldModel -> 
+        HomePage oldModel ->
           let ( newModel, cmd ) = Home.update homeMsg oldModel
           in ( { model | page = HomePage newModel }, Cmd.map HomeMsg cmd )
         _ -> ( model, Cmd.none )
-      
+
     VoteMsg voteMsg ->
       case model.page of
-        VotePage oldModel -> 
+        VotePage oldModel ->
           let ( newModel, cmd ) = Vote.update voteMsg oldModel
           in ( { model | page = VotePage newModel }, Cmd.map VoteMsg cmd )
         _ -> ( model, Cmd.none )
 
     PollMsg pollMsg ->
       case model.page of
-        PollPage oldModel -> 
+        PollPage oldModel ->
           let ( newModel, cmd ) = Poll.update pollMsg oldModel
           in ( { model | page = PollPage newModel }, Cmd.map PollMsg cmd )
         _ -> ( model, Cmd.none )
@@ -222,10 +222,10 @@ update msg model =
 -- VIEW
 view : Model -> Browser.Document Msg
 view model =
-  let 
+  let
     pageTitle =
       case model.page of
-        HomePage _ -> 
+        HomePage _ ->
           "Functional Vote - Create a Ranked-Choice Poll"
         VotePage _ ->
           "Functional Vote - Vote in a Poll"
@@ -239,13 +239,13 @@ view model =
   { title = pageTitle
   , body = renderBody model
   }
-      
+
 renderBody : Model -> List (Html Msg)
 renderBody model =
-  let 
+  let
     content =
       case model.page of
-        HomePage homeModel -> 
+        HomePage homeModel ->
           [ Html.map HomeMsg ( Home.view homeModel ) ]
         VotePage voteModel ->
           [ Html.map VoteMsg ( Vote.view voteModel ) ]
@@ -262,7 +262,7 @@ renderBody model =
             [ class "fv-nav-btn"
             , href "/"
             ]
-            [ text "fv" 
+            [ text "fv"
             , div [ class "text-orange-500 font-mono opacity-25 text-sm" ] [ text "=" ]
             ]
 

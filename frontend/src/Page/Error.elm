@@ -8,15 +8,15 @@ import Html.Events exposing ( .. )
 
 view : Html a
 view =
-  div [] 
+  div []
     [ div [ class "fv-code" ] [ text "{-" ]
-      
+
     , h1 [ class "fv-header" ]
       [ text "Error" ]
 
     ,  div [ class "fv-text mb-2" ]
       [ text "Hmm, this page doesn’t seem to exist, or maybe we encountered an error. Feel free to "
-      , a [ href "https://twitter.com/FunctionalVote" 
+      , a [ href "https://twitter.com/FunctionalVote"
           , target "_blank"
           ] [ text "contact us"]
       , text " if you are experiencing any issues." ]
@@ -25,11 +25,11 @@ view =
 
     , div [ class "flex justify-between" ]
         [ div [ class "w-8" ] [ text "" ]
-        , a 
+        , a
             [ class "fv-btn"
             , href "/"
             ]
-            [ text "Go Home" ] 
+            [ text "Go Home" ]
         , div [ class "w-8 text-right" ] [ text "" ]
         ]
     ]

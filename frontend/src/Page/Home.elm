@@ -17,7 +17,7 @@ import Task
 
 
 -- MODEL
-type alias Model = 
+type alias Model =
   { key : Navigation.Key
   , title : String
   , showError: Bool
@@ -26,7 +26,7 @@ type alias Model =
   , apiAddress: String }
 
 init : Navigation.Key -> String -> ( Model, Cmd Msg )
-init key apiAddress = 
+init key apiAddress =
   ( Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress
   , Task.attempt ( \_ -> NoOp ) ( Dom.focus "question" )
   )
@@ -34,12 +34,13 @@ init key apiAddress =
 
 
 -- UPDATE
-type Msg 
+type Msg
   = ChangeTitle String
   | ChangeChoice Int String
   | MakePollRequest
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
+  | ScrollTo String
   | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -47,11 +48,11 @@ update msg model =
   case msg of
     ChangeTitle newTitle ->
       ( { model | title = newTitle, showError = False }, Cmd.none )
-      
+
     ChangeChoice index newChoice ->
-      let 
+      let
         updatedChoices = Array.set index newChoice model.choices
-        newChoices = 
+        newChoices =
           if index == Array.length model.choices - 1  then
             Array.push "" updatedChoices
           else
@@ -67,7 +68,7 @@ update msg model =
         Ok ( _, pollId ) ->
           ( model, Navigation.pushUrl model.key ( "/vote/" ++ pollId ) )
         Err error ->
-          let 
+          let
             newError =
               case error of
                 Http.Detailed.BadStatus _ body ->
@@ -81,6 +82,13 @@ update msg model =
       let newChoices = Array.Extra.removeAt index model.choices
       in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
+    ScrollTo tag ->
+      ( model
+      , Task.attempt
+          ( \_ -> NoOp )
+          ( Dom.getElement tag |> Task.andThen (\info -> Dom.setViewport 0 info.element.y) )
+      )
+
     NoOp ->
       ( model, Cmd.none )
 
@@ -93,7 +101,7 @@ makePollRequest model =
     }
 
 makePollJson : Model -> Encode.Value
-makePollJson model = 
+makePollJson model =
   Encode.object
     [ ( "title", Encode.string model.title )
     , ( "choices", Encode.array Encode.string model.choices )
@@ -108,20 +116,27 @@ makePollDecoder =
 -- VIEW
 view : Model -> Html Msg
 view model =
-  Html.form 
+  Html.form
     [ onSubmit MakePollRequest ]
     [ div [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "--" ]
-        , p [ class "fv-text w-full" ] [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use ranked-choice voting. Create a new poll by entering a question and a few choices." ]
+        , p [ class "fv-text w-full" ]
+            [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use "
+            , a
+                [ href "#ranked-choice"
+                , target "_self"
+                ]
+                [ text "ranked-choice voting" ]
+            , text ". Create a new poll by entering a question and a few choices." ]
 
         , div [ class "w-8" ] []
         ]
-      
+
     , div [ class "flex justify-between" ]
         [ h1 [ class "fv-code opacity-25" ] [ text "poll" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
-    
+
     , div [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "{" ]
         , h2 [ class "fv-header" ] [ text "Question" ]
@@ -151,23 +166,22 @@ view model =
 
       , let choicesLength = Array.length model.choices
         in
-        div []
-          ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
-    
+        div [] ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
+
       , div [ class "fv-code pb-2" ] [ text "]}" ]
-      
+
       , div [ class "flex justify-between pb-1" ]
           [ div [ class "w-8" ] []
-          , button 
+          , button
               [ class "fv-btn"
               , type_ "submit"
-              ] [ text "Create Poll" ] 
+              ] [ text "Create Poll" ]
           , div [ class "w-8" ] []
           ]
 
       , div [ class "flex justify-between" ]
           [ div [ class "fv-code w-8" ] [ errorComment model.error ]
-          , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ] 
+          , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ]
           , div [ class "w-8" ] []
           ]
 
@@ -247,24 +261,28 @@ view model =
                 ]
 
               , div [ class "fv-break" ] [ text "--" ]
-                
-              , h2 [ class "fv-header mb-1" ]
-                  [ text "Why Ranked-Choice?"]
 
-              , p [ class "fv-text mb-6" ]
-                  [ text "In a traditional voting system, voters may only vote for one out of many options. Ranked-choice voting, instead, allows voters to rank their options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
+              , h2
+                  [ class "fv-header mb-1"
+                  , id "ranked-choice"
+                  ]
+                  [ text "Why Ranked-Choice?" ]
 
-              , p [ class "fv-text mb-6" ]
-                  [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
+              , p [ class "fv-text mb-6" ] [ text "In a traditional voting system, voters may only vote for a single choice out of many options. Ranked-choice voting, instead, allows voters to rank multiple options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
 
-              , p [ class "fv-text mb-6" ]
-                  [ text "There are many resources online that explain ranked-choice voting in greater detail. We particularly like "
-                  , a [ href "https://www.youtube.com/user/CGPGrey" ] [ text "CGP Grey" ]
-                  , text "'s video on this topic since that's how we were first introduced to the concept:" 
+              , p [ class "fv-text mb-6" ] [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
+
+              , p [ class "fv-text mb-6" ] [ text "There are many resources online that explain ranked-choice voting in greater detail. We particularly like "
+                  , a
+                      [ href "https://www.youtube.com/user/CGPGrey"
+                      , target "_blank"
+                      ]
+                      [ text "CGP Grey" ]
+                  , text "'s video on this topic since that's how we were first introduced to the concept:"
                   ]
 
               , div [ class "embed-responsive embed-responsive-16by9"]
-                  [ iframe 
+                  [ iframe
                     [ class "embed-responsive-item"
                     , src "https://www.youtube.com/embed/3Y3jE3B8HsE"
                     , attribute "frameborder" "none"
@@ -281,20 +299,20 @@ view model =
 
 renderChoice : Int -> Bool -> Int -> String -> Html Msg
 renderChoice choicesLength showError index choice =
-  let 
-    placeholderValue = 
+  let
+    placeholderValue =
       if index == 0 then
         "Enter a choice"
       else
         "Enter another choice"
-    
-    startQuotation = 
+
+    startQuotation =
       if index == 0 then
         "[\""
       else
         ",\""
   in
-  div [ class "flex justify-between items-center py-2" ] 
+  div [ class "flex justify-between items-center py-2" ]
     [ div [ class "fv-code w-8"] [ text startQuotation ]
 
     , div [ class "flex justify-between items-center w-full" ]
@@ -303,8 +321,8 @@ renderChoice choicesLength showError index choice =
             , errorClass showError
             , placeholder placeholderValue
             , value choice
-            , onInput ( ChangeChoice index ) 
-            ] 
+            , onInput ( ChangeChoice index )
+            ]
             []
 
         , if index == choicesLength - 1 then
@@ -323,7 +341,7 @@ renderChoice choicesLength showError index choice =
 
     , div [ class "fv-code w-8 text-right"] [ text "\"" ]
     ]
-  
+
 errorClass : Bool -> Attribute a
 errorClass showError =
   if showError then

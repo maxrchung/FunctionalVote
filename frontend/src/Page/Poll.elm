@@ -22,7 +22,7 @@ import TypedSvg.Types as SvgTypes
 
 
 -- MODEL
-type alias Model = 
+type alias Model =
   { key : Navigation.Key
   , pollId : String
   , poll : Poll
@@ -44,16 +44,16 @@ type LoadingState
   | Error
 
 init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> LoadingState -> Model
-init key apiAddress title winner tallies pollId loadingState  = 
-  let 
+init key apiAddress title winner tallies pollId loadingState  =
+  let
     removedEmpty = removeEmpty tallies
     removedDuplicate = removeDuplicate removedEmpty
     newPoll = Poll title winner ( reorderTallies removedDuplicate )
-    lastRound = 
+    lastRound =
       case List.Extra.last newPoll.tallies of
           Nothing -> []
           Just last -> last
-    newXScaleMax = 
+    newXScaleMax =
       case List.head lastRound of
         Nothing -> 0
         Just head -> Tuple.second head
@@ -83,7 +83,7 @@ subscriptions model =
 
 
 -- UPDATE
-type Msg 
+type Msg
   = DecrementStep
   | IncrementStep
   | ChangeStep String
@@ -137,9 +137,9 @@ update msg model =
 
 updateTransition : Transition.Transition ( List ( String, Float ) ) -> Int -> List ( List ( String, Float ) ) -> Transition.Transition ( List ( String, Float ) )
 updateTransition oldTransition newStep tallies =
-  let 
+  let
     currValue = Transition.value oldTransition
-    newRound = 
+    newRound =
       case List.Extra.getAt newStep tallies of
          Nothing -> []
          Just getAt -> getAt
@@ -161,7 +161,7 @@ interpolateEntries : ( String, Float ) -> ( String, Float ) -> Interpolation.Int
 interpolateEntries ( _, fromTallies ) ( toChoice, toTallies ) =
   Interpolation.map ( Tuple.pair toChoice ) ( Interpolation.float fromTallies toTallies )
 
-removeEmpty : List ( List ( String, Float ) ) -> List ( List ( String, Float ) ) 
+removeEmpty : List ( List ( String, Float ) ) -> List ( List ( String, Float ) )
 removeEmpty tallies =
   List.map removeEmptyEntries tallies
 
@@ -207,7 +207,7 @@ view model =
     Error ->
       Page.Error.view
     Loaded ->
-      div [] 
+      div []
         [ div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
             , p [ class "fv-text w-full" ] [ text "View the poll results and see how the winner is determined. In case of ties, a winner is randomly decided." ]
@@ -251,10 +251,10 @@ view model =
         , div
             [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
-            , div 
+            , div
               [ class "flex justify-center w-full"]
               [ div
-                [ class "fv-text text-blue-100 text-left" ] 
+                [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.winner ]
               ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
@@ -265,14 +265,14 @@ view model =
         , div [ class "fv-code" ] [ text "}" ]
 
         , div [ class "fv-break" ] [ text "--" ]
-        
+
         , div [ class "flex justify-between items-center mb-2" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
             , p [ class "fv-text w-full" ] [ text "View the vote submission page to submit a new vote." ]
             , div [ class "w-8" ] []
             ]
-          
-        , div 
+
+        , div
             [ class "flex justify-between" ]
             [ div [ class "w-8" ] []
             , a
@@ -285,12 +285,12 @@ view model =
 
         , Shared.renderShareLinks
             ( "https://functionalvote.com/poll/" ++ model.pollId )
-            "Share this poll results page by copying the link or sharing through social media." 
+            "Share this poll results page by copying the link or sharing through social media."
             model.poll.title
             "View my poll results: "
         ]
 
-type alias ResultsConfig = 
+type alias ResultsConfig =
   { width: Float
   , height: Float
   , padding: Float
@@ -300,7 +300,7 @@ type alias ResultsConfig =
 initResults : List ( String, Float ) -> Float -> ResultsConfig
 initResults round xScaleMax =
   let
-    height = 
+    height =
         55 + 2 * 6 + 30 * List.length round
   in ResultsConfig 375 ( toFloat height ) 30 xScaleMax
 
@@ -329,14 +329,14 @@ row config scale ( choice, votes ) =
   Svg.g
     []
     [ Svg.rect
-        [ SvgAttributes.class [ "text-blue-900 fill-current" ] 
+        [ SvgAttributes.class [ "text-blue-900 fill-current" ]
         , SvgInPx.y <| Scale.convert scale choice
         , SvgInPx.width <| Scale.convert ( xScale config ) votes
         , SvgInPx.height <| Scale.bandwidth scale
         ]
         []
     , Svg.text_
-        [ SvgAttributes.class 
+        [ SvgAttributes.class
             [ choiceTextColor votes config.xScaleMax
             , "fill-current text-sm" ]
         , SvgInPx.x <| config.padding / 4
@@ -346,7 +346,7 @@ row config scale ( choice, votes ) =
         ]
         [ SvgCore.text <| truncateChoice choiceText ]
     ]
-    
+
 choiceTextColor : Float -> Float -> String
 choiceTextColor votes xScaleMax =
   if votes == xScaleMax then
@@ -368,7 +368,7 @@ renderResults step xScaleMax tallies transition =
         []
       else
         [ div [ class "fv-code" ] [ text "," ]
-        , div 
+        , div
             [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
             , h2 [ class "fv-header" ] [ text "Results" ]
@@ -386,18 +386,18 @@ renderSlider step tallies =
   if List.length ( List.take 2 tallies ) < 2 then
     div [] []
   else
-    div 
+    div
       [ class "flex justify-between items-center" ]
       [ div [ class "w-8" ] []
-      , div 
+      , div
         [ class "flex justify-between items-center mt-2 w-full" ]
-        [ button 
-          [ class "fv-nav-btn fv-nav-btn-blue" 
+        [ button
+          [ class "fv-nav-btn fv-nav-btn-blue"
           , onClick DecrementStep
           ]
           [ Shared.renderIcon FeatherIcons.arrowLeft ]
 
-        , input 
+        , input
             [ class "fv-slider w-full mx-2"
             , type_ "range"
             , onInput ChangeStep
@@ -406,8 +406,8 @@ renderSlider step tallies =
             ]
             []
 
-        , button 
-            [ class "fv-nav-btn fv-nav-btn-blue" 
+        , button
+            [ class "fv-nav-btn fv-nav-btn-blue"
             , onClick IncrementStep
             ]
             [ Shared.renderIcon FeatherIcons.arrowRight ]
@@ -418,7 +418,7 @@ renderSlider step tallies =
 renderChart : ResultsConfig -> List ( String, Float ) -> SvgCore.Svg a
 renderChart config round =
   let
-    reordered = reorderRound round      
+    reordered = reorderRound round
   in
   Svg.svg
     [ SvgAttributes.class [ "fv-results" ]

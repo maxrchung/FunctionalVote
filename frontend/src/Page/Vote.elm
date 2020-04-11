@@ -17,7 +17,7 @@ import Task
 
 
 -- MODEL
-type alias Model = 
+type alias Model =
   { key : Navigation.Key
   , pollId : String
   , poll : Poll
@@ -35,12 +35,12 @@ type alias Poll =
   , unorderedChoices : List String
   }
 
-type LoadingState 
+type LoadingState
   = Loaded
   | Error
 
 init : Navigation.Key -> String -> String -> List String -> String -> LoadingState -> Model
-init key apiAddress title choices pollId loadingState = 
+init key apiAddress title choices pollId loadingState =
   { key = key
   , pollId = pollId
   , poll = Poll title Dict.empty choices
@@ -62,7 +62,7 @@ subscriptions model =
 
 
 -- UPDATE
-type Msg 
+type Msg
   = ChangeRank String String
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
@@ -87,19 +87,19 @@ update msg model =
                 ]
             ]
             model.fadeStyle
-        
+
         focus =
           if rank == "--" then
             "unordered-" ++ ( String.fromInt <| List.length newUnordered - 1)
           else
             "ordered-" ++ rank
-      in 
+      in
       ( { model | poll = newPoll, showError = False, fadeStyle = newFadeStyle, fadeChoice = choice }
       , Task.attempt ( \_ -> NoOp ) ( Dom.focus focus )
       )
-      
+
     SubmitVoteRequest ->
-        ( model, submitVoteRequest model) 
+        ( model, submitVoteRequest model)
 
     SubmitVoteResponse result ->
       case result of
@@ -107,7 +107,7 @@ update msg model =
           ( model, Navigation.pushUrl model.key ( "/poll/" ++ model.pollId ) )
 
         Err error ->
-          let 
+          let
             newError =
               case error of
                 Http.Detailed.BadStatus _ body ->
@@ -116,7 +116,7 @@ update msg model =
                   "Unable to submit vote. The website may be down for maintenace. Please try again later."
           in
           ( { model | showError = True, error = newError }, Cmd.none )
-    
+
     Animate animate ->
       ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
 
@@ -144,23 +144,23 @@ changeRank rank choice ordered unordered  =
     Just newRank ->
       let
         -- Update choices with new rankings
-        ( updatedOrdered, updatedUnordered ) = updateChoices 0 True maxRank newRank filteredOrdered Dict.empty filteredUnordered 
+        ( updatedOrdered, updatedUnordered ) = updateChoices 0 True maxRank newRank filteredOrdered Dict.empty filteredUnordered
         -- Add new rank into ordered
         addedOrdered = Dict.insert newRank choice updatedOrdered
       in ( addedOrdered, updatedUnordered )
 
 updateChoices : Int -> Bool -> Int -> Int -> Dict.Dict Int String -> Dict.Dict Int String -> List String -> ( Dict.Dict Int String, List String )
-updateChoices index canFill maxRank rank ordered newOrdered newUnordered = 
+updateChoices index canFill maxRank rank ordered newOrdered newUnordered =
   if index > maxRank then
     ( newOrdered, newUnordered )
-  else 
+  else
     case Dict.get index ordered of
       Nothing ->
-        let 
-          newCanFill = 
+        let
+          newCanFill =
             if not canFill then
               False
-            else 
+            else
               index < rank
         in updateChoices ( index + 1 ) newCanFill maxRank rank ordered newOrdered newUnordered
       Just choice ->
@@ -183,7 +183,7 @@ submitVoteRequest model =
     }
 
 submitVoteJson : Model -> Encode.Value
-submitVoteJson model = 
+submitVoteJson model =
   let
     choices =
       Dict.foldl buildSubmissionChoices Dict.empty model.poll.orderedChoices
@@ -207,10 +207,10 @@ view model =
       Page.Error.view
     Loaded ->
       let
-        maxOrdered = Dict.size model.poll.orderedChoices 
+        maxOrdered = Dict.size model.poll.orderedChoices
         maxUnordered = List.length model.poll.unorderedChoices
         maxRank = maxOrdered + maxUnordered
-        hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices 
+        hasOrderedChoices = not <| Dict.isEmpty model.poll.orderedChoices
       in
       div []
         [ div [ class "flex justify-between items-center" ]
@@ -219,26 +219,26 @@ view model =
             , div [ class "w-8" ] []
             ]
 
-        , div 
+        , div
             [ class "flex justify-between" ]
             [ h1 [ class "fv-code opacity-25" ] [ text "vote" ]
             , div [ class "fv-code" ] [ text "=" ]
             ]
-        
-        , div 
+
+        , div
             [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "{" ]
             , h2 [ class "fv-header" ] [ text "Question" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div 
+        , div
             [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
-            , div 
+            , div
               [ class "flex justify-center w-full"]
               [ div
-                [ class "fv-text text-blue-100 text-left" ] 
+                [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.title ]
               ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
@@ -246,13 +246,13 @@ view model =
 
         , div [ class "fv-code" ] [ text "," ]
 
-        , div 
+        , div
             [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
             , h2 [ class "fv-header" ] [ text "Ranks" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
-        
+
         , div []
             ( List.indexedMap ( renderOrdered maxRank maxOrdered model ) <| Dict.toList model.poll.orderedChoices )
 
@@ -264,7 +264,7 @@ view model =
             ( List.indexedMap ( renderUnordered maxRank maxUnordered hasOrderedChoices model ) <| model.poll.unorderedChoices )
 
         , div [class "fv-code pb-2" ] [ text "]}" ]
-          
+
         , div
             [ class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] []
@@ -284,27 +284,27 @@ view model =
             ]
 
         , div [ class "fv-break" ] [ text "--" ]
-        
+
         , div [ class "flex justify-between items-center mb-2" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
             , p [ class "fv-text w-full" ] [ text "View the poll results page to see the current standings." ]
             , div [ class "w-8" ] []
             ]
-          
+
         , div
             [ class "flex justify-between" ]
             [ div [ class "w-8" ] []
-            , a 
+            , a
               [ class "fv-btn fv-btn-blank mb-2"
               , href <| "/poll/" ++ model.pollId
-              ] 
+              ]
               [ text "View Results" ]
             , div [ class "w-8" ] []
             ]
 
-        , Shared.renderShareLinks 
-            ( "https://functionalvote.com/vote/" ++ model.pollId ) 
-            "Share this vote submission page by copying the link or sharing through social media." 
+        , Shared.renderShareLinks
+            ( "https://functionalvote.com/vote/" ++ model.pollId )
+            "Share this vote submission page by copying the link or sharing through social media."
             model.poll.title
             "Vote in my poll: "
         ]
@@ -326,12 +326,12 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
       else
         "ordered-" ++ rank
   in
-  div 
+  div
     [ class "flex justify-between items-center" ]
-    [ div 
-      [ class "fv-code w-8"] 
+    [ div
+      [ class "fv-code w-8"]
       [ unorderedCommaText hasOrderedChoices index
-      , text "(" 
+      , text "("
       ]
 
     , div
@@ -339,17 +339,17 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
         , textColorClass index
         , borderClass index maxIndex
         ]
-        [ select 
+        [ select
             [ class "fv-input w-auto"
             , errorClass model.showError
             , id selectIndex
             , value rank
-            , onInput ( ChangeRank choice ) 
+            , onInput ( ChangeRank choice )
             ]
 
             ( List.concat
               [ renderOptions maxRank rank
-              , [ option 
+              , [ option
                   [ value "--"
                   , selected ( rank == "--" )
                   ]
@@ -358,11 +358,11 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
               ]
             )
 
-        , div 
-            [ class "fv-code w-8 text-center" ] 
+        , div
+            [ class "fv-code w-8 text-center" ]
             [ text ",\"" ]
 
-        , div 
+        , div
             ( List.concat
                 [ if model.fadeChoice == choice then
                     Animation.render model.fadeStyle
@@ -378,7 +378,7 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
     ]
 
 renderOptions : Int -> String -> List ( Html Msg )
-renderOptions maxRank selectedRank = 
+renderOptions maxRank selectedRank =
   List.map ( renderOption selectedRank ) <| List.range 1 maxRank
 
 renderOption : String -> Int -> Html Msg
@@ -388,20 +388,20 @@ renderOption selectedRank rank  =
       option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
      Just selectedRankInt ->
       option
-        [ value <| String.fromInt rank 
+        [ value <| String.fromInt rank
         , selected ( selectedRankInt == rank )
-        ] 
+        ]
         [ text <| String.fromInt rank ]
 
 unorderedCommaText : Bool -> Int -> Html a
-unorderedCommaText hasOrderedChoices index = 
+unorderedCommaText hasOrderedChoices index =
   if hasOrderedChoices || index > 0 then
     text ","
   else
     text "["
 
 textColorClass : Int -> Attribute a
-textColorClass index = 
+textColorClass index =
   if modBy 2 index == 0 then
     class "bg-blue-800"
   else
