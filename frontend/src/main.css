@@ -182,7 +182,7 @@ a:hover {
 }
 
 .fv-break {
-  @apply fv-code text-center w-full my-3 opacity-25;
+  @apply fv-code text-center w-full my-8 opacity-25;
 }
 
 @tailwind utilities;

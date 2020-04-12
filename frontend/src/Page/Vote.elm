@@ -215,7 +215,7 @@ view model =
       div []
         [ div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of each choice. Not all choices need to have a rank. Smaller rank numbers have higher preference." ]
+            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of each choice. Not all choices need to have a rank, and smaller rank numbers have higher preference." ]
             , div [ class "w-8" ] []
             ]
 
@@ -257,7 +257,7 @@ view model =
             ( List.indexedMap ( renderOrdered maxRank maxOrdered model ) <| Dict.toList model.poll.orderedChoices )
 
         , div
-            [ class "fv-break py-1" ]
+            [ class "fv-break my-2" ]
             [ text "--" ]
 
         , div []

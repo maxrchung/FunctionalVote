@@ -254,7 +254,7 @@ renderBody model =
             ]
 
         , div [ class "flex items-center justify-center" ]
-          [ div [ class "fv-code w-5" ] [ text "[" ]
+          [ div [ class "fv-code w-5 opacity-25" ] [ text "[" ]
 
           , a
               [ class "fv-nav-btn"
@@ -263,7 +263,7 @@ renderBody model =
               ]
               [ Shared.renderIcon FeatherIcons.github ]
 
-          , div [ class "fv-code text-center w-6" ] [ text "," ]
+          , div [ class "fv-code text-center w-6 opacity-25" ] [ text "," ]
 
           , a
               [ class "fv-nav-btn"
@@ -272,7 +272,7 @@ renderBody model =
               ]
               [ Shared.renderIcon FeatherIcons.twitter ]
 
-          , div [ class "fv-code text-right w-5" ] [ text "]" ]
+          , div [ class "fv-code text-right w-5 opacity-25" ] [ text "]" ]
           ]
         ]
       ]
