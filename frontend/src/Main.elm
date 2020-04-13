@@ -277,7 +277,5 @@ renderBody model =
         ]
       ]
   , div [ class "container max-w-screen-sm mx-auto p-4" ]
-      [
-      , content
-      ]
+      [ content ]
   ]
