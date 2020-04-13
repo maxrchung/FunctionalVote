@@ -233,15 +233,15 @@ renderBody model =
     content =
       case model.page of
         HomePage homeModel ->
-          [ Html.map HomeMsg ( Home.view homeModel ) ]
+          Html.map HomeMsg ( Home.view homeModel )
         VotePage voteModel ->
-          [ Html.map VoteMsg ( Vote.view voteModel ) ]
+          Html.map VoteMsg ( Vote.view voteModel )
         PollPage pollModel ->
-          [ Html.map PollMsg ( Poll.view pollModel ) ]
+          Html.map PollMsg ( Poll.view pollModel )
         ErrorPage ->
-          [ Error.view ]
+          Error.view
         NoPage ->
-          [ div [] [] ]
+          div [] []
   in
   [ div [ class "bg-blue-900 shadow-lg" ]
       [ div [ class "h-16 flex justify-between items-center max-w-screen-sm mx-auto px-4" ]
@@ -276,5 +276,8 @@ renderBody model =
           ]
         ]
       ]
-  , div [ class "container max-w-screen-sm mx-auto p-4" ] content
+  , div [ class "container max-w-screen-sm mx-auto p-4" ]
+      [
+      , content
+      ]
   ]
