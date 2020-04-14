@@ -156,7 +156,7 @@ a {
 }
 
 /* Mobile devices have hover issues in the vote submission page when ranks are changed. This block ensures that only hover-supported devices can have hover rules. */
-@media (hover: hover) {
+@media (pointer: fine) {
   a:hover {
     @apply text-blue-100;
   }
