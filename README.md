@@ -5,4 +5,4 @@
 ![NGINX CD](https://github.com/maxrchung/FunctionalVote/workflows/NGINX%20CD/badge.svg)
 
 # Functional Vote
-Create free online polls using ranked-choice voting. Made with [Elm](https://elm-lang.org/) and [Elixir](https://elixir-lang.org/). Made by [Max](https://github.com/maxrchung) and [Aaron](https://github.com/Xenocidel).
+Create and share free online polls that use ranked-choice voting. Made with [Elm](https://elm-lang.org/) and [Elixir](https://elixir-lang.org/). Made by [Max](https://github.com/maxrchung) and [Aaron](https://github.com/Xenocidel).
