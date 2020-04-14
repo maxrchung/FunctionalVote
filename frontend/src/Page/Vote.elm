@@ -64,6 +64,7 @@ subscriptions model =
 -- UPDATE
 type Msg
   = ChangeRank String String
+  | BlurInput String String String
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | Animate Animation.Msg
@@ -118,6 +119,11 @@ update msg model =
 
     NoOp ->
       ( model, Cmd.none )
+
+    BlurInput choice selectedIndex rank ->
+      ( model
+      , Task.attempt ( \_ -> ChangeRank choice rank ) ( Dom.blur selectedIndex )
+      )
 
 calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =
@@ -340,7 +346,7 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
             , errorClass model.showError
             , id selectIndex
             , value rank
-            , onInput ( ChangeRank choice )
+            , onInput ( BlurInput choice selectIndex )
             ]
 
             ( List.concat
