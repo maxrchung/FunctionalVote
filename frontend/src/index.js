@@ -8,7 +8,11 @@ const app = Elm.Main.init({
 });
 app.ports.renderReCAPTCHA.subscribe(() => {
   requestAnimationFrame(() => {
-    grecaptcha.render('recaptcha');
+    grecaptcha.render('recaptcha', {
+      callback: val => {
+        app.ports.submitReCAPTCHA.send(val);
+      }
+    });
   });
 });
 
