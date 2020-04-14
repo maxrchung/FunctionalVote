@@ -54,6 +54,7 @@ type alias VoteResponse =
   { title : String
   , choices : List String
   , pollId: String
+  , useReCAPTCHA: Bool
   }
 
 type alias PollResponse =
@@ -106,10 +107,12 @@ getVoteRequest apiAddress pollId =
 
 getVoteDecoder : Decode.Decoder VoteResponse
 getVoteDecoder =
-  Decode.map3 VoteResponse
-    ( Decode.at ["data", "title" ] Decode.string )
-    ( Decode.at ["data", "choices" ] <| Decode.list Decode.string )
-    ( Decode.at ["data", "poll_id"] Decode.string )
+  Decode.map4 ( \a b c _ -> VoteResponse a b c True )
+    ( Decode.at [ "data", "title" ] Decode.string )
+    ( Decode.at [ "data", "choices" ] <| Decode.list Decode.string )
+    ( Decode.at [ "data", "poll_id" ] Decode.string )
+    ( Decode.at [ "data", "poll_id" ] Decode.string )
+
 
 getPollRequest : String -> String -> Cmd Msg
 getPollRequest apiAddress pollId =
@@ -187,11 +190,11 @@ update msg model =
     GetVoteResponse result ->
       case result of
         Ok response ->
-          let voteModel = Vote.init model.key model.apiAddress response.title response.choices response.pollId Vote.Loaded
+          let voteModel = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA Vote.Loaded
           in ( { model | page = VotePage voteModel }, Cmd.none )
 
         Err _ ->
-          let voteModel = Vote.init model.key model.apiAddress "" [] "" Vote.Error
+          let voteModel = Vote.init model.key model.apiAddress "" [] "" False Vote.Error
           in ( { model | page = VotePage voteModel }, Cmd.none )
 
     GetPollResponse result ->

@@ -33,17 +33,18 @@ type alias Poll =
   { title : String
   , orderedChoices : Dict.Dict Int String
   , unorderedChoices : List String
+  , useReCAPTCHA : Bool
   }
 
 type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> List String -> String -> LoadingState -> Model
-init key apiAddress title choices pollId loadingState =
+init : Navigation.Key -> String -> String -> List String -> String -> Bool -> LoadingState -> Model
+init key apiAddress title choices pollId useReCAPTCHA loadingState =
   { key = key
   , pollId = pollId
-  , poll = Poll title Dict.empty choices
+  , poll = Poll title Dict.empty choices useReCAPTCHA
   , apiAddress = apiAddress
   , error = ""
   , showError = False
