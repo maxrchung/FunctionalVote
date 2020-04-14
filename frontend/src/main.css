@@ -26,9 +26,6 @@ body {
 a {
   @apply text-blue-500;
 }
-a:hover {
-  @apply text-blue-100;
-}
 
 .fv-nav-btn {
   @apply flex flex-shrink-0 items-center justify-center h-10 w-10 border-2 border-blue-500 rounded-full shadow font-sans font-bold text-xl text-blue-500;
@@ -43,20 +40,11 @@ a:hover {
 .fv-nav-btn:focus {
   @apply outline-none bg-blue-800 shadow-md text-blue-500;
 }
-.fv-nav-btn:hover {
-  @apply bg-blue-800 shadow-md text-blue-500;
-}
 .fv-nav-btn-orange {
   @apply text-orange-500 border-orange-500;
 }
 .fv-nav-btn-orange:focus {
   @apply text-orange-500 bg-orange-900;
-}
-.fv-nav-btn-orange:hover {
-  @apply text-orange-500 bg-orange-900;
-}
-.fv-nav-btn-blue:hover {
-  @apply bg-blue-900;
 }
 .fv-nav-btn-blue:focus {
   @apply bg-blue-900;
@@ -83,9 +71,6 @@ a:hover {
 .fv-input:focus {
   @apply bg-blue-900 shadow-lg;
 }
-.fv-input:hover {
-  @apply bg-blue-900;
-}
 .fv-input::placeholder {
   @apply text-blue-100 opacity-75;
 }
@@ -93,9 +78,6 @@ a:hover {
   @apply border-red-700;
 }
 .fv-input-error:focus {
-  @apply bg-red-900;
-}
-.fv-input-error:hover {
   @apply bg-red-900;
 }
 .fv-input-error::placeholder {
@@ -115,16 +97,10 @@ a:hover {
 .fv-btn:focus {
   @apply outline-none bg-orange-700 shadow-md;
 }
-.fv-btn:hover {
-  @apply bg-orange-700 shadow-md;
-}
 .fv-btn-blank {
   @apply bg-gray-900 text-orange-500 border-2 border-orange-500;
 }
 .fv-btn-blank:focus {
-  @apply text-orange-500;
-}
-.fv-btn-blank:hover {
   @apply text-orange-500;
 }
 
@@ -144,17 +120,11 @@ a:hover {
 .fv-slider::-webkit-slider-thumb {
   @apply appearance-none bg-blue-700 border-0 h-6 w-6 rounded-full shadow-lg;
 }
-.fv-slider::-webkit-slider-thumb:hover {
-  @apply bg-blue-500;
-}
 .fv-slider::-webkit-slider-thumb:focus {
   @apply bg-blue-500;
 }
 .fv-slider::-moz-range-thumb {
   @apply outline-none bg-blue-700 border-0 w-6 h-6 rounded-full shadow-lg;
-}
-.fv-slider::-moz-range-thumb:hover {
-  @apply bg-blue-500;
 }
 .fv-slider::-moz-range-thumb:focus {
   @apply bg-blue-500;
@@ -184,6 +154,41 @@ a:hover {
 .fv-break {
   @apply fv-code text-center w-full my-8 opacity-25;
 }
+
+/* Mobile devices have hover issues in the vote submission page when ranks are changed. This block ensures that only hover-supported devices can have hover rules. */
+@media (hover: hover) {
+  a:hover {
+    @apply text-blue-100;
+  }
+  .fv-nav-btn:hover {
+    @apply bg-blue-800 shadow-md text-blue-500;
+  }
+  .fv-nav-btn-orange:hover {
+    @apply text-orange-500 bg-orange-900;
+  }
+  .fv-nav-btn-blue:hover {
+    @apply bg-blue-900;
+  }
+  .fv-input:hover {
+    @apply bg-blue-900;
+  }
+  .fv-input-error:hover {
+    @apply bg-red-900;
+  }
+  .fv-btn:hover {
+    @apply bg-orange-700 shadow-md;
+  }
+  .fv-btn-blank:hover {
+    @apply text-orange-500;
+  }
+  .fv-slider::-webkit-slider-thumb:hover {
+    @apply bg-blue-500;
+  }
+  .fv-slider::-moz-range-thumb:hover {
+    @apply bg-blue-500;
+  }
+}
+
 
 @tailwind utilities;
 
