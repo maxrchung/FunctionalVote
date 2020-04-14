@@ -2,9 +2,14 @@ import './main.css';
 import { Elm } from './Main.elm';
 import * as serviceWorker from './serviceWorker';
 
-Elm.Main.init({
+const app = Elm.Main.init({
   node: document.getElementById('root'),
   flags: process.env.NODE_ENV
+});
+app.ports.renderReCAPTCHA.subscribe(() => {
+  requestAnimationFrame(() => {
+    grecaptcha.render('recaptcha');
+  });
 });
 
 // If you want your app to work offline and load faster, you can change
@@ -19,5 +24,5 @@ const showShareText = () => {
   }
 };
 
-const clipboard = new ClipboardJS(".fv-share-copy");
+const clipboard = new ClipboardJS('.fv-share-copy');
 clipboard.on('success', showShareText);

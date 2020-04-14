@@ -1,4 +1,4 @@
-module Page.Vote exposing ( .. )
+port module Page.Vote exposing ( .. )
 
 import Animation
 import Browser.Dom as Dom
@@ -27,6 +27,7 @@ type alias Model =
   , loadingState : LoadingState
   , fadeStyle : Animation.State
   , fadeChoice : String
+  , reCAPTCHAResponse : String
   }
 
 type alias Poll =
@@ -40,25 +41,35 @@ type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> List String -> String -> Bool -> LoadingState -> Model
+init : Navigation.Key -> String -> String -> List String -> String -> Bool -> LoadingState -> ( Model, Cmd msg )
 init key apiAddress title choices pollId useReCAPTCHA loadingState =
-  { key = key
-  , pollId = pollId
-  , poll = Poll title Dict.empty choices useReCAPTCHA
-  , apiAddress = apiAddress
-  , error = ""
-  , showError = False
-  , loadingState = loadingState
-  , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
-  , fadeChoice = ""
-  }
+  ( { key = key
+    , pollId = pollId
+    , poll = Poll title Dict.empty choices useReCAPTCHA
+    , apiAddress = apiAddress
+    , error = ""
+    , showError = False
+    , loadingState = loadingState
+    , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
+    , fadeChoice = ""
+    , reCAPTCHAResponse = ""
+    }
+  , renderReCAPTCHA ()
+  )
 
+
+
+-- PORTS
+port renderReCAPTCHA : () -> Cmd msg
+port submitReCAPTCHA : ( Encode.Value -> msg ) -> Sub msg
 
 
 -- SUBSCRIPTIONS
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Animation.subscription Animate [ model.fadeStyle ]
+    Sub.batch
+      [ Animation.subscription Animate [ model.fadeStyle ]
+      ]
 
 
 
@@ -216,21 +227,18 @@ view model =
             , div [ class "w-8" ] []
             ]
 
-        , div
-            [ class "flex justify-between" ]
+        , div [ class "flex justify-between" ]
             [ h1 [ class "fv-code opacity-25" ] [ text "vote" ]
             , div [ class "fv-code" ] [ text "=" ]
             ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "{" ]
             , h2 [ class "fv-header" ] [ text "Question" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div
               [ class "flex justify-center w-full"]
@@ -243,8 +251,7 @@ view model =
 
         , div [ class "fv-code" ] [ text "," ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
             , h2 [ class "fv-header" ] [ text "Ranks" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
@@ -253,17 +260,36 @@ view model =
         , div []
             ( List.indexedMap ( renderOrdered maxRank maxOrdered model ) <| Dict.toList model.poll.orderedChoices )
 
-        , div
-            [ class "fv-break my-2" ]
+        , div [ class "fv-break my-2" ]
             [ text "--" ]
 
         , div []
             ( List.indexedMap ( renderUnordered maxRank maxUnordered hasOrderedChoices model ) <| model.poll.unorderedChoices )
 
-        , div [class "fv-code pb-2" ] [ text "]}" ]
+        , div [ class "fv-code pb-2" ] [ text "]," ]
 
-        , div
-            [ class "flex justify-between pb-1" ]
+        , if model.poll.useReCAPTCHA then
+            div []
+              [ div [ class "flex justify-between items-center" ]
+                  [ div [ class "w-8" ] []
+                  , h2 [ class "fv-header" ] [ text "reCAPTCHA" ]
+                  , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+                  ]
+              , div [ class "w-full flex justify-center"]
+                  [ div
+                      [ attribute "data-sitekey" "6LeskukUAAAAACVQNLgOef9dSxPau59T04w4r9CA"
+                      , class "g-recaptcha"
+                      , id "recaptcha"
+                      ] []
+                  ]
+              ]
+
+          else
+            div [] []
+
+        , div [ class "fv-code pb-2" ] [ text "}" ]
+
+        , div [ class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] []
             , button
                 [ class "fv-btn"
@@ -273,8 +299,7 @@ view model =
             , div [ class "w-8" ] []
             ]
 
-        , div
-            [ class "flex justify-between" ]
+        , div [ class "flex justify-between" ]
             [ div [ class "fv-code w-8" ] [ errorComment model.error ]
             , div [ class "w-full fv-text fv-text-error" ] [ errorText model.error ]
             , div [ class "w-8" ] []
@@ -288,8 +313,7 @@ view model =
             , div [ class "w-8" ] []
             ]
 
-        , div
-            [ class "flex justify-between" ]
+        , div [ class "flex justify-between" ]
             [ div [ class "w-8" ] []
             , a
               [ class "fv-btn fv-btn-blank mb-2"

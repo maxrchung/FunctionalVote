@@ -190,12 +190,12 @@ update msg model =
     GetVoteResponse result ->
       case result of
         Ok response ->
-          let voteModel = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA Vote.Loaded
-          in ( { model | page = VotePage voteModel }, Cmd.none )
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA Vote.Loaded
+          in ( { model | page = VotePage voteModel }, cmd )
 
         Err _ ->
-          let voteModel = Vote.init model.key model.apiAddress "" [] "" False Vote.Error
-          in ( { model | page = VotePage voteModel }, Cmd.none )
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False Vote.Error
+          in ( { model | page = VotePage voteModel }, cmd )
 
     GetPollResponse result ->
       case result of
