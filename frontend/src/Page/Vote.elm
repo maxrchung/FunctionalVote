@@ -61,7 +61,7 @@ init key apiAddress title choices pollId useReCAPTCHA loadingState =
 
 -- PORTS
 port renderReCAPTCHA : () -> Cmd msg
-port submitReCAPTCHA : ( Encode.Value -> msg ) -> Sub msg
+port submitReCAPTCHA : ( String -> msg ) -> Sub msg
 
 
 -- SUBSCRIPTIONS
@@ -69,6 +69,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
       [ Animation.subscription Animate [ model.fadeStyle ]
+      , submitReCAPTCHA ReCAPTCHAResponse
       ]
 
 
@@ -79,6 +80,7 @@ type Msg
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | Animate Animation.Msg
+  | ReCAPTCHAResponse String
   | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -127,6 +129,9 @@ update msg model =
 
     Animate animate ->
       ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
+
+    ReCAPTCHAResponse reCAPTCHAResponse ->
+      ( { model | reCAPTCHAResponse = reCAPTCHAResponse }, Cmd.none )
 
     NoOp ->
       ( model, Cmd.none )
