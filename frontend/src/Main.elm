@@ -36,6 +36,7 @@ type alias Model =
   { key : Navigation.Key
   , apiAddress : String
   , page : Page
+  , env : String
   }
 
 type Page
@@ -65,15 +66,15 @@ type alias PollResponse =
   }
 
 init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
-init environment url key =
+init env url key =
   let
     apiAddress =
-      if environment == "production" then
+      if env == "production" then
         "https://FunctionalVote.com:4001"
       else
         "http://localhost:4000"
     ( page, cmd ) = initPage NoPage url key apiAddress
-  in ( Model key apiAddress page, cmd )
+  in ( Model key apiAddress page env, cmd )
 
 initPage : Page -> Url.Url -> Navigation.Key -> String -> ( Page, Cmd Msg )
 initPage page url key apiAddress =
@@ -190,11 +191,11 @@ update msg model =
     GetVoteResponse result ->
       case result of
         Ok response ->
-          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA Vote.Loaded
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA model.env Vote.Loaded
           in ( { model | page = VotePage voteModel }, cmd )
 
         Err _ ->
-          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False Vote.Error
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False model.env Vote.Error
           in ( { model | page = VotePage voteModel }, cmd )
 
     GetPollResponse result ->
