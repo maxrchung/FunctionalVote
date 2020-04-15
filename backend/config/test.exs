@@ -16,3 +16,9 @@ config :functional_vote, FunctionalVoteWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+# reCAPTCHA testing guidelines: https://github.com/samueljseay/recaptcha#testing
+config :recaptcha,
+  http_client: Recaptcha.Http.MockClient,
+  secret: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe",
+  json_library: Jason
