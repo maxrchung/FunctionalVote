@@ -83,6 +83,11 @@ a {
 .fv-input-error::placeholder {
   @apply text-red-100;
 }
+/* Source: https://stackoverflow.com/a/18853002 */
+.fv-input:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #EBF8FF;
+}
 
 /* Checkbox styling adapted from: https://css-tricks.com/the-checkbox-hack/
 /* Base for label styling */
