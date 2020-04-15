@@ -268,8 +268,7 @@ view model =
       , div [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8" ] [ text "{-" ]
 
-          , h2 [ class "fv-header mb-1" ]
-              [ text "Why Functional Vote?" ]
+          , h2 [ class "fv-header mb-1" ] [ text "Why Functional Vote?" ]
 
           , div [ class "w-8" ] []
           ]
