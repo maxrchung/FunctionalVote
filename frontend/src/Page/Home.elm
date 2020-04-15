@@ -23,11 +23,13 @@ type alias Model =
   , showError: Bool
   , error : String
   , choices : Array.Array String
-  , apiAddress: String }
+  , apiAddress: String
+  , useReCAPTCHA: Bool
+  }
 
 init : Navigation.Key -> String -> Maybe String -> ( Model, Cmd Msg )
 init key apiAddress fragment =
-  let model = Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress
+  let model = Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress False
   in
   case fragment of
     Just id ->
@@ -45,6 +47,7 @@ type Msg
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
   | ViewElement String
+  | ToggleReCAPTCHA
   | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -84,6 +87,8 @@ update msg model =
       in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
     ViewElement id -> ( model, viewElement id )
+
+    ToggleReCAPTCHA -> ( { model | useReCAPTCHA = not model.useReCAPTCHA }, Cmd.none )
 
     NoOp -> ( model, Cmd.none )
 
@@ -183,11 +188,11 @@ view model =
         [ div [ class "fv-code w-8" ] [ text "[(" ]
         , div [ class "w-full flex items-center" ]
             [ input
-                [ checked True
+                [ checked model.useReCAPTCHA
                 , class "fv-chk"
                 , type_ "checkbox"
                 ] []
-            , label [] []
+            , label [ onClick ToggleReCAPTCHA ] []
             , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
             , div [ class "fv-text text-blue-100"] [ text "Use reCAPTCHA verification" ]
             ]
