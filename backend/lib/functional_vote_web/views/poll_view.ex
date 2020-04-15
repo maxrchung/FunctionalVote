@@ -15,6 +15,7 @@ defmodule FunctionalVoteWeb.PollView do
       title: poll.title,
       choices: poll.choices,
       tallies: poll.tallies,
-      winner: poll.winner}
+      winner: poll.winner,
+      use_recaptcha: poll.use_recaptcha}
   end
 end

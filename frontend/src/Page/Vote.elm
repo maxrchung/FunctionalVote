@@ -43,6 +43,8 @@ type LoadingState
 
 init : Navigation.Key -> String -> String -> List String -> String -> Bool -> LoadingState -> ( Model, Cmd msg )
 init key apiAddress title choices pollId useReCAPTCHA loadingState =
+  let cmd = if useReCAPTCHA then renderReCAPTCHA () else Cmd.none
+  in
   ( { key = key
     , pollId = pollId
     , poll = Poll title Dict.empty choices useReCAPTCHA
@@ -54,7 +56,7 @@ init key apiAddress title choices pollId useReCAPTCHA loadingState =
     , fadeChoice = ""
     , reCAPTCHAResponse = ""
     }
-  , renderReCAPTCHA ()
+  , cmd
   )
 
 
