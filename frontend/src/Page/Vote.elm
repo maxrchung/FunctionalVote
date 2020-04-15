@@ -27,7 +27,8 @@ type alias Model =
   , loadingState : LoadingState
   , fadeStyle : Animation.State
   , fadeChoice : String
-  , reCAPTCHAResponse : String
+  , reCAPTCHAToken : String
+  , env : String
   }
 
 type alias Poll =
@@ -41,8 +42,8 @@ type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> List String -> String -> Bool -> LoadingState -> ( Model, Cmd msg )
-init key apiAddress title choices pollId useReCAPTCHA loadingState =
+init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> LoadingState -> ( Model, Cmd msg )
+init key apiAddress title choices pollId useReCAPTCHA env loadingState =
   let cmd = if useReCAPTCHA then renderReCAPTCHA () else Cmd.none
   in
   ( { key = key
@@ -54,7 +55,8 @@ init key apiAddress title choices pollId useReCAPTCHA loadingState =
     , loadingState = loadingState
     , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
     , fadeChoice = ""
-    , reCAPTCHAResponse = ""
+    , reCAPTCHAToken = ""
+    , env = env
     }
   , cmd
   )
@@ -71,7 +73,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
       [ Animation.subscription Animate [ model.fadeStyle ]
-      , submitReCAPTCHA ReCAPTCHAResponse
+      , submitReCAPTCHA ReCAPTCHAToken
       ]
 
 
@@ -82,7 +84,7 @@ type Msg
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | Animate Animation.Msg
-  | ReCAPTCHAResponse String
+  | ReCAPTCHAToken String
   | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -132,8 +134,8 @@ update msg model =
     Animate animate ->
       ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
 
-    ReCAPTCHAResponse reCAPTCHAResponse ->
-      ( { model | reCAPTCHAResponse = reCAPTCHAResponse }, Cmd.none )
+    ReCAPTCHAToken reCAPTCHAToken ->
+      ( { model | reCAPTCHAToken = reCAPTCHAToken }, Cmd.none )
 
     NoOp ->
       ( model, Cmd.none )
@@ -206,6 +208,7 @@ submitVoteJson model =
   Encode.object
     [ ( "poll_id", Encode.string model.pollId )
     , ( "choices", Encode.dict identity Encode.int choices )
+    , ( "recaptcha_token", Encode.string model.reCAPTCHAToken )
     ]
 
 buildSubmissionChoices : Int -> String -> Dict.Dict String Int -> Dict.Dict String Int
@@ -283,8 +286,15 @@ view model =
                   , div [ class "fv-code w-8 text-right" ] [ text "=" ]
                   ]
               , div [ class "w-full flex justify-center"]
-                  [ div
-                      [ attribute "data-sitekey" "6LeskukUAAAAACVQNLgOef9dSxPau59T04w4r9CA"
+                  [ let
+                      sitekey =
+                        if model.env == "production" then
+                          "6Ld44ukUAAAAAGaOzaluZITl3zQE-6fbgZh2O2PC"
+                        else
+                          "6LeskukUAAAAACVQNLgOef9dSxPau59T04w4r9CA"
+                    in
+                    div
+                      [ attribute "data-sitekey" sitekey
                       , class "g-recaptcha"
                       , id "recaptcha"
                       ] []
