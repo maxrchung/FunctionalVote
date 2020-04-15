@@ -130,7 +130,7 @@ view model =
                 , onClick ( ViewElement "ranked-choice" )
                 ]
                 [ text "ranked-choice voting" ]
-            , text ". Create a new poll by entering a question and a few choices." ]
+            , text ". Create a new poll by entering a question, providing choices, and selecting security options." ]
 
         , div [ class "w-8" ] []
         ]
@@ -171,6 +171,29 @@ view model =
         in
         div [] ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
 
+      , div [ class "fv-code pb-2" ] [ text "]," ]
+
+      , div [ class "flex justify-between items-center" ]
+        [ div [ class "w-8" ] [ text "" ]
+        , h2 [ class "fv-header" ] [ text "Options" ]
+        , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+        ]
+
+      , div [ class "flex justify-between items-center" ]
+        [ div [ class "fv-code w-8" ] [ text "[(" ]
+        , div [ class "w-full flex items-center" ]
+            [ input
+                [ checked True
+                , class "fv-chk"
+                , type_ "checkbox"
+                ] []
+            , label [] []
+            , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
+            , div [ class "fv-text text-blue-100"] [ text "Use reCAPTCHA verification" ]
+            ]
+        , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
+        ]
+
       , div [ class "fv-code pb-2" ] [ text "]}" ]
 
       , div [ class "flex justify-between pb-1" ]
@@ -203,35 +226,35 @@ view model =
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
-          , div [ class "w-full text-center" ]
+          , div [ class "w-full" ]
               [ a [ href "/vote/bjDm9VD" ] [ text "Favorite color?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full text-center" ]
+          , div [ class "w-full" ]
               [ a [ href "/vote/TlR007Q" ] [ text "Favorite season of the year?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full text-center" ]
+          , div [ class "w-full" ]
               [ a [ href "/vote/oFDFtDwq" ] [ text "Pineapple on pizza?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full text-center" ]
+          , div [ class "w-full" ]
               [ a [ href "/vote/Q2tobIMV" ] [ text "How do you pronounce GIF?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full text-center" ]
+          , div [ class "w-full" ]
               [ a [ href "/vote/DVmeUPww" ] [ text "How do you like your eggs?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
