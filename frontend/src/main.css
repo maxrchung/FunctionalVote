@@ -91,7 +91,7 @@ a {
   left: -9999px;
 }
 .fv-chk + label {
-  @apply: relative cursor-pointer;
+  @apply relative cursor-pointer;
 }
 .fv-chk + label:before {
   content: '';
