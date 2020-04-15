@@ -84,6 +84,30 @@ a {
   @apply text-red-100;
 }
 
+/* Checkbox styling adapted from: https://css-tricks.com/the-checkbox-hack/
+/* Base for label styling */
+.fv-chk {
+  @apply absolute;
+  left: -9999px;
+}
+.fv-chk + label {
+  @apply: relative cursor-pointer;
+}
+.fv-chk + label:before {
+  content: '';
+  @apply block w-8 h-8 rounded shadow-md bg-gray-900 border-2 border-blue-500 text-blue-100;
+}
+.fv-chk + label:after {
+  content: '\2714';
+  @apply absolute inset-0 flex justify-center items-center w-8 h-8 text-blue-500;
+}
+.fv-chk:not(:checked) + label:after {
+  @apply opacity-0;
+}
+.fv-chk:focus + label:before {
+  @apply bg-blue-900 shadow-lg;
+}
+
 .fv-btn {
   @apply w-full py-2 bg-orange-500 rounded-full shadow-lg font-sans font-bold text-2xl text-orange-100 text-center;
   -webkit-tap-highlight-color: transparent;
@@ -175,6 +199,9 @@ a {
   .fv-input-error:hover {
     @apply bg-red-900;
   }
+  .fv-chk + label:hover:before {
+    @apply bg-blue-900 shadow-lg;
+  }
   .fv-btn:hover {
     @apply bg-orange-700 shadow-md;
   }
@@ -188,7 +215,6 @@ a {
     @apply bg-blue-500;
   }
 }
-
 
 @tailwind utilities;
 
