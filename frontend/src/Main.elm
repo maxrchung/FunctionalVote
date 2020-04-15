@@ -107,11 +107,11 @@ getVoteRequest apiAddress pollId =
 
 getVoteDecoder : Decode.Decoder VoteResponse
 getVoteDecoder =
-  Decode.map4 ( \a b c _ -> VoteResponse a b c True )
+  Decode.map4 VoteResponse
     ( Decode.at [ "data", "title" ] Decode.string )
     ( Decode.at [ "data", "choices" ] <| Decode.list Decode.string )
     ( Decode.at [ "data", "poll_id" ] Decode.string )
-    ( Decode.at [ "data", "poll_id" ] Decode.string )
+    ( Decode.at [ "data", "use_recaptcha" ] Decode.bool )
 
 
 getPollRequest : String -> String -> Cmd Msg
