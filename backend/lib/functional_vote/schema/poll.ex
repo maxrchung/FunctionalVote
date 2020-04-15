@@ -7,7 +7,7 @@ defmodule FunctionalVote.Polls.Poll do
     field :title, :string
     field :winner, :string
     field :poll_id, :string
-    field :use_recaptcha, :bool
+    field :use_recaptcha, :boolean
 
     timestamps()
   end
