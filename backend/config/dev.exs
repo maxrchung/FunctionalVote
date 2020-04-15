@@ -79,4 +79,5 @@ config :phoenix, :plug_init_mode, :runtime
 # dev uses hardcoded reCAPTCHA keys
 config :recaptcha,
   public_key: "6LeskukUAAAAACVQNLgOef9dSxPau59T04w4r9CA",
-  secret: "6LeskukUAAAAAC7-jy8JC2-ECUMNUfPQ5mwhD0y_"
+  secret: "6LeskukUAAAAAC7-jy8JC2-ECUMNUfPQ5mwhD0y_",
+  json_library: Jason
