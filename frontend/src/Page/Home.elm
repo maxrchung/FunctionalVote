@@ -88,7 +88,7 @@ update msg model =
 
     ViewElement id -> ( model, viewElement id )
 
-    ToggleReCAPTCHA -> ( { model | useReCAPTCHA = not model.useReCAPTCHA }, Cmd.none )
+    ToggleReCAPTCHA -> ( { model | useReCAPTCHA = not model.useReCAPTCHA, showError = False }, Cmd.none )
 
     NoOp -> ( model, Cmd.none )
 
@@ -156,7 +156,7 @@ view model =
         [ div [ class "fv-code w-8"] [ text "\"" ]
         , input
             [ class "fv-input"
-            , errorClass model.showError
+            , inputErrorClass model.showError
             , id "question"
             , placeholder "Enter a question"
             , value model.title
@@ -191,6 +191,7 @@ view model =
             [ input
                 [ checked model.useReCAPTCHA
                 , class "fv-chk"
+                , chkErrorClass model.showError
                 , type_ "checkbox"
                 ] []
             , label [ onClick ToggleReCAPTCHA ] []
@@ -232,36 +233,31 @@ view model =
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text "[\"" ]
-          , div [ class "w-full" ]
-              [ a [ href "/vote/bjDm9VD" ] [ text "Favorite color?" ] ]
+          , div [ class "w-full" ] [ a [ href "/vote/bjDm9VD" ] [ text "Favorite color?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full" ]
-              [ a [ href "/vote/TlR007Q" ] [ text "Favorite season of the year?" ] ]
+          , div [ class "w-full" ] [ a [ href "/vote/TlR007Q" ] [ text "Favorite season of the year?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full" ]
-              [ a [ href "/vote/oFDFtDwq" ] [ text "Pineapple on pizza?" ] ]
+          , div [ class "w-full" ] [ a [ href "/vote/oFDFtDwq" ] [ text "Pineapple on pizza?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full" ]
-              [ a [ href "/vote/Q2tobIMV" ] [ text "How do you pronounce GIF?" ] ]
+          , div [ class "w-full" ] [ a [ href "/vote/Q2tobIMV" ] [ text "How do you pronounce GIF?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
       , div [ class "flex justify-between items-center my-2" ]
           [ div [ class "fv-code w-8" ] [ text ",\"" ]
-          , div [ class "w-full" ]
-              [ a [ href "/vote/DVmeUPww" ] [ text "How do you like your eggs?" ] ]
+          , div [ class "w-full" ] [ a [ href "/vote/DVmeUPww" ] [ text "How do you like your eggs?" ] ]
           , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
           ]
 
@@ -350,7 +346,7 @@ renderChoice choicesLength showError index choice =
     , div [ class "flex justify-between items-center w-full" ]
         [ input
             [ class "fv-input"
-            , errorClass showError
+            , inputErrorClass showError
             , placeholder placeholderValue
             , value choice
             , onInput ( ChangeChoice index )
@@ -374,10 +370,17 @@ renderChoice choicesLength showError index choice =
     , div [ class "fv-code w-8 text-right"] [ text "\"" ]
     ]
 
-errorClass : Bool -> Attribute a
-errorClass showError =
+inputErrorClass : Bool -> Attribute a
+inputErrorClass showError =
   if showError then
     class "fv-input-error"
+  else
+    class ""
+
+chkErrorClass : Bool -> Attribute a
+chkErrorClass showError =
+  if showError then
+    class "fv-chk-error"
   else
     class ""
 

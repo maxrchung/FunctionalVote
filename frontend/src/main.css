@@ -107,6 +107,12 @@ a {
 .fv-chk:focus + label:before {
   @apply bg-blue-900 shadow-lg;
 }
+.fv-chk-error + label:before {
+  @apply border-red-700;
+}
+.fv-chk-error:focus {
+  @apply bg-red-900;
+}
 
 .fv-btn {
   @apply w-full py-2 bg-orange-500 rounded-full shadow-lg font-sans font-bold text-2xl text-orange-100 text-center;
@@ -200,7 +206,10 @@ a {
     @apply bg-red-900;
   }
   .fv-chk + label:hover:before {
-    @apply bg-blue-900 shadow-lg;
+    @apply bg-blue-900;
+  }
+  .fv-chk-error + label:hover:before {
+    @apply bg-red-900;
   }
   .fv-btn:hover {
     @apply bg-orange-700 shadow-md;
