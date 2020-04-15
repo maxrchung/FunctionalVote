@@ -78,7 +78,7 @@ defmodule FunctionalVote.VotesTest do
 
     # 20200415: The latest version of our reCAPTCHA package supports error
     # handling for "invalid_response" token. However, the latest reCAPTCHA
-    # package released on Hex does not contain these changes.
+    # package released on Hex does support these changes.
     # test "use_recaptcha true with invalid token returns :recaptcha_error" do
     #   poll = setup_recaptcha()
     #   attrs = %{"poll_id" => poll.poll_id, "choices" => %{"a" => 1}, "recaptcha_token" => "invalid_response" }
