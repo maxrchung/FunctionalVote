@@ -151,7 +151,7 @@ defmodule FunctionalVote.Votes do
   defp validate_recaptcha(use_recaptcha, recaptcha_token) do
     if use_recaptcha do
       case Recaptcha.verify(recaptcha_token) do
-        {:ok, response} -> :recaptcha_success
+        {:ok, _response} -> :ok
         {:error, _errors} ->
           IO.puts("[VoteCtx] Failed reCAPTCHA verification")
           :recaptcha_error

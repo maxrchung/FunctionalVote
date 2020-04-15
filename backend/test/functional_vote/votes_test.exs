@@ -6,12 +6,21 @@ defmodule FunctionalVote.VotesTest do
 
   setup do
     attrs = %{"choices" => ["a", "b", "c"], "title" => "test", "use_recaptcha" => false}
-    {:ok, poll} = Polls.create_poll(attrs)
+    setup_poll(attrs)
+  end
 
+  def setup_recaptcha do
+    attrs = %{"choices" => ["a", "b", "c"], "title" => "test", "use_recaptcha" => true}
+    setup_poll(attrs)
+  end
+
+  def setup_poll(attrs) do
+    {:ok, poll} = Polls.create_poll(attrs)
     %{poll_id: poll.poll_id,
       choices: poll.choices,
       title:   poll.title,
-      winner:  poll.winner}
+      winner:  poll.winner,
+      use_recaptcha: poll.use_recaptcha}
   end
 
   describe "votes" do
@@ -59,6 +68,31 @@ defmodule FunctionalVote.VotesTest do
       attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => 1, "b" => 1}}
       assert :duplicate_rank_error = Votes.create_vote(attrs)
       assert %{} = Votes.get_votes(context.poll_id)
+    end
+
+    test "use_recaptcha true with valid token returns :ok" do
+      poll = setup_recaptcha()
+      attrs = %{"poll_id" => poll.poll_id, "choices" => %{"a" => 1}, "recaptcha_token" => "valid_response" }
+      assert :ok = Votes.create_vote(attrs)
+    end
+
+    # 20200415: The latest version of our reCAPTCHA package supports error
+    # handling for "invalid_response" token. However, the latest reCAPTCHA
+    # package released on Hex does not contain these changes.
+    # test "use_recaptcha true with invalid token returns :recaptcha_error" do
+    #   poll = setup_recaptcha()
+    #   attrs = %{"poll_id" => poll.poll_id, "choices" => %{"a" => 1}, "recaptcha_token" => "invalid_response" }
+    #   assert :recaptcha_error = Votes.create_vote(attrs)
+    # end
+
+    test "use_recaptcha false with valid token returns :ok", context do
+      attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => 1}, "recaptcha_token" => "valid_response" }
+      assert :ok = Votes.create_vote(attrs)
+    end
+
+    test "use_recaptcha false with invalid token returns :ok", context do
+      attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => 1}, "recaptcha_token" => "invalid_response" }
+      assert :ok = Votes.create_vote(attrs)
     end
 
   end
