@@ -34,6 +34,7 @@ config :functional_vote, FunctionalVoteWeb.Endpoint,
 config :recaptcha,
     public_key: {:system, "RECAPTCHA_PUBLIC_KEY"},
     secret: {:system, "RECAPTCHA_PRIVATE_KEY"}
+    json_library: Jason
 
 # ## Using releases (Elixir v1.9+)
 #
