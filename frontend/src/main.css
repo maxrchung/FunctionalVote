@@ -121,6 +121,9 @@ a {
 .fv-chk-error:focus + label:before {
   @apply bg-red-900;
 }
+.fv-chk-error + label:after {
+  @apply text-red-700;
+}
 
 .fv-btn {
   @apply w-full py-2 bg-orange-500 rounded-full shadow-lg font-sans font-bold text-2xl text-orange-100 text-center;
