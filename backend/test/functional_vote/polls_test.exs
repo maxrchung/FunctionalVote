@@ -6,12 +6,12 @@ defmodule FunctionalVote.PollsTest do
   describe "polls" do
     alias FunctionalVote.Polls.Poll
 
-    @valid_attrs %{"choices" => ["a", "b", "c"], "title" => "test"}
-    @empty_title_attrs %{"choices" => ["a", "b", "c"], "title" => ""}
-    @no_title_attrs %{"choices" => ["a", "b", "c"]}
+    @valid_attrs %{"choices" => ["a", "b", "c"], "title" => "test", "use_recaptcha" => false}
+    @empty_title_attrs %{"choices" => ["a", "b", "c"], "title" => "", "use_recaptcha" => false}
+    @no_title_attrs %{"choices" => ["a", "b", "c"], "use_recaptcha" => false}
     @dup_choices_attrs %{"choices" => ["a", "b", "b"], "title" => "test"}
-    @empty_choices_attrs %{"choices" => [], "title" => "test"}
-    @no_choices_attrs %{"title" => "test"}
+    @empty_choices_attrs %{"choices" => [], "title" => "test", "use_recaptcha" => false}
+    @no_choices_attrs %{"title" => "test", "use_recaptcha" => false}
 
     def poll_fixture(attrs \\ %{}) do
       {:ok, poll} = Polls.create_poll(attrs)
@@ -32,7 +32,7 @@ defmodule FunctionalVote.PollsTest do
     test "create_poll/1 with no title returns no_title_error" do
       assert :no_title_error == Polls.create_poll(@no_title_attrs)
     end
-    
+
     test "create_poll/1 with duplicate choices returns duplicate_choices_error" do
       assert :duplicate_choices_error == Polls.create_poll(@dup_choices_attrs)
     end
