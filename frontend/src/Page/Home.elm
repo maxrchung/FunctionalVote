@@ -357,7 +357,8 @@ renderChoice choicesLength showError index choice =
               div [] []
             else
               button
-                [ class "fv-nav-btn ml-2 hover:bg-blue-900 focus:bg-blue-900"
+                [ class "fv-nav-btn fv-nav-btn-blue ml-2"
+                , navBtnErrorClass showError
                 , onClick <| RemoveChoice index
                 , type_ "button"
                 , tabindex -1
@@ -381,6 +382,13 @@ chkErrorClass : Bool -> Attribute a
 chkErrorClass showError =
   if showError then
     class "fv-chk-error"
+  else
+    class ""
+
+navBtnErrorClass : Bool -> Attribute a
+navBtnErrorClass showError =
+  if showError then
+    class "fv-nav-btn-error"
   else
     class ""
 
