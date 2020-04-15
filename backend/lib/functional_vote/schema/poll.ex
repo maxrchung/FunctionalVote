@@ -7,6 +7,7 @@ defmodule FunctionalVote.Polls.Poll do
     field :title, :string
     field :winner, :string
     field :poll_id, :string
+    field :use_recaptcha, :bool
 
     timestamps()
   end
@@ -14,7 +15,7 @@ defmodule FunctionalVote.Polls.Poll do
   @doc false
   def changeset(poll, attrs) do
     poll
-    |> cast(attrs, [:title, :choices, :poll_id])
-    |> validate_required([:title, :choices, :poll_id])
+    |> cast(attrs, [:title, :choices, :poll_id, :use_recaptcha])
+    |> validate_required([:title, :choices, :poll_id, :use_recaptcha])
   end
 end

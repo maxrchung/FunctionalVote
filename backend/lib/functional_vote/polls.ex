@@ -10,7 +10,7 @@ defmodule FunctionalVote.Polls do
   alias FunctionalVote.Polls.Results
 
   alias FunctionalVote.Votes
-  
+
   @doc """
   Save the winner to the database
   @param poll_id - poll_id
@@ -22,7 +22,7 @@ defmodule FunctionalVote.Polls do
     case Repo.update cs do
       {:ok, _cs} ->
         IO.puts("[PollCtx] Writing winner to DB")
-      {:error, changeset} -> 
+      {:error, changeset} ->
         IO.puts("[PollCtx] Unable to write winner to DB:")
         IO.inspect(changeset)
     end
@@ -51,7 +51,7 @@ defmodule FunctionalVote.Polls do
     Enum.each tallies_by_choice, fn {k, v} ->
       choice_map = %{poll_id: poll_id,
                     round: round,
-                    choice: k, 
+                    choice: k,
                     votes: v}
       %Results{}
         |> Results.changeset(choice_map)
@@ -137,7 +137,7 @@ defmodule FunctionalVote.Polls do
         # Remove all votes cast for this choice
         votes = for {k, v} <- votes,
                 into: %{},
-                do: {k, 
+                do: {k,
                     Enum.filter(v, fn choice -> choice !== loser end)
                 }
         {tallies_by_choice, winner} = instant_runoff_recurse(votes, poll_id, round, eliminated)
@@ -163,7 +163,7 @@ defmodule FunctionalVote.Polls do
     unless (write_winner) do
       # Just read the winner and return raw_tallies and winner
       winner = read_winner(poll_id)
-      if winner == nil do 
+      if winner == nil do
         winner = get_poll_choices(poll_id) |> Enum.random()
         IO.puts("[PollCtx] New poll, randomized winner to be #{winner}")
         write_winner(poll_id, winner)
