@@ -48,7 +48,7 @@ defmodule FunctionalVote.Votes do
   @return {:non_integer_rank_error} Vote with non-integer rank provided
   @return {:available_choices_error} Choice does not exist in poll
   @return {:duplicate_rank_error} Vote with duplicate ranks
-  
+
   """
   def create_vote(attrs \\ %{}) do
     poll_id = attrs["poll_id"]
@@ -63,6 +63,12 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Determined user_id: #{user_id}")
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
+
+      # Get reCAPTCHA information
+      poll = Polls.get_poll_data!(poll_id)
+      use_recaptcha = poll.use_recaptcha
+      recaptcha_token = attrs["recaptcha_token"]
+
       cond do
         validate_non_empty_choices(choices) == :empty_choices_error ->
           # Received empty choices list
@@ -76,6 +82,9 @@ defmodule FunctionalVote.Votes do
         validate_choices(choices, available_choices) == :available_choices_error ->
           # Received a choice that does not exist in this poll
           :available_choices_error # RETURN ENDPOINT
+        validate_recaptcha(use_recaptcha, recaptcha_token) == :recaptcha_error ->
+          # reCAPTCHA verification returned an error, e.g. missing, expired, or wrong reCAPTCHA token
+          :recaptcha_error # RETURN ENDPOINT
         true ->
           # No error
           IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
@@ -108,7 +117,7 @@ defmodule FunctionalVote.Votes do
 
   defp validate_integer_ranks(choices) do
     try do
-      Enum.map(choices, fn {k, v} -> 
+      Enum.map(choices, fn {k, v} ->
         # Maintain backwards compatibility if others want to submit ranks as ints represented as strings
         v = if is_integer(v), do: v, else: String.to_integer(v)
         {k, v}
@@ -136,6 +145,15 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Available choices:")
       IO.inspect(available_choices)
       :available_choices_error
+    end
+  end
+
+  defp validate_recaptcha(use_recaptcha, recaptcha_token) do
+    if use_recaptcha do
+      case Recaptcha.verify(recaptcha_token) do
+        # {:ok, response} -> do_something
+        {:error, _errors} -> :recaptcha_error
+      end
     end
   end
 
