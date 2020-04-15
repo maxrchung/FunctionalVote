@@ -49,6 +49,9 @@ a {
 .fv-nav-btn-blue:focus {
   @apply bg-blue-900;
 }
+.fv-nav-btn-error {
+  @apply text-red-700 border-red-700;
+}
 
 .fv-code {
   @apply font-mono text-sm text-orange-500 opacity-10;
@@ -115,7 +118,7 @@ a {
 .fv-chk-error + label:before {
   @apply border-red-700;
 }
-.fv-chk-error:focus {
+.fv-chk-error:focus + label:before {
   @apply bg-red-900;
 }
 
@@ -202,7 +205,10 @@ a {
     @apply text-orange-500 bg-orange-900;
   }
   .fv-nav-btn-blue:hover {
-    @apply bg-blue-900;
+    @apply text-red-700 bg-blue-900;
+  }
+  .fv-nav-btn-error:hover {
+    @apply bg-red-900;
   }
   .fv-input:hover {
     @apply bg-blue-900;
