@@ -32,8 +32,8 @@ config :functional_vote, FunctionalVoteWeb.Endpoint,
 
 # prod uses reCAPTCHA environment variables
 config :recaptcha,
-    public_key: {:system, "RECAPTCHA_PUBLIC_KEY"},
-    secret: {:system, "RECAPTCHA_PRIVATE_KEY"},
+    public_key: System.get_env("RECAPTCHA_PUBLIC_KEY") || raise "environment variable RECAPTCHA_PUBLIC_KEY is missing",
+    secret: System.get_env("RECAPTCHA_PRIVATE_KEY") || raise "environment variable RECAPTCHA_PRIVATE_KEY is missing",
     json_library: Jason
 
 # ## Using releases (Elixir v1.9+)
