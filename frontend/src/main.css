@@ -106,7 +106,7 @@ a {
   @apply block w-8 h-8 rounded shadow-md bg-gray-900 border-2 border-blue-500 text-blue-100;
 }
 .fv-chk + label:after {
-  content: '\2714';
+  content: '\2713';
   @apply absolute inset-0 flex justify-center items-center w-8 h-8 text-blue-500;
 }
 .fv-chk:not(:checked) + label:after {
