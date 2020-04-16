@@ -62,7 +62,7 @@ a {
 }
 
 .fv-text {
-  @apply font-sans text-orange-500 leading-relaxed;
+  @apply font-sans text-orange-500;
 }
 .fv-text-error {
   @apply text-red-500;
