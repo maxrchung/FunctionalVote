@@ -58,10 +58,7 @@ init key apiAddress title choices pollId useReCAPTCHA env loadingState =
     , reCAPTCHAToken = ""
     , env = env
     }
-  , Cmd.batch
-      [ Task.attempt ( \_ -> NoOp ) ( Dom.setViewport 0 0 )
-      , cmd
-      ]
+  , cmd
   )
 
 

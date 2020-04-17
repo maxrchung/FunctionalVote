@@ -32,15 +32,14 @@ init key apiAddress fragment =
   let model = Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress False
   in
   case fragment of
-    Just id ->
-      ( model, viewElement id )
     Nothing ->
       ( model
-      , Task.attempt ( \_ -> NoOp )
-          ( Dom.setViewport 0 0
-            |> Task.andThen ( \_ -> Dom.focus "question" )
-          )
+      , Task.attempt ( \_ -> NoOp ) ( Dom.focus "question" )
       )
+
+    -- If there is no fragment, then don't focus question, otherwise the viewport will be reset
+    _ -> ( model, Cmd.none )
+
 
 
 
@@ -51,7 +50,6 @@ type Msg
   | MakePollRequest
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
-  | ViewElement String
   | ToggleReCAPTCHA
   | NoOp
 
@@ -91,20 +89,9 @@ update msg model =
       let newChoices = Array.Extra.removeAt index model.choices
       in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
-    ViewElement id -> ( model, viewElement id )
-
     ToggleReCAPTCHA -> ( { model | useReCAPTCHA = not model.useReCAPTCHA, showError = False }, Cmd.none )
 
     NoOp -> ( model, Cmd.none )
-
--- https://discourse.elm-lang.org/t/is-it-possible-to-restore-the-browser-default-behavior-on-fragment-links-without-ports/3614/6
-viewElement : String -> Cmd Msg
-viewElement id =
-  Task.attempt ( \_ -> NoOp )
-    ( Dom.getElement id
-        -- Offset the height to account for navbar padding and content padding
-        |> Task.andThen ( \info -> Dom.setViewport 0 ( info.element.y - 16 * 4 - 16 ) )
-    )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -137,11 +124,7 @@ view model =
         [ div [ class "fv-code w-8" ] [ text "--" ]
         , p [ class "fv-text w-full" ]
             [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use "
-            , a
-                [ href "#ranked-choice"
-                , onClick ( ViewElement "ranked-choice" )
-                ]
-                [ text "ranked-choice voting" ]
+            , a [ href "#ranked-choice" ] [ text "ranked-choice voting" ]
             , text ". Create a new poll by entering a question, providing choices, and selecting security options." ]
 
         , div [ class "w-8" ] []
@@ -168,7 +151,7 @@ view model =
             , value model.title
             , onInput ChangeTitle
             ] []
-        , div [class "fv-code w-8 text-right" ] [ text "\"" ]
+        , div [ class "fv-code w-8 text-right" ] [ text "\"" ]
         ]
 
     , div [ class "fv-code" ] [ text "," ]
@@ -180,32 +163,31 @@ view model =
         ]
 
       , let choicesLength = Array.length model.choices
-        in
-        div [] ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
+        in div [] ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
 
       , div [ class "fv-code" ] [ text "]," ]
 
       , div [ class "flex justify-between items-center" ]
-        [ div [ class "w-8" ] [ text "" ]
-        , h2 [ class "fv-header" ] [ text "Options" ]
-        , div [ class "fv-code w-8 text-right" ] [ text "=" ]
-        ]
+          [ div [ class "w-8" ] [ text "" ]
+          , h2 [ class "fv-header" ] [ text "Options" ]
+          , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+          ]
 
       , div [ class "flex justify-between items-center" ]
-        [ div [ class "fv-code w-8" ] [ text "[(" ]
-        , div [ class "w-full flex items-center" ]
-            [ input
-                [ checked model.useReCAPTCHA
-                , class "fv-chk"
-                , chkErrorClass model.showError
-                , type_ "checkbox"
-                ] []
-            , label [ onClick ToggleReCAPTCHA ] []
-            , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
-            , div [ class "fv-text text-blue-100"] [ text "Use reCAPTCHA verification" ]
-            ]
-        , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
-        ]
+          [ div [ class "fv-code w-8" ] [ text "[(" ]
+          , div [ class "w-full flex items-center" ]
+              [ input
+                  [ checked model.useReCAPTCHA
+                  , class "fv-chk"
+                  , chkErrorClass model.showError
+                  , type_ "checkbox"
+                  ] []
+              , label [ onClick ToggleReCAPTCHA ] []
+              , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
+              , div [ class "fv-text text-blue-100"] [ text "Use reCAPTCHA verification" ]
+              ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
+          ]
 
       , div [ class "fv-code pb-2" ] [ text "]}" ]
 
