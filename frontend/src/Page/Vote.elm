@@ -229,7 +229,7 @@ view model =
       div []
         [ div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of choices. Not all choices need to have a rank, and smaller rank numbers have higher preference." ]
+            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of choices. Not all choices need to have a rank. Smaller rank numbers have higher preference." ]
             , div [ class "w-8" ] []
             ]
 
