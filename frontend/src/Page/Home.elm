@@ -177,7 +177,7 @@ view model =
         in
         div [] ( Array.toList <| Array.indexedMap ( renderChoice choicesLength model.showError ) model.choices )
 
-      , div [ class "fv-code pb-2" ] [ text "]," ]
+      , div [ class "fv-code" ] [ text "]," ]
 
       , div [ class "flex justify-between items-center" ]
         [ div [ class "w-8" ] [ text "" ]
