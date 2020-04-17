@@ -97,7 +97,8 @@ viewElement : String -> Cmd Msg
 viewElement id =
   Task.attempt ( \_ -> NoOp )
     ( Dom.getElement id
-        |> Task.andThen ( \info -> Dom.setViewport 0 info.element.y )
+        -- Offset the height to account for navbar padding and content padding
+        |> Task.andThen ( \info -> Dom.setViewport 0 ( info.element.y - 16 * 4 - 16) )
     )
 
 makePollRequest : Model -> Cmd Msg
@@ -222,7 +223,7 @@ view model =
 
       , div [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8" ] [ text "--" ]
-          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how the voting process works. Click a question and rank your favorite preferences." ]
+          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how the voting process works. Click a question and vote for your favorite preferences." ]
           , div [ class "w-8" ] []
           ]
 
