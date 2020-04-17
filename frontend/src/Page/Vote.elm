@@ -42,7 +42,7 @@ type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> LoadingState -> ( Model, Cmd msg )
+init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> LoadingState -> ( Model, Cmd Msg )
 init key apiAddress title choices pollId useReCAPTCHA env loadingState =
   let cmd = if useReCAPTCHA then renderReCAPTCHA () else Cmd.none
   in
@@ -58,7 +58,10 @@ init key apiAddress title choices pollId useReCAPTCHA env loadingState =
     , reCAPTCHAToken = ""
     , env = env
     }
-  , cmd
+  , Cmd.batch
+      [ Task.attempt ( \_ -> NoOp ) ( Dom.setViewport 0 0 )
+      , cmd
+      ]
   )
 
 

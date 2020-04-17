@@ -191,11 +191,11 @@ update msg model =
       case result of
         Ok response ->
           let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA model.env Vote.Loaded
-          in ( { model | page = VotePage voteModel }, cmd )
+          in ( { model | page = VotePage voteModel }, Cmd.map VoteMsg cmd )
 
         Err _ ->
           let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False model.env Vote.Error
-          in ( { model | page = VotePage voteModel }, cmd )
+          in ( { model | page = VotePage voteModel }, Cmd.map VoteMsg cmd )
 
     GetPollResponse result ->
       case result of
