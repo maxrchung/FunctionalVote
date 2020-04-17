@@ -84,8 +84,8 @@ initPage page url key apiAddress =
     Just route ->
       case route of
         HomeRoute fragment ->
-            let ( model, cmd ) = Home.init key apiAddress fragment
-            in ( HomePage model , Cmd.batch [ updateViewport fragment, Cmd.map HomeMsg cmd ] )
+            let model = Home.init key apiAddress
+            in ( HomePage model , updateViewport fragment )
 
         VoteRoute pollId -> ( page, getVoteRequest apiAddress pollId )
 

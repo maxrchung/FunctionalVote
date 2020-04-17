@@ -2,7 +2,6 @@ module Page.Home exposing ( .. )
 
 import Array
 import Array.Extra
-import Browser.Dom as Dom
 import Browser.Navigation as Navigation
 import FeatherIcons
 import Html exposing ( .. )
@@ -12,7 +11,6 @@ import Http
 import Http.Detailed
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Task
 
 
 
@@ -27,19 +25,9 @@ type alias Model =
   , useReCAPTCHA: Bool
   }
 
-init : Navigation.Key -> String -> Maybe String -> ( Model, Cmd Msg )
-init key apiAddress fragment =
-  let model = Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress False
-  in
-  case fragment of
-    Nothing ->
-      ( model
-      , Task.attempt ( \_ -> NoOp ) ( Dom.focus "question" )
-      )
-
-    -- If there is no fragment, then don't focus question, otherwise the viewport will be reset
-    _ -> ( model, Cmd.none )
-
+init : Navigation.Key -> String -> Model
+init key apiAddress =
+  Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress False
 
 
 
@@ -51,7 +39,6 @@ type Msg
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
   | ToggleReCAPTCHA
-  | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -90,8 +77,6 @@ update msg model =
       in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
     ToggleReCAPTCHA -> ( { model | useReCAPTCHA = not model.useReCAPTCHA, showError = False }, Cmd.none )
-
-    NoOp -> ( model, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
