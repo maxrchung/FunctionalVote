@@ -126,7 +126,6 @@ view model =
             [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use "
             , a [ href "#ranked-choice" ] [ text "ranked-choice voting" ]
             , text ". Create a new poll by entering a question, providing choices, and selecting security options." ]
-
         , div [ class "w-8" ] []
         ]
 
@@ -290,6 +289,7 @@ view model =
                     , attribute "allowfullscreen" "true"
                     ] []
                   ]
+
               , div [ class "fv-break" ] [ text "--" ]
 
               , h2 [ class "fv-header mb-1" ] [ text "Why Functional Vote?" ]
