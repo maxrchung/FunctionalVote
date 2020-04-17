@@ -69,7 +69,7 @@ a {
 }
 
 .fv-input {
-  @apply bg-gray-900 w-full p-2 rounded shadow-md border-2 border-blue-500 outline-none font-sans text-blue-100;
+  @apply appearance-none bg-gray-900 w-full p-2 rounded shadow-md border-2 border-blue-500 outline-none font-sans text-blue-100;
 }
 .fv-input:focus {
   @apply bg-blue-900 shadow-lg;
@@ -92,6 +92,12 @@ a {
   text-shadow: 0 0 0 #EBF8FF;
 }
 
+.fv-input-select {
+  @apply pr-8 bg-no-repeat;
+  background-position: center right 5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgb(235,248,255)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%0A%3E%3Cpolyline points='6 9 12 15 18 9' /%3E%3C/svg%3E%0A");
+}
+
 /* Checkbox styling adapted from: https://css-tricks.com/the-checkbox-hack/
 /* Base for label styling */
 .fv-chk {
@@ -109,7 +115,8 @@ a {
   @apply absolute inset-0 flex justify-center items-center w-8 h-8 bg-no-repeat bg-center;
   content: '';
   /* https://yoksel.github.io/url-encoder/ */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22' fill='none' stroke='rgb(66,153,225)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%0A%3E%3Cpolyline points='20 6 9 17 4 12' /%3E%3C/svg%3E%0A");
+  /* Hex value is not supported for stroke attribute */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='rgb(66,153,225)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%0A%3E%3Cpolyline points='20 6 9 17 4 12' /%3E%3C/svg%3E%0A");
 }
 .fv-chk:not(:checked) + label:after {
   @apply opacity-0;
