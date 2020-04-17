@@ -35,7 +35,12 @@ init key apiAddress fragment =
     Just id ->
       ( model, viewElement id )
     Nothing ->
-      ( model, Task.attempt ( \_ -> NoOp ) ( Dom.focus "question" ) )
+      ( model
+      , Task.attempt ( \_ -> NoOp )
+          ( Dom.setViewport 0 0
+            |> Task.andThen ( \_ -> Dom.focus "question" )
+          )
+      )
 
 
 
@@ -98,7 +103,7 @@ viewElement id =
   Task.attempt ( \_ -> NoOp )
     ( Dom.getElement id
         -- Offset the height to account for navbar padding and content padding
-        |> Task.andThen ( \info -> Dom.setViewport 0 ( info.element.y - 16 * 4 - 16) )
+        |> Task.andThen ( \info -> Dom.setViewport 0 ( info.element.y - 16 * 4 - 16 ) )
     )
 
 makePollRequest : Model -> Cmd Msg
