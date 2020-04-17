@@ -1,6 +1,7 @@
 module Page.Poll exposing ( .. )
 
 import Axis
+import Browser.Dom as Dom
 import Browser.Events
 import Browser.Navigation as Navigation
 import FeatherIcons
@@ -12,6 +13,7 @@ import List.Extra
 import Page.Error
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
 import Shared
+import Task
 import Transition
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
@@ -43,7 +45,7 @@ type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> LoadingState -> Model
+init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> LoadingState -> ( Model, Cmd Msg )
 init key apiAddress title winner tallies pollId loadingState  =
   let
     removedEmpty = removeEmpty tallies
@@ -60,15 +62,17 @@ init key apiAddress title winner tallies pollId loadingState  =
     newStep = List.length newPoll.tallies - 1
     newTransition = updateTransition ( Transition.constant [] ) newStep newPoll.tallies
   in
-  { key = key
-  , pollId = pollId
-  , poll = newPoll
-  , apiAddress = apiAddress
-  , step = newStep
-  , xScaleMax = newXScaleMax
-  , loadingState = loadingState
-  , transition =  newTransition
-  }
+  ( { key = key
+    , pollId = pollId
+    , poll = newPoll
+    , apiAddress = apiAddress
+    , step = newStep
+    , xScaleMax = newXScaleMax
+    , loadingState = loadingState
+    , transition =  newTransition
+    }
+  , Task.attempt ( \_ -> NoOp ) ( Dom.setViewport 0 0 )
+  )
 
 
 
@@ -88,6 +92,7 @@ type Msg
   | IncrementStep
   | ChangeStep String
   | Tick Int
+  | NoOp
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -134,6 +139,8 @@ update msg model =
     Tick tick ->
       let newTransition = Transition.step tick model.transition
       in ( { model | transition = newTransition } , Cmd.none )
+
+    NoOp -> ( model, Cmd.none )
 
 updateTransition : Transition.Transition ( List ( String, Float ) ) -> Int -> List ( List ( String, Float ) ) -> Transition.Transition ( List ( String, Float ) )
 updateTransition oldTransition newStep tallies =
