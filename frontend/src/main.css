@@ -106,8 +106,12 @@ a {
   @apply block w-8 h-8 rounded shadow-md bg-gray-900 border-2 border-blue-500 text-blue-100;
 }
 .fv-chk + label:after {
-  background: url('https://api.iconify.design/feather:check.svg') no-repeat center center / contain;
-  @apply absolute inset-0 flex justify-center items-center w-8 h-8 text-blue-500;
+  @apply absolute inset-0 flex justify-center items-center w-8 h-8 text-blue-500 stroke-current bg-center bg-no-repeat;
+  content: '';
+  background-image: url('https://api.iconify.design/feather:check.svg');
+  background-size: 22px;
+  /* https://codepen.io/sosuke/pen/Pjoqqp */
+  filter: invert(48%) sepia(66%) saturate(458%) hue-rotate(166deg) brightness(98%) contrast(100%);
 }
 .fv-chk:not(:checked) + label:after {
   @apply opacity-0;
