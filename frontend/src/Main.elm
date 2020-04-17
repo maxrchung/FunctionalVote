@@ -104,6 +104,7 @@ updateViewport fragment =
             |> Task.andThen ( \info -> Dom.setViewport 0 ( info.element.y - 16 * 4 - 16 ) )
         )
 
+    -- Set viewport to top of page if no fragment id is provided
     Nothing -> Task.attempt ( \_ -> NoOp ) ( Dom.setViewport 0 0 )
 
 
