@@ -200,12 +200,12 @@ update msg model =
     GetPollResponse result ->
       case result of
         Ok response ->
-          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
-          in ( { model | page = PollPage pollModel }, Cmd.none )
+          let ( pollModel, cmd ) = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
+          in ( { model | page = PollPage pollModel }, Cmd.map PollMsg cmd )
 
         Err _ ->
-          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
-          in ( { model | page = PollPage pollModel }, Cmd.none )
+          let ( pollModel, cmd ) = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
+          in ( { model | page = PollPage pollModel }, Cmd.map PollMsg cmd )
 
 
 
