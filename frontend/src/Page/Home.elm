@@ -222,7 +222,7 @@ view model =
 
       , div [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8" ] [ text "--" ]
-          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how the voting process works. Click a question and your favorite preferences." ]
+          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how the voting process works. Click a question and rank your favorite preferences." ]
           , div [ class "w-8" ] []
           ]
 
@@ -268,7 +268,10 @@ view model =
       , div [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8" ] [ text "{-" ]
 
-          , h2 [ class "fv-header mb-1" ] [ text "Why Functional Vote?" ]
+          , h2
+              [ class "fv-header mb-1"
+              , id "ranked-choice"
+              ] [ text "Why Ranked-Choice?" ]
 
           , div [ class "w-8" ] []
           ]
@@ -277,25 +280,7 @@ view model =
           [ div [ class "w-8" ] []
 
           , div [ class "w-full" ]
-              [ p [ class "fv-text" ]
-                [ text "Functional Vote was started by us ("
-                , a [ href "https://github.com/maxrchung"
-                    , target "_blank" ] [ text "Max" ]
-                , text " and "
-                , a [ href "https://github.com/Xenocidel"
-                    , target "_blank" ] [ text "Aaron" ]
-                , text ") when we couldn't easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."
-                ]
-
-              , div [ class "fv-break" ] [ text "--" ]
-
-              , h2
-                  [ class "fv-header mb-1"
-                  , id "ranked-choice"
-                  ]
-                  [ text "Why Ranked-Choice?" ]
-
-              , p [ class "fv-text mb-6" ] [ text "In a traditional single vote system, voters may only select one out of many options. Ranked-choice voting, instead, allows voters to rank multiple options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
+              [ p [ class "fv-text mb-6" ] [ text "In a traditional single vote system, voters may only select one out of many options. Ranked-choice voting, instead, allows voters to rank multiple options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
 
               , p [ class "fv-text mb-6" ] [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
 
@@ -316,6 +301,19 @@ view model =
                     , attribute "allow" "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                     , attribute "allowfullscreen" "true"
                     ] []
+                  ]
+              , div [ class "fv-break" ] [ text "--" ]
+
+              , h2 [ class "fv-header mb-1" ] [ text "Why Functional Vote?" ]
+
+              , p [ class "fv-text" ]
+                  [ text "Functional Vote was started by us ("
+                  , a [ href "https://github.com/maxrchung"
+                      , target "_blank" ] [ text "Max" ]
+                  , text " and "
+                  , a [ href "https://github.com/Xenocidel"
+                      , target "_blank" ] [ text "Aaron" ]
+                  , text ") when we couldn't easily find an online resource to make ranked-choice polls. We like working on software projects in our free time, so naturally, we tried to solve our own problem. We added a little educational twist, using only functional programming languages, and with Elm and Elixir in tow, we began Functional Vote."
                   ]
               ]
           , div [ class "w-8" ] []
