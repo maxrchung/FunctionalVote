@@ -376,7 +376,7 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
         , borderClass index maxIndex
         ]
         [ select
-            [ class "fv-input w-auto"
+            [ class "fv-input fv-input-select w-auto"
             , errorClass model.showError
             , id selectIndex
             , value rank
