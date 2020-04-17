@@ -114,7 +114,6 @@ getVoteDecoder =
     ( Decode.at [ "data", "poll_id" ] Decode.string )
     ( Decode.at [ "data", "use_recaptcha" ] Decode.bool )
 
-
 getPollRequest : String -> String -> Cmd Msg
 getPollRequest apiAddress pollId =
   Http.get
@@ -252,36 +251,36 @@ renderBody model =
       -- Navbar needs to have a high z-value otherwise input placeholders and checkboxes appear over it
       [ div [ class "fixed w-full top-0 z-50 bg-blue-900 shadow-lg" ]
           [ div [ class "flex justify-between items-center max-w-screen-sm h-16 mx-auto px-4" ]
-            [ a
-                [ class "fv-nav-btn"
-                , href "/"
-                ]
-                [ text "fv"
-                , div [ class "font-mono text-sm text-orange-500 opacity-25" ] [ text "=" ]
-                ]
-
-            , div [ class "flex items-center justify-center" ]
-              [ div [ class "fv-code w-5 opacity-25" ] [ text "[" ]
-
-              , a
+              [ a
                   [ class "fv-nav-btn"
-                  , href "https://github.com/maxrchung/FunctionalVote"
-                  , target "_blank"
+                  , href "/"
                   ]
-                  [ Shared.renderIcon FeatherIcons.github ]
-
-              , div [ class "fv-code w-6 text-center opacity-25" ] [ text "," ]
-
-              , a
-                  [ class "fv-nav-btn"
-                  , href "https://twitter.com/FunctionalVote"
-                  , target "_blank"
+                  [ text "fv"
+                  , div [ class "font-mono text-sm text-orange-500 opacity-25" ] [ text "=" ]
                   ]
-                  [ Shared.renderIcon FeatherIcons.twitter ]
 
-              , div [ class "fv-code w-5 text-right opacity-25" ] [ text "]" ]
+              , div [ class "flex items-center justify-center" ]
+                  [ div [ class "fv-code w-5 opacity-25" ] [ text "[" ]
+
+                  , a
+                      [ class "fv-nav-btn"
+                      , href "https://github.com/maxrchung/FunctionalVote"
+                      , target "_blank"
+                      ]
+                      [ Shared.renderIcon FeatherIcons.github ]
+
+                  , div [ class "fv-code w-6 text-center opacity-25" ] [ text "," ]
+
+                  , a
+                      [ class "fv-nav-btn"
+                      , href "https://twitter.com/FunctionalVote"
+                      , target "_blank"
+                      ]
+                      [ Shared.renderIcon FeatherIcons.twitter ]
+
+                  , div [ class "fv-code w-5 text-right opacity-25" ] [ text "]" ]
+                  ]
               ]
-            ]
           ]
         , div [ class "container max-w-screen-sm mx-auto p-4" ] [ content ]
       ]
