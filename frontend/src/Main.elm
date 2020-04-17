@@ -1,6 +1,7 @@
 module Main exposing ( .. )
 
 import Browser
+import Browser.Dom as Dom
 import Browser.Navigation as Navigation
 import FeatherIcons
 import Html exposing ( .. )
@@ -13,6 +14,7 @@ import Page.Vote as Vote
 import Page.Poll as Poll
 import Page.Error as Error
 import Shared
+import Task
 import Url
 import Url.Parser as Parser exposing ( (</>) )
 
@@ -83,13 +85,27 @@ initPage page url key apiAddress =
       case route of
         HomeRoute fragment ->
             let ( model, cmd ) = Home.init key apiAddress fragment
-            in ( HomePage model , Cmd.map HomeMsg cmd )
+            in ( HomePage model , Cmd.batch [ updateViewport fragment, Cmd.map HomeMsg cmd ] )
 
         VoteRoute pollId -> ( page, getVoteRequest apiAddress pollId )
 
         PollRoute pollId -> ( page, getPollRequest apiAddress pollId )
 
-    Nothing -> ( ErrorPage, Cmd.none )
+    Nothing -> ( ErrorPage, updateViewport Nothing )
+
+updateViewport : Maybe String -> Cmd Msg
+updateViewport fragment =
+  case fragment of
+    Just id ->
+      -- https://discourse.elm-lang.org/t/is-it-possible-to-restore-the-browser-default-behavior-on-fragment-links-without-ports/3614/6
+      Task.attempt ( \_ -> NoOp )
+        ( Dom.getElement id
+            -- Offset the height to account for navbar padding and content padding
+            |> Task.andThen ( \info -> Dom.setViewport 0 ( info.element.y - 16 * 4 - 16 ) )
+        )
+
+    Nothing -> Task.attempt ( \_ -> NoOp ) ( Dom.setViewport 0 0 )
+
 
 routeParser : Parser.Parser ( Route -> a ) a
 routeParser =
@@ -150,6 +166,7 @@ type Msg
   | PollMsg Poll.Msg
   | GetVoteResponse ( Result Http.Error VoteResponse )
   | GetPollResponse ( Result Http.Error PollResponse )
+  | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -191,21 +208,23 @@ update msg model =
       case result of
         Ok response ->
           let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA model.env Vote.Loaded
-          in ( { model | page = VotePage voteModel }, Cmd.map VoteMsg cmd )
+          in ( { model | page = VotePage voteModel }, Cmd.batch [ updateViewport Nothing, Cmd.map VoteMsg cmd ] )
 
         Err _ ->
           let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False model.env Vote.Error
-          in ( { model | page = VotePage voteModel }, Cmd.map VoteMsg cmd )
+          in ( { model | page = VotePage voteModel }, Cmd.batch [ updateViewport Nothing, Cmd.map VoteMsg cmd ] )
 
     GetPollResponse result ->
       case result of
         Ok response ->
-          let ( pollModel, cmd ) = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
-          in ( { model | page = PollPage pollModel }, Cmd.map PollMsg cmd )
+          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
+          in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
         Err _ ->
-          let ( pollModel, cmd ) = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
-          in ( { model | page = PollPage pollModel }, Cmd.map PollMsg cmd )
+          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
+          in ( { model | page = PollPage pollModel }, updateViewport Nothing )
+
+    NoOp -> ( model, Cmd.none )
 
 
 
