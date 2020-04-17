@@ -217,10 +217,10 @@ a {
     @apply text-orange-500 bg-orange-900;
   }
   .fv-nav-btn-blue:hover {
-    @apply text-red-700 bg-blue-900;
+    @apply text-blue-500 bg-blue-900;
   }
   .fv-nav-btn-error:hover {
-    @apply bg-red-900;
+    @apply text-red-700 bg-red-900;
   }
   .fv-input:hover {
     @apply bg-blue-900;
