@@ -276,11 +276,10 @@ view model =
         , div []
             ( List.indexedMap ( renderUnordered maxRank maxUnordered hasOrderedChoices model ) <| model.poll.unorderedChoices )
 
-        , div [ class "fv-code pb-2" ] [ text "]," ]
-
         , if model.poll.useReCAPTCHA then
             div []
-              [ div [ class "flex justify-between items-center" ]
+              [ div [ class "fv-code" ] [ text "," ]
+              , div [ class "flex justify-between items-center" ]
                   [ div [ class "w-8" ] []
                   , h2 [ class "fv-header" ] [ text "reCAPTCHA" ]
                   , div [ class "fv-code w-8 text-right" ] [ text "=" ]
@@ -299,12 +298,11 @@ view model =
                       , id "recaptcha"
                       ] []
                   ]
+              , div [ class "fv-code pb-2" ] [ text "}" ]
               ]
 
           else
-            div [] []
-
-        , div [ class "fv-code pb-2" ] [ text "}" ]
+            div [ class "fv-code pb-2" ] [ text "]}" ]
 
         , div [ class "flex justify-between pb-1" ]
             [ div [ class "w-8" ] []
