@@ -112,8 +112,7 @@ update msg model =
       , Task.attempt ( \_ -> NoOp ) ( Dom.focus focus )
       )
 
-    SubmitVoteRequest ->
-        ( model, submitVoteRequest model)
+    SubmitVoteRequest -> ( model, submitVoteRequest model)
 
     SubmitVoteResponse result ->
       case result of
@@ -131,14 +130,11 @@ update msg model =
           in
           ( { model | showError = True, error = newError }, Cmd.none )
 
-    Animate animate ->
-      ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
+    Animate animate -> ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
 
-    ReCAPTCHAToken reCAPTCHAToken ->
-      ( { model | reCAPTCHAToken = reCAPTCHAToken }, Cmd.none )
+    ReCAPTCHAToken reCAPTCHAToken -> ( { model | reCAPTCHAToken = reCAPTCHAToken }, Cmd.none )
 
-    NoOp ->
-      ( model, Cmd.none )
+    NoOp -> ( model, Cmd.none )
 
 calculateMaxRank : Dict.Dict Int String -> List String -> Int
 calculateMaxRank ordered unordered =

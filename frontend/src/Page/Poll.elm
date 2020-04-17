@@ -88,7 +88,6 @@ type Msg
   | IncrementStep
   | ChangeStep String
   | Tick Int
-  | NoOp
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -135,8 +134,6 @@ update msg model =
     Tick tick ->
       let newTransition = Transition.step tick model.transition
       in ( { model | transition = newTransition } , Cmd.none )
-
-    NoOp -> ( model, Cmd.none )
 
 updateTransition : Transition.Transition ( List ( String, Float ) ) -> Int -> List ( List ( String, Float ) ) -> Transition.Transition ( List ( String, Float ) )
 updateTransition oldTransition newStep tallies =
