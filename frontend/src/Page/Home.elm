@@ -22,12 +22,13 @@ type alias Model =
   , error : String
   , choices : Array.Array String
   , apiAddress: String
-  , useReCAPTCHA: Bool
+  , useRecaptcha: Bool
+  , preventMultipleIP: Bool
   }
 
 init : Navigation.Key -> String -> Model
 init key apiAddress =
-  Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress False
+  Model key "" False "" ( Array.fromList [ "", "" ] ) apiAddress False False
 
 
 
@@ -38,7 +39,8 @@ type Msg
   | MakePollRequest
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
-  | ToggleReCAPTCHA
+  | ToggleRecaptcha
+  | ToggleMultipleIP
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -76,7 +78,9 @@ update msg model =
       let newChoices = Array.Extra.removeAt index model.choices
       in ( { model | choices = newChoices, showError = False }, Cmd.none )
 
-    ToggleReCAPTCHA -> ( { model | useReCAPTCHA = not model.useReCAPTCHA, showError = False }, Cmd.none )
+    ToggleRecaptcha -> ( { model | useRecaptcha = not model.useRecaptcha, showError = False }, Cmd.none )
+
+    ToggleMultipleIP -> ( { model | preventMultipleIP = not model.useRecaptcha, showError = False }, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -91,7 +95,7 @@ makePollJson model =
   Encode.object
     [ ( "title", Encode.string model.title )
     , ( "choices", Encode.array Encode.string model.choices )
-    , ( "use_recaptcha", Encode.bool model.useReCAPTCHA )
+    , ( "use_recaptcha", Encode.bool model.useRecaptcha )
     ]
 
 makePollDecoder : Decode.Decoder String
@@ -161,12 +165,12 @@ view model =
           [ div [ class "fv-code w-8" ] [ text "[(" ]
           , div [ class "w-full flex items-center" ]
               [ input
-                  [ checked model.useReCAPTCHA
+                  [ checked model.useRecaptcha
                   , class "fv-chk"
                   , chkErrorClass model.showError
                   , type_ "checkbox"
                   ] []
-              , label [ onClick ToggleReCAPTCHA ] []
+              , label [ onClick ToggleRecaptcha ] []
               , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
               , div [ class "fv-text text-blue-100"] [ text "Use reCAPTCHA verification" ]
               ]

@@ -6,11 +6,11 @@ const app = Elm.Main.init({
   node: document.getElementById('root'),
   flags: process.env.NODE_ENV
 });
-app.ports.renderReCAPTCHA.subscribe(() => {
+app.ports.renderRecaptcha.subscribe(() => {
   requestAnimationFrame(() => {
     grecaptcha.render('recaptcha', {
       callback: val => {
-        app.ports.submitReCAPTCHA.send(val);
+        app.ports.submitRecaptcha.send(val);
       }
     });
   });
