@@ -36,19 +36,20 @@ type alias Poll =
   , orderedChoices : Dict.Dict Int String
   , unorderedChoices : List String
   , useReCAPTCHA : Bool
+  , created : String
   }
 
 type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> LoadingState -> ( Model, Cmd msg )
-init key apiAddress title choices pollId useReCAPTCHA env loadingState =
+init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> String -> LoadingState -> ( Model, Cmd msg )
+init key apiAddress title choices pollId useReCAPTCHA created env loadingState =
   let cmd = if useReCAPTCHA then renderReCAPTCHA () else Cmd.none
   in
   ( { key = key
     , pollId = pollId
-    , poll = Poll title Dict.empty choices useReCAPTCHA
+    , poll = Poll title Dict.empty choices useReCAPTCHA created
     , apiAddress = apiAddress
     , error = ""
     , showError = False
@@ -255,6 +256,18 @@ view model =
               [ div
                 [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.title ]
+              ]
+            , div [class "fv-code w-8 text-right" ] [ text "\"" ]
+            ]
+
+        , div
+            [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8"] [ text "\"" ]
+            , div
+              [ class "flex justify-center w-full"]
+              [ div
+                [ class "fv-text text-blue-100 text-left" ]
+                [ text ("Created: " ++ model.poll.created) ]
               ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
             ]
