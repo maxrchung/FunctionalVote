@@ -23,7 +23,7 @@ type alias Model =
   , choices : Array.Array String
   , apiAddress: String
   , useRecaptcha: Bool
-  , preventMultipleIP: Bool
+  , preventMultipleIp: Bool
   }
 
 init : Navigation.Key -> String -> Model
@@ -40,7 +40,7 @@ type Msg
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
   | ToggleRecaptcha
-  | ToggleMultipleIP
+  | ToggleMultipleIp
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -80,7 +80,7 @@ update msg model =
 
     ToggleRecaptcha -> ( { model | useRecaptcha = not model.useRecaptcha, showError = False }, Cmd.none )
 
-    ToggleMultipleIP -> ( { model | preventMultipleIP = not model.useRecaptcha, showError = False }, Cmd.none )
+    ToggleMultipleIp -> ( { model | preventMultipleIp = not model.preventMultipleIp, showError = False }, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
