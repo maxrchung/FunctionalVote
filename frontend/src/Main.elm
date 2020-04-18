@@ -56,15 +56,17 @@ type Route
 type alias VoteResponse =
   { title : String
   , choices : List String
-  , pollId: String
-  , useReCAPTCHA: Bool
+  , pollId : String
+  , useReCAPTCHA : Bool
+  , created : String
   }
 
 type alias PollResponse =
   { title : String
   , winner : String
   , tallies : List ( List ( String, Float ) )
-  , pollId: String
+  , pollId : String
+  , created : String
   }
 
 init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
@@ -125,11 +127,12 @@ getVoteRequest apiAddress pollId =
 
 getVoteDecoder : Decode.Decoder VoteResponse
 getVoteDecoder =
-  Decode.map4 VoteResponse
+  Decode.map5 VoteResponse
     ( Decode.at [ "data", "title" ] Decode.string )
     ( Decode.at [ "data", "choices" ] <| Decode.list Decode.string )
     ( Decode.at [ "data", "poll_id" ] Decode.string )
     ( Decode.at [ "data", "use_recaptcha" ] Decode.bool )
+    ( Decode.at [ "data", "created" ] Decode.string )
 
 getPollRequest : String -> String -> Cmd Msg
 getPollRequest apiAddress pollId =
@@ -140,11 +143,12 @@ getPollRequest apiAddress pollId =
 
 getPollDecoder : Decode.Decoder PollResponse
 getPollDecoder =
-  Decode.map4 PollResponse
-    ( Decode.at ["data", "title" ] Decode.string )
-    ( Decode.at ["data", "winner"] Decode.string )
-    ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
-    ( Decode.at ["data", "poll_id"] Decode.string )
+  Decode.map5 PollResponse
+    ( Decode.at [ "data", "title" ] Decode.string )
+    ( Decode.at [ "data", "winner" ] Decode.string )
+    ( Decode.at [ "data", "tallies" ] <| Decode.list <| Decode.keyValuePairs Decode.float )
+    ( Decode.at [ "data", "poll_id" ] Decode.string )
+    ( Decode.at [ "data", "created" ] Decode.string )
 
 
 
@@ -169,7 +173,7 @@ type Msg
   | GetPollResponse ( Result Http.Error PollResponse )
   | NoOp
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     UrlRequested urlRequest ->
@@ -208,21 +212,22 @@ update msg model =
     GetVoteResponse result ->
       case result of
         Ok response ->
-          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA model.env Vote.Loaded
+
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA response.created model.env Vote.Loaded
           in ( { model | page = VotePage voteModel }, Cmd.batch [ updateViewport Nothing, Cmd.map VoteMsg cmd ] )
 
         Err _ ->
-          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False model.env Vote.Error
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False "" model.env Vote.Error
           in ( { model | page = VotePage voteModel }, Cmd.batch [ updateViewport Nothing, Cmd.map VoteMsg cmd ] )
 
     GetPollResponse result ->
       case result of
         Ok response ->
-          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
+          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId response.created Poll.Loaded
           in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
         Err _ ->
-          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
+          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" "" Poll.Error
           in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
     NoOp -> ( model, Cmd.none )
