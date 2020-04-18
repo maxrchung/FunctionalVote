@@ -27,7 +27,7 @@ type alias Model =
   , loadingState : LoadingState
   , fadeStyle : Animation.State
   , fadeChoice : String
-  , reCAPTCHAToken : String
+  , recaptchaToken : String
   , env : String
   }
 
@@ -35,7 +35,7 @@ type alias Poll =
   { title : String
   , orderedChoices : Dict.Dict Int String
   , unorderedChoices : List String
-  , useReCAPTCHA : Bool
+  , useRecaptcha : Bool
   }
 
 type LoadingState
@@ -43,19 +43,19 @@ type LoadingState
   | Error
 
 init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> LoadingState -> ( Model, Cmd Msg )
-init key apiAddress title choices pollId useReCAPTCHA env loadingState =
-  let cmd = if useReCAPTCHA then renderReCAPTCHA () else Cmd.none
+init key apiAddress title choices pollId useRecaptcha env loadingState =
+  let cmd = if useRecaptcha then renderRecaptcha () else Cmd.none
   in
   ( { key = key
     , pollId = pollId
-    , poll = Poll title Dict.empty choices useReCAPTCHA
+    , poll = Poll title Dict.empty choices useRecaptcha
     , apiAddress = apiAddress
     , error = ""
     , showError = False
     , loadingState = loadingState
     , fadeStyle = Animation.style [ Animation.opacity 1.0 ]
     , fadeChoice = ""
-    , reCAPTCHAToken = ""
+    , recaptchaToken = ""
     , env = env
     }
   , cmd
@@ -64,8 +64,8 @@ init key apiAddress title choices pollId useReCAPTCHA env loadingState =
 
 
 -- PORTS
-port renderReCAPTCHA : () -> Cmd msg
-port submitReCAPTCHA : ( String -> msg ) -> Sub msg
+port renderRecaptcha : () -> Cmd msg
+port submitRecaptcha : ( String -> msg ) -> Sub msg
 
 
 -- SUBSCRIPTIONS
@@ -73,7 +73,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
       [ Animation.subscription Animate [ model.fadeStyle ]
-      , submitReCAPTCHA ReCAPTCHAToken
+      , submitRecaptcha RecaptchaToken
       ]
 
 
@@ -84,7 +84,7 @@ type Msg
   | SubmitVoteRequest
   | SubmitVoteResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | Animate Animation.Msg
-  | ReCAPTCHAToken String
+  | RecaptchaToken String
   | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -132,7 +132,7 @@ update msg model =
 
     Animate animate -> ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
 
-    ReCAPTCHAToken reCAPTCHAToken -> ( { model | reCAPTCHAToken = reCAPTCHAToken }, Cmd.none )
+    RecaptchaToken recaptchaToken -> ( { model | recaptchaToken = recaptchaToken }, Cmd.none )
 
     NoOp -> ( model, Cmd.none )
 
@@ -204,7 +204,7 @@ submitVoteJson model =
   Encode.object
     [ ( "poll_id", Encode.string model.pollId )
     , ( "choices", Encode.dict identity Encode.int choices )
-    , ( "recaptcha_token", Encode.string model.reCAPTCHAToken )
+    , ( "recaptcha_token", Encode.string model.recaptchaToken )
     ]
 
 buildSubmissionChoices : Int -> String -> Dict.Dict String Int -> Dict.Dict String Int
@@ -272,7 +272,7 @@ view model =
         , div []
             ( List.indexedMap ( renderUnordered maxRank maxUnordered hasOrderedChoices model ) <| model.poll.unorderedChoices )
 
-        , if model.poll.useReCAPTCHA then
+        , if model.poll.useRecaptcha then
             div []
               [ div [ class "fv-code" ] [ text "," ]
               , div [ class "flex justify-between items-center" ]
