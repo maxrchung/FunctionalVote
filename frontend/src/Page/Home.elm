@@ -171,8 +171,8 @@ view model =
                   , type_ "checkbox"
                   ] []
               , label [ onClick ToggleMultipleVotes ] []
-              , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
-              , div [ class "fv-text text-blue-100"] [ text "Prevent multiple votes from the same IP address" ]
+              , div [ class "fv-code w-8 text-center flex-shrink-0" ] [ text ",\"" ]
+              , div [ class "fv-text text-blue-100 w-auto"] [ text "Prevent multiple votes from the same IP address" ]
               ]
           , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
           ]
