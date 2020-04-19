@@ -23,7 +23,7 @@ type alias Model =
   , choices : Array.Array String
   , apiAddress: String
   , useRecaptcha: Bool
-  , preventMultipleIp: Bool
+  , preventMultipleVotes: Bool
   }
 
 init : Navigation.Key -> String -> Model
@@ -40,7 +40,7 @@ type Msg
   | MakePollResponse ( Result ( Http.Detailed.Error String ) ( Http.Metadata, String ) )
   | RemoveChoice Int
   | ToggleRecaptcha
-  | ToggleMultipleIp
+  | ToggleMultipleVotes
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -80,7 +80,7 @@ update msg model =
 
     ToggleRecaptcha -> ( { model | useRecaptcha = not model.useRecaptcha, showError = False }, Cmd.none )
 
-    ToggleMultipleIp -> ( { model | preventMultipleIp = not model.preventMultipleIp, showError = False }, Cmd.none )
+    ToggleMultipleVotes -> ( { model | preventMultipleVotes = not model.preventMultipleVotes, showError = False }, Cmd.none )
 
 makePollRequest : Model -> Cmd Msg
 makePollRequest model =
@@ -161,8 +161,24 @@ view model =
           , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
-      , div [ class "flex justify-between items-center" ]
+      , div [ class "flex justify-between items-center py-2" ]
           [ div [ class "fv-code w-8" ] [ text "[(" ]
+          , div [ class "w-full flex items-center" ]
+              [ input
+                  [ checked model.preventMultipleVotes
+                  , class "fv-chk"
+                  , chkErrorClass model.showError
+                  , type_ "checkbox"
+                  ] []
+              , label [ onClick ToggleMultipleVotes ] []
+              , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
+              , div [ class "fv-text text-blue-100"] [ text "Prevent multiple votes from the same IP address" ]
+              ]
+          , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
+          ]
+
+      , div [ class "flex justify-between items-center py-2" ]
+          [ div [ class "fv-code w-8" ] [ text "(" ]
           , div [ class "w-full flex items-center" ]
               [ input
                   [ checked model.useRecaptcha
