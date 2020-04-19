@@ -187,7 +187,7 @@ view model =
                   , type_ "checkbox"
                   ] []
               , label [ onClick ToggleRecaptcha ] []
-              , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
+              , div [ class "fv-code w-8 text-center flex-shrink-0" ] [ text ",\"" ]
               , div [ class "fv-text text-blue-100"] [ text "Use reCAPTCHA verification" ]
               ]
           , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
