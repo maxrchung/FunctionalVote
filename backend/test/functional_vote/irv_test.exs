@@ -5,7 +5,7 @@ defmodule FunctionalVote.IrvTest do
   alias FunctionalVote.Polls
 
   setup do
-    attrs = %{"choices" => ["a", "b", "c", "d"], "title" => "test", "use_recaptcha" => false}
+    attrs = %{"choices" => ["a", "b", "c", "d"], "title" => "test"}
     {:ok, poll} = Polls.create_poll(attrs)
 
     %{poll_id: poll.poll_id,
