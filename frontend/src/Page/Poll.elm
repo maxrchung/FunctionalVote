@@ -240,6 +240,15 @@ view model =
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
             ]
 
+        , div [ class "fv-code" ] [ text "," ]
+
+        , div
+            [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8" ] []
+            , h2 [ class "fv-header" ] [ text "Created" ]
+            , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+            ]
+
         , div
             [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
@@ -247,7 +256,7 @@ view model =
               [ class "flex justify-center w-full"]
               [ div
                 [ class "fv-text text-blue-100 text-left" ]
-                [ text ("Created: " ++ model.poll.created) ]
+                [ text model.poll.created ]
               ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
             ]
