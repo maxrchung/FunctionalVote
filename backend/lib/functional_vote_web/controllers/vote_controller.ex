@@ -17,6 +17,11 @@ defmodule FunctionalVoteWeb.VoteController do
     IO.puts("[VoteCtrl] Submit vote")
     case Votes.create_vote(vote_params) do
       :ok ->
+        # Add remote IP to vote_params for multiple vote validation
+        # https://stackoverflow.com/a/45284462/13183186
+        ip_address = (conn.remote_ip |> :inet_parse.ntoa |> to_string())
+        vote_params = Map.put(vote_params, "ip_address", ip_address)
+
         {_, winner} = vote_params["poll_id"]
                          |> Votes.get_votes()
                          |> Polls.instant_runoff(vote_params["poll_id"], true)
@@ -25,6 +30,7 @@ defmodule FunctionalVoteWeb.VoteController do
         else
           send_resp(conn, :created, "")
         end
+
       :id_error ->
         send_resp(conn, :unprocessable_entity, "Invalid poll ID")
       :empty_choices_error ->
@@ -35,6 +41,8 @@ defmodule FunctionalVoteWeb.VoteController do
         send_resp(conn, :unprocessable_entity, "Received a choice that does not exist in this poll")
       :duplicate_rank_error ->
         send_resp(conn, :unprocessable_entity, "Received votes with duplicate ranks")
+      :multiple_votes_error ->
+        send_resp(conn, :unprocessable_entity, "Multiple votes from the same IP address not allowed for this poll")
       :recaptcha_error ->
         send_resp(conn, :unprocessable_entity, "reCAPTCHA verification failed")
       _ ->

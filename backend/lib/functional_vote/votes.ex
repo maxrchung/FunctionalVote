@@ -64,10 +64,18 @@ defmodule FunctionalVote.Votes do
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
 
+      # Check for IP
+      ip_address = attrs["ip_address"]
+      query = from v in "votes",
+              where: v.poll_id == ^poll_id and v.ip_address == ^ip_address,
+              select: v.user_id
+      has_ip_address = Repo.exists?(query) || false
+
       # Get reCAPTCHA information
       poll = Polls.get_poll_data!(poll_id)
       use_recaptcha = poll.use_recaptcha
       recaptcha_token = attrs["recaptcha_token"]
+      prevent_multiple_votes = poll.prevent_multiple_votes
 
       cond do
         validate_non_empty_choices(choices) == :empty_choices_error ->
@@ -82,6 +90,9 @@ defmodule FunctionalVote.Votes do
         validate_choices(choices, available_choices) == :available_choices_error ->
           # Received a choice that does not exist in this poll
           :available_choices_error # RETURN ENDPOINT
+        validate_multiple_votes(prevent_multiple_votes, has_ip_address) == :multiple_votes_error ->
+          # Multiple votes cannot be made for this poll
+          :multiple_votes_error # RETURN ENDPOINT
         validate_recaptcha(use_recaptcha, recaptcha_token) == :recaptcha_error ->
           # reCAPTCHA verification returned an error, e.g. missing, expired, or wrong reCAPTCHA token
           :recaptcha_error # RETURN ENDPOINT
@@ -145,6 +156,12 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Available choices:")
       IO.inspect(available_choices)
       :available_choices_error
+    end
+  end
+
+  defp validate_multiple_votes(prevent_multiple_votes, has_ip_address) do
+    if prevent_multiple_votes and has_ip_address do
+      :multiple_votes_error
     end
   end
 
