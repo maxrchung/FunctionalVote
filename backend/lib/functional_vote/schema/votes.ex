@@ -16,6 +16,6 @@ defmodule FunctionalVote.Polls.Votes do
   def changeset(votes, attrs) do
     votes
     |> cast(attrs, [:poll_id, :user_id, :choice, :rank, :ip_address])
-    |> validate_required([:poll_id, :user_id, :choice, :rank, :ip_address])
+    |> validate_required([:poll_id, :user_id, :choice, :rank])
   end
 end
