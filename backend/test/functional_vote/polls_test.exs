@@ -6,12 +6,12 @@ defmodule FunctionalVote.PollsTest do
   describe "polls" do
     alias FunctionalVote.Polls.Poll
 
-    @valid_attrs %{"choices" => ["a", "b", "c"], "title" => "test", "use_recaptcha" => false}
-    @empty_title_attrs %{"choices" => ["a", "b", "c"], "title" => "", "use_recaptcha" => false}
-    @no_title_attrs %{"choices" => ["a", "b", "c"], "use_recaptcha" => false}
+    @valid_attrs %{"choices" => ["a", "b", "c"], "title" => "test"}
+    @empty_title_attrs %{"choices" => ["a", "b", "c"], "title" => ""}
+    @no_title_attrs %{"choices" => ["a", "b", "c"]}
     @dup_choices_attrs %{"choices" => ["a", "b", "b"], "title" => "test"}
-    @empty_choices_attrs %{"choices" => [], "title" => "test", "use_recaptcha" => false}
-    @no_choices_attrs %{"title" => "test", "use_recaptcha" => false}
+    @empty_choices_attrs %{"choices" => [], "title" => "test"}
+    @no_choices_attrs %{"title" => "test"}
 
     def poll_fixture(attrs \\ %{}) do
       {:ok, poll} = Polls.create_poll(attrs)

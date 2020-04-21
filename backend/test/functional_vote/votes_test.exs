@@ -5,7 +5,7 @@ defmodule FunctionalVote.VotesTest do
   alias FunctionalVote.Polls
 
   setup do
-    attrs = %{"choices" => ["a", "b", "c"], "title" => "test", "use_recaptcha" => false}
+    attrs = %{"choices" => ["a", "b", "c"], "title" => "test"}
     setup_poll(attrs)
   end
 
