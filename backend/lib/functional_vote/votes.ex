@@ -64,7 +64,7 @@ defmodule FunctionalVote.Votes do
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
 
-      # Check for IP
+      # Check for existing IP
       ip_address = attrs["ip_address"]
       query = from v in "votes",
               where: v.poll_id == ^poll_id and v.ip_address == ^ip_address,
@@ -109,7 +109,7 @@ defmodule FunctionalVote.Votes do
                            "ip_address" => ip_address}
             %Votes{}
             |> Votes.changeset(choice_map)
-            |> Repo.insert() # RETURN ENDPOINT
+            |> Repo.insert!() # RETURN ENDPOINT
           end
       end
     else
@@ -162,6 +162,7 @@ defmodule FunctionalVote.Votes do
 
   defp validate_multiple_votes(prevent_multiple_votes, has_ip_address) do
     if prevent_multiple_votes and has_ip_address do
+      IO.puts("[VoteCtx] Prevented multiple votes for #{has_ip_address}")
       :multiple_votes_error
     end
   end
