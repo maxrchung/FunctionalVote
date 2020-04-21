@@ -15,13 +15,13 @@ defmodule FunctionalVoteWeb.VoteController do
   """
   def create(conn, vote_params) do
     IO.puts("[VoteCtrl] Submit vote")
+    # Add remote IP to vote_params for multiple vote validation
+    # https://stackoverflow.com/a/45284462/13183186
+    ip_address = (conn.remote_ip |> :inet_parse.ntoa |> to_string())
+    vote_params = Map.put(vote_params, "ip_address", ip_address)
+
     case Votes.create_vote(vote_params) do
       :ok ->
-        # Add remote IP to vote_params for multiple vote validation
-        # https://stackoverflow.com/a/45284462/13183186
-        ip_address = (conn.remote_ip |> :inet_parse.ntoa |> to_string())
-        vote_params = Map.put(vote_params, "ip_address", ip_address)
-
         {_, winner} = vote_params["poll_id"]
                          |> Votes.get_votes()
                          |> Polls.instant_runoff(vote_params["poll_id"], true)
