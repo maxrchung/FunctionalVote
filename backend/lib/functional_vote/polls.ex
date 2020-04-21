@@ -256,6 +256,11 @@ defmodule FunctionalVote.Polls do
             poll_id = StringGenerator.poll_id_of_length(8)
             IO.inspect(poll_id)
             attrs = Map.put_new(attrs, "poll_id", poll_id)
+
+            # Add default options if they are missing
+            attrs = if Map.has_key?(attrs, "prevent_multiple_votes"), do: attrs, else: Map.put(attrs, "prevent_multiple_votes", false)
+            attrs = if Map.has_key?(attrs, "use_recaptcha"), do: attrs, else: Map.put(attrs, "use_recaptcha", false)
+
             %Poll{}
             |> Poll.changeset(attrs)
             |> Repo.insert() # RETURN ENDPOINT
