@@ -3,7 +3,7 @@ defmodule FunctionalVote.Repo.Migrations.AddVoteIpAddress do
 
   def change do
     alter table(:votes) do
-      add :ip_address, :string, default: ""
+      add :ip_address, :text, default: ""
     end
   end
 end
