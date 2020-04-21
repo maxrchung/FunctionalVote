@@ -102,10 +102,11 @@ defmodule FunctionalVote.Votes do
           Enum.each choices, fn {k, v} ->
             # Maintain backwards compatibility if others want to submit ranks as ints represented as strings
             v = if is_integer(v), do: v, else: String.to_integer(v)
-            choice_map = %{"poll_id" => poll_id,
-                           "user_id" => user_id,
-                           "choice"  => k,
-                           "rank"    => v}
+            choice_map = %{"poll_id"    => poll_id,
+                           "user_id"    => user_id,
+                           "choice"     => k,
+                           "rank"       => v,
+                           "ip_address" => ip_address}
             %Votes{}
             |> Votes.changeset(choice_map)
             |> Repo.insert() # RETURN ENDPOINT
