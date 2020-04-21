@@ -96,6 +96,7 @@ makePollJson model =
     [ ( "title", Encode.string model.title )
     , ( "choices", Encode.array Encode.string model.choices )
     , ( "use_recaptcha", Encode.bool model.useRecaptcha )
+    , ( "prevent_multiple_votes", Encode.bool model.preventMultipleVotes )
     ]
 
 makePollDecoder : Decode.Decoder String
