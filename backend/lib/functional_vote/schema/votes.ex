@@ -7,6 +7,7 @@ defmodule FunctionalVote.Polls.Votes do
     field :poll_id, :string
     field :rank, :integer
     field :user_id, :integer
+    field :ip_address, :string
 
     timestamps()
   end
@@ -14,7 +15,7 @@ defmodule FunctionalVote.Polls.Votes do
   @doc false
   def changeset(votes, attrs) do
     votes
-    |> cast(attrs, [:poll_id, :user_id, :choice, :rank])
-    |> validate_required([:poll_id, :user_id, :choice, :rank])
+    |> cast(attrs, [:poll_id, :user_id, :choice, :rank, :ip_address])
+    |> validate_required([:poll_id, :user_id, :choice, :rank, :ip_address])
   end
 end
