@@ -252,7 +252,7 @@ defmodule FunctionalVote.Polls do
       attrs["title"] === nil or String.trim(attrs["title"]) === "" ->
         :no_title_error # RETURN ENDPOINT
 
-      length(attrs["title"]) >= 100 ->
+      length(attrs["title"]) > 100 ->
         :title_length_error # RETURN ENDPOINT
 
       attrs["choices"] === nil ->
@@ -266,6 +266,9 @@ defmodule FunctionalVote.Polls do
 
           attrs["choices"] === Enum.uniq(attrs["choices"]) ->
             :duplicate_choices_error # RETURN ENDPOINT
+
+          Enum.find(attrs["choices"], fn x -> length(x) > 100 end) !== nil ->
+            :choice_length_error
 
           _ ->
             poll_id = StringGenerator.poll_id_of_length(8)
