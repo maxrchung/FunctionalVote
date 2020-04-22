@@ -130,7 +130,7 @@ view model =
         , div [ class "fv-code w-8 text-right" ] [ text "=" ]
         ]
 
-    , div [ class "flex justify-between items-center py-2" ]
+    , div [ class "flex justify-between items-center py-1" ]
         [ div [ class "fv-code w-8"] [ text "\"" ]
         , input
             [ class "fv-input"
@@ -162,7 +162,7 @@ view model =
           , div [ class "fv-code w-8 text-right" ] [ text "=" ]
           ]
 
-      , div [ class "flex justify-between items-center py-2" ]
+      , div [ class "flex justify-between items-center py-1" ]
           [ div [ class "fv-code w-8" ] [ text "[(" ]
           , div [ class "w-full flex items-center" ]
               [ input
@@ -178,7 +178,7 @@ view model =
           , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
           ]
 
-      , div [ class "flex justify-between items-center py-2" ]
+      , div [ class "flex justify-between items-center py-1" ]
           [ div [ class "fv-code w-8" ] [ text "(" ]
           , div [ class "w-full flex items-center" ]
               [ input
@@ -331,7 +331,7 @@ renderChoice choicesLength showError index choice =
       else
         ",\""
   in
-  div [ class "flex justify-between items-center py-2" ]
+  div [ class "flex justify-between items-center py-1" ]
     [ div [ class "fv-code w-8"] [ text startQuotation ]
 
     , div [ class "flex justify-between items-center w-full" ]
