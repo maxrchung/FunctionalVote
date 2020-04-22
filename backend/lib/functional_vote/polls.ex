@@ -247,12 +247,27 @@ defmodule FunctionalVote.Polls do
   """
   def create_poll(attrs \\ %{}) do
     IO.puts("[PollCtx] Create poll")
-    if (attrs["title"] !== nil and String.trim(attrs["title"]) !== "") do
-      if (attrs["choices"] !== nil) do
-        attrs = Map.update!(attrs, "choices",
-                  &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
-        if (length(attrs["choices"]) !== 0) do
-          if (attrs["choices"] === Enum.uniq(attrs["choices"])) do
+
+    cond do
+      attrs["title"] === nil or String.trim(attrs["title"]) === "" ->
+        :no_title_error # RETURN ENDPOINT
+
+      length(attrs["title"]) >= 100 ->
+        :title_length_error # RETURN ENDPOINT
+
+      attrs["choices"] === nil ->
+        :no_choices_error # RETURN ENDPOINT
+
+      _ ->
+        attrs = Map.update!(attrs, "choices", &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
+        cond do
+          length(attrs["choices"]) === 0 ->
+            :no_choices_error # RETURN ENDPOINT
+
+          attrs["choices"] === Enum.uniq(attrs["choices"]) ->
+            :duplicate_choices_error # RETURN ENDPOINT
+
+          _ ->
             poll_id = StringGenerator.poll_id_of_length(8)
             IO.inspect(poll_id)
             attrs = Map.put_new(attrs, "poll_id", poll_id)
@@ -262,19 +277,9 @@ defmodule FunctionalVote.Polls do
             attrs = if Map.has_key?(attrs, "use_recaptcha"), do: attrs, else: Map.put(attrs, "use_recaptcha", false)
 
             %Poll{}
-            |> Poll.changeset(attrs)
-            |> Repo.insert() # RETURN ENDPOINT
-          else
-            :duplicate_choices_error # RETURN ENDPOINT
-          end
-        else
-          :no_choices_error # RETURN ENDPOINT
+              |> Poll.changeset(attrs)
+              |> Repo.insert() # RETURN ENDPOINT
         end
-      else
-        :no_choices_error # RETURN ENDPOINT
-      end
-    else
-      :no_title_error # RETURN ENDPOINT
     end
   end
 
