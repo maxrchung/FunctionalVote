@@ -135,7 +135,7 @@ view model =
         , input
             [ class "fv-input"
             , inputErrorClass model.showError
-            , id "question"
+            , maxlength 100
             , placeholder "Enter a question"
             , value model.title
             , onInput ChangeTitle
@@ -338,11 +338,11 @@ renderChoice choicesLength showError index choice =
         [ input
             [ class "fv-input"
             , inputErrorClass showError
+            , maxlength 100
             , placeholder placeholderValue
             , value choice
             , onInput ( ChangeChoice index )
-            ]
-            []
+            ] []
 
         , if index == choicesLength - 1 then
               div [] []
