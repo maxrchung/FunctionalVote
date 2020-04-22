@@ -107,7 +107,7 @@ defmodule FunctionalVote.VotesTest do
       assert :ok = Votes.create_vote(attrs)
     end
 
-    test "prevent_multiple_votes true with multiple votes :multiple_votes_error", context do
+    test "prevent_multiple_votes true with multiple votes :multiple_votes_error" do
       poll = setup_multiple()
       attrs = %{"poll_id" => poll.poll_id, "choices" => %{"a" => 1}}
       assert :ok = Votes.create_vote(attrs)
