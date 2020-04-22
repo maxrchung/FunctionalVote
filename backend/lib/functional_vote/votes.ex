@@ -91,6 +91,8 @@ defmodule FunctionalVote.Votes do
           :duplicate_rank_error # RETURN ENDPOINT
         validate_choices(choices, available_choices) == :available_choices_error ->
           :available_choices_error # RETURN ENDPOINT
+        validate_submission(ip_address) == :submission_timeout_error ->
+          :submission_timeout_error
         validate_recaptcha(use_recaptcha, recaptcha_token) == :recaptcha_error ->
           :recaptcha_error # RETURN ENDPOINT
         true ->
@@ -161,6 +163,21 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Available choices:")
       IO.inspect(available_choices)
       :available_choices_error
+    end
+  end
+
+
+  defp validate_submission(ip_address) do
+    query = from p in Votes,
+      where: p.ip_address == ^ip_address,
+      order_by: [desc: p.inserted_at],
+      select: p.inserted_at
+    # Default to Unix epoch if inserted_at cannot be found
+    last_inserted = query |> first |> Repo.one || ~N[1970-01-01 00:00:00]
+    submission_timeout = Application.get_env(:functional_vote, FunctionalVoteWeb.Endpoint)[:submission_timeout]
+
+    if NaiveDateTime.diff(NaiveDateTime.utc_now(), last_inserted, :millisecond) < submission_timeout do
+      :submission_timeout_error
     end
   end
 
