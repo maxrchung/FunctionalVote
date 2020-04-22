@@ -16,6 +16,7 @@ defmodule FunctionalVote.Polls.Votes do
   def changeset(votes, attrs) do
     votes
     |> cast(attrs, [:poll_id, :user_id, :choice, :rank, :ip_address])
+    # ip_address is not required so it can accept an empty string representing an unknown IP address
     |> validate_required([:poll_id, :user_id, :choice, :rank])
   end
 end
