@@ -53,7 +53,7 @@ renderShareLinks url helpText title message =
                     [ class "fv-nav-btn fv-nav-btn-orange fv-share-copy"
                     , attribute "data-clipboard-target" ".fv-share-link"
                     ]
-                    [ renderIcon FeatherIcons.clipboard ]
+                    [ renderIcon FeatherIcons.copy ]
                 ]
             ]
 
