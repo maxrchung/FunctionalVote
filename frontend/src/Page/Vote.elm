@@ -13,6 +13,7 @@ import Json.Encode as Encode
 import Page.Error
 import Shared
 import Task
+import Time exposing ( Posix, Zone )
 
 
 
@@ -43,13 +44,15 @@ type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> String -> LoadingState -> ( Model, Cmd msg )
-init key apiAddress title choices pollId useReCAPTCHA created env loadingState =
-  let cmd = if useReCAPTCHA then renderReCAPTCHA () else Cmd.none
+init : Navigation.Key -> String -> String -> List String -> String -> Bool -> Posix -> Zone -> String -> LoadingState -> ( Model, Cmd msg )
+init key apiAddress title choices pollId useReCAPTCHA created timezone env loadingState =
+  let
+    cmd = if useReCAPTCHA then renderReCAPTCHA () else Cmd.none
+    humanTimeString = Shared.toHumanTimeString created timezone
   in
   ( { key = key
     , pollId = pollId
-    , poll = Poll title Dict.empty choices useReCAPTCHA created
+    , poll = Poll title Dict.empty choices useReCAPTCHA humanTimeString
     , apiAddress = apiAddress
     , error = ""
     , showError = False

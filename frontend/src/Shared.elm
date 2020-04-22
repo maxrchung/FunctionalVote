@@ -1,9 +1,29 @@
 
 module Shared exposing ( .. )
 
+import DateFormat
 import FeatherIcons
 import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
+import Time exposing ( Posix, Zone )
+
+toHumanTimeString : Posix -> Zone -> String
+toHumanTimeString time timezone =
+  DateFormat.format
+    [ DateFormat.monthNameAbbreviated
+    , DateFormat.text " "
+    , DateFormat.dayOfMonthNumber
+    , DateFormat.text ", "
+    , DateFormat.yearNumber
+    , DateFormat.text " "
+    , DateFormat.hourNumber
+    , DateFormat.text ":"
+    , DateFormat.minuteNumber
+    , DateFormat.text " "
+    , DateFormat.amPmUppercase
+    ]
+    timezone
+    time
 
 renderShareLinks : String -> String -> String -> String -> Html a
 renderShareLinks url helpText title message =
