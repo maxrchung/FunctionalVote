@@ -15,22 +15,17 @@ view =
         , div [ class "w-8 text-right" ] [ text "" ]
         ]
 
-    ,  div [ class "fv-text mb-2" ]
-      [ text "Hmm, this page doesn’t seem to exist, or maybe we encountered an error. Feel free to "
-      , a [ href "https://twitter.com/FunctionalVote"
-          , target "_blank"
-          ] [ text "contact us"]
-      , text " if you are experiencing any issues." ]
+    , div [ class "fv-text mb-2" ]
+        [ text "Hmm, this page doesn’t seem to exist, or maybe we encountered an error. Feel free to "
+        , a [ href "https://twitter.com/FunctionalVote", target "_blank" ] [ text "contact us"]
+        , text " if you are experiencing any issues."
+        ]
 
     , div [ class "fv-code mb-1" ] [ text "-}" ]
 
     , div [ class "flex justify-between" ]
         [ div [ class "w-8" ] [ text "" ]
-        , a
-            [ class "fv-btn"
-            , href "/"
-            ]
-            [ text "Go Home" ]
+        , a [ class "fv-btn", href "/" ] [ text "Go Home" ]
         , div [ class "w-8 text-right" ] [ text "" ]
         ]
     ]

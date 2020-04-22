@@ -82,7 +82,7 @@ init env url key =
         "http://localhost:4000"
   in
   ( Model key apiAddress NoPage env Time.utc
-  , Task.perform (LoadTimezone url) Time.here
+  , Task.perform ( LoadTimezone url ) Time.here
   )
 
 initPage : Page -> Url.Url -> Navigation.Key -> String -> ( Page, Cmd Msg )
@@ -236,7 +236,7 @@ update msg model =
           in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
         Err _ ->
-          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" (Time.millisToPosix 0) Time.utc Poll.Error
+          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" ( Time.millisToPosix 0 ) Time.utc Poll.Error
           in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
     NoOp -> ( model, Cmd.none )

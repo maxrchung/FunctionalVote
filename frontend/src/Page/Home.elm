@@ -11,6 +11,7 @@ import Http
 import Http.Detailed
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Shared
 
 
 
@@ -354,9 +355,7 @@ renderChoice choicesLength showError index choice =
                 , type_ "button"
                 , tabindex -1
                 ]
-                [ FeatherIcons.x
-                    |> FeatherIcons.toHtml []
-                ]
+                [ Shared.renderIcon FeatherIcons.x ]
         ]
 
     , div [ class "fv-code w-8 text-right"] [ text "\"" ]

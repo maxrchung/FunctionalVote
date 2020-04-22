@@ -120,8 +120,7 @@ update msg model =
 
     SubmitVoteResponse result ->
       case result of
-        Ok _ ->
-          ( model, Navigation.pushUrl model.key ( "/poll/" ++ model.pollId ) )
+        Ok _ -> ( model, Navigation.pushUrl model.key ( "/poll/" ++ model.pollId ) )
 
         Err error ->
           let
@@ -131,8 +130,7 @@ update msg model =
                   body
                 _ ->
                   "Unable to submit vote. The website may be down for maintenace. Please try again later."
-          in
-          ( { model | showError = True, error = newError }, Cmd.none )
+          in ( { model | showError = True, error = newError }, Cmd.none )
 
     Animate animate -> ( { model | fadeStyle = Animation.update animate model.fadeStyle }, Cmd.none )
 
@@ -201,9 +199,7 @@ submitVoteRequest model =
 
 submitVoteJson : Model -> Encode.Value
 submitVoteJson model =
-  let
-    choices =
-      Dict.foldl buildSubmissionChoices Dict.empty model.poll.orderedChoices
+  let choices = Dict.foldl buildSubmissionChoices Dict.empty model.poll.orderedChoices
   in
   Encode.object
     [ ( "poll_id", Encode.string model.pollId )
@@ -221,8 +217,8 @@ buildSubmissionChoices rank choice choices =
 view : Model -> Html Msg
 view model =
   case model.loadingState of
-    Error ->
-      Page.Error.view
+    Error -> Page.Error.view
+
     Loaded ->
       let
         maxOrdered = Dict.size model.poll.orderedChoices
@@ -250,33 +246,23 @@ view model =
 
         , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
-            , div
-              [ class "flex justify-center w-full"]
-              [ div
-                [ class "fv-text text-blue-100 text-left" ]
-                [ text model.poll.title ]
-              ]
+            , div [ class "flex justify-center w-full"]
+                [ div [ class "fv-text text-blue-100 text-left" ] [ text model.poll.title ] ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
             ]
 
         , div [ class "fv-code" ] [ text "," ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] []
             , h2 [ class "fv-header" ] [ text "Created" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
-            , div
-              [ class "flex justify-center w-full"]
-              [ div
-                [ class "fv-text text-blue-100 text-left" ]
-                [ text model.poll.created ]
-              ]
+            , div [ class "flex justify-center w-full"]
+                [ div [ class "fv-text text-blue-100 text-left" ] [ text model.poll.created ] ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
             ]
 
@@ -288,14 +274,11 @@ view model =
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div []
-            ( List.indexedMap ( renderOrdered maxRank maxOrdered model ) <| Dict.toList model.poll.orderedChoices )
+        , div [] ( List.indexedMap ( renderOrdered maxRank maxOrdered model ) <| Dict.toList model.poll.orderedChoices )
 
-        , div [ class "fv-break my-2" ]
-            [ text "--" ]
+        , div [ class "fv-break my-2" ] [ text "--" ]
 
-        , div []
-            ( List.indexedMap ( renderUnordered maxRank maxUnordered hasOrderedChoices model ) <| model.poll.unorderedChoices )
+        , div [] ( List.indexedMap ( renderUnordered maxRank maxUnordered hasOrderedChoices model ) <| model.poll.unorderedChoices )
 
         , if model.poll.useRecaptcha then
             div []
@@ -385,11 +368,10 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
   in
   div
     [ class "flex justify-between items-center" ]
-    [ div
-      [ class "fv-code w-8"]
-      [ unorderedCommaText hasOrderedChoices index
-      , text "("
-      ]
+    [ div [ class "fv-code w-8"]
+        [ unorderedCommaText hasOrderedChoices index
+        , text "("
+        ]
 
     , div
         [ class "flex items-center w-full p-2"
@@ -403,7 +385,6 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
             , value rank
             , onInput ( ChangeRank choice )
             ]
-
             ( List.concat
               [ renderOptions maxRank rank
               , [ option
@@ -415,9 +396,7 @@ renderChoice maxRank maxIndex hasOrderedChoices model index ( rank, choice ) =
               ]
             )
 
-        , div
-            [ class "fv-code w-8 text-center" ]
-            [ text ",\"" ]
+        , div [ class "fv-code w-8 text-center" ] [ text ",\"" ]
 
         , div
             ( List.concat

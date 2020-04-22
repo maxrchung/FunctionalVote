@@ -48,12 +48,10 @@ renderShareLinks url helpText title message =
         , div [ class "fv-code" ] [ text "=" ]
         ]
 
-    , div
-        [ class "flex justify-between items-center" ]
+    , div [ class "flex justify-between items-center" ]
         [ div [ class "w-8 fv-code" ] [ text "[" ]
 
-        , div
-            [ class "w-full" ]
+        , div [ class "w-full" ]
             [ div
                 [ class "flex justify-between items-center" ]
                 [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.link ]
@@ -65,8 +63,7 @@ renderShareLinks url helpText title message =
                         [ class "fv-share-link fv-input"
                         , readonly True
                         , value <| url
-                        ]
-                        []
+                        ] []
                     ]
 
                 , button
@@ -80,12 +77,10 @@ renderShareLinks url helpText title message =
         , div [ class "w-8" ] []
         ]
 
-    , div
-        [ class "fv-share-text flex justify-between items-center hidden" ]
+    , div [ class "fv-share-text flex justify-between items-center hidden" ]
         [ div [ class "fv-code w-8" ] [ text "--" ]
 
-        , div
-            [ class "w-full flex justify-between items-center -mt-1" ]
+        , div [ class "w-full flex justify-between items-center -mt-1" ]
             [ div [ class "invisible" ] [ renderIcon FeatherIcons.link ]
 
             , div [ class "mx-2 w-full text-orange-500" ] [ text "Link copied" ]
@@ -95,21 +90,17 @@ renderShareLinks url helpText title message =
         , div [ class "w-8" ] []
         ]
 
-    , div
-        [ class "flex justify-between items-center" ]
+    , div [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "," ]
-        , div
-            [ class "w-full flex justify-between items-center my-2" ]
+        , div [ class "w-full flex justify-between items-center my-2" ]
             [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.twitter ]
 
-            , div
-                [ class "mx-2 w-full" ]
+            , div [ class "mx-2 w-full" ]
                 [ input
                     [ class "fv-input"
                     , readonly True
                     , value twitterUrl
-                    ]
-                    []
+                    ] []
                 ]
 
             , a
@@ -122,22 +113,18 @@ renderShareLinks url helpText title message =
         , div [ class "w-8" ] []
         ]
 
-    , div
-        [ class "flex justify-between items-center" ]
+    , div [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "," ]
 
-        , div
-            [ class "w-full flex justify-between items-center my-2" ]
+        , div [ class "w-full flex justify-between items-center my-2" ]
             [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.facebook ]
 
-            , div
-                [ class "mx-2 w-full" ]
+            , div [ class "mx-2 w-full" ]
                 [ input
                     [ class "fv-input"
                     , readonly True
                     , value <| facebookUrl
-                    ]
-                    []
+                    ] []
                 ]
 
             , a
@@ -150,22 +137,18 @@ renderShareLinks url helpText title message =
         , div [ class "w-8" ] []
         ]
 
-    , div
-        [ class "flex justify-between items-center" ]
+    , div [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "," ]
 
-        , div
-            [ class "w-full flex justify-between items-center my-2" ]
+        , div [ class "w-full flex justify-between items-center my-2" ]
             [ div [ class "text-blue-500" ] [ renderIcon FeatherIcons.mail ]
 
-            , div
-                [ class "mx-2 w-full" ]
+            , div [ class "mx-2 w-full" ]
                 [ input
                     [ class "fv-input"
                     , readonly True
                     , value <| mailUrl
-                    ]
-                    []
+                    ] []
                 ]
 
             , a

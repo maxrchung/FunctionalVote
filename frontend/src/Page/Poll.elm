@@ -207,8 +207,8 @@ compareEntries ( _, a ) ( _, b ) =
 view : Model -> Html Msg
 view model =
   case model.loadingState of
-    Error ->
-      Page.Error.view
+    Error -> Page.Error.view
+
     Loaded ->
       div []
         [ div [ class "flex justify-between items-center" ]
@@ -217,21 +217,18 @@ view model =
             , div [ class "w-8" ] []
             ]
 
-        , div
-            [ class "flex justify-between" ]
+        , div [ class "flex justify-between" ]
             [ h1 [ class "fv-code opacity-25" ] [ text "results" ]
             , div [ class "fv-code" ] [ text "=" ]
             ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "{" ]
             , h2 [ class "fv-header" ] [ text "Question" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div
               [ class "flex justify-center w-full"]
@@ -244,15 +241,13 @@ view model =
 
         , div [ class "fv-code" ] [ text "," ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] []
             , h2 [ class "fv-header" ] [ text "Created" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
             , div
               [ class "flex justify-center w-full"]
@@ -265,18 +260,15 @@ view model =
 
         , div [ class "fv-code" ] [ text "," ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
             , h2 [ class "fv-header" ] [ text "Winner" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
             ]
 
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8"] [ text "\"" ]
-            , div
-              [ class "flex justify-center w-full"]
+            , div [ class "flex justify-center w-full"]
               [ div
                 [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.winner ]
@@ -296,8 +288,7 @@ view model =
             , div [ class "w-8" ] []
             ]
 
-        , div
-            [ class "flex justify-between" ]
+        , div [ class "flex justify-between" ]
             [ div [ class "w-8" ] []
             , a
               [ class "fv-btn fv-btn-blank mb-2"
@@ -350,15 +341,13 @@ row : ResultsConfig -> BandScale String -> ( String, Float ) -> SvgCore.Svg a
 row config scale ( choice, votes ) =
   let choiceText = String.fromInt ( round votes ) ++ " - " ++ choice
   in
-  Svg.g
-    []
+  Svg.g []
     [ Svg.rect
         [ SvgAttributes.class [ "text-blue-900 fill-current" ]
         , SvgInPx.y <| Scale.convert scale choice
         , SvgInPx.width <| Scale.convert ( xScale config ) votes
         , SvgInPx.height <| Scale.bandwidth scale
-        ]
-        []
+        ] []
     , Svg.text_
         [ SvgAttributes.class
             [ choiceTextColor votes config.xScaleMax
@@ -392,8 +381,7 @@ renderResults step xScaleMax tallies transition =
         []
       else
         [ div [ class "fv-code" ] [ text "," ]
-        , div
-            [ class "flex justify-between items-center" ]
+        , div [ class "flex justify-between items-center" ]
             [ div [ class "w-8" ] []
             , h2 [ class "fv-header" ] [ text "Results" ]
             , div [ class "fv-code w-8 text-right" ] [ text "=" ]
@@ -410,11 +398,9 @@ renderSlider step tallies =
   if List.length ( List.take 2 tallies ) < 2 then
     div [] []
   else
-    div
-      [ class "flex justify-between items-center" ]
+    div [ class "flex justify-between items-center" ]
       [ div [ class "w-8" ] []
-      , div
-        [ class "flex justify-between items-center mt-2 w-full" ]
+      , div [ class "flex justify-between items-center mt-2 w-full" ]
         [ button
           [ class "fv-nav-btn fv-nav-btn-blue"
           , onClick DecrementStep
@@ -427,8 +413,7 @@ renderSlider step tallies =
             , onInput ChangeStep
             , Html.Attributes.max <| String.fromInt <| List.length tallies - 1
             , value <| String.fromInt step
-            ]
-            []
+            ] []
 
         , button
             [ class "fv-nav-btn fv-nav-btn-blue"
