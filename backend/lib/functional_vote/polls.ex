@@ -241,8 +241,11 @@ defmodule FunctionalVote.Polls do
 
       iex> create_poll(%{field: bad_value})
       :no_title_error
+      :max_title_error
       :no_choices_error
+      :max_choices_error
       :duplicate_choices_error
+      :submission_timeout_error
 
   """
   def create_poll(attrs \\ %{}) do
@@ -288,9 +291,11 @@ defmodule FunctionalVote.Polls do
               order_by: [desc: p.inserted_at],
               select: p.inserted_at
             # Default to Unix epoch if inserted_at cannot be found
-            last_inserted = Repo.one(query) || ~N[1970-01-01 00:00:00]
-            if NaiveDateTime.diff(NaiveDateTime.utc_now(), last_inserted, :millisecond) < 1000 do
-              :timeout_error
+            last_inserted = query |> first |> Repo.one || ~N[1970-01-01 00:00:00]
+            submission_timeout = Application.get_env(:functional_vote, FunctionalVoteWeb.Endpoint)[:submission_timeout]
+
+            if NaiveDateTime.diff(NaiveDateTime.utc_now(), last_inserted, :millisecond) < submission_timeout do
+              :submission_timeout_error
             else
               # Add default options if they are missing
               attrs = if Map.has_key?(attrs, "prevent_multiple_votes"), do: attrs, else: Map.put(attrs, "prevent_multiple_votes", false)
