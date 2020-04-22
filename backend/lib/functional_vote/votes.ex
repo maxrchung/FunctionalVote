@@ -43,11 +43,13 @@ defmodule FunctionalVote.Votes do
 
   @param attrs : contains "poll_id" and "choices" (map of choices and ranks)
   @return {:ok}
-  @return {:empty_choices_error} No votes provided
   @return {:id_error} Invalid poll ID provided
+  @return {:multiple_votes_error} Poll does not allow multiple votes from the same IP address
+  @return {:empty_choices_error} No votes provided
   @return {:non_integer_rank_error} Vote with non-integer rank provided
-  @return {:available_choices_error} Choice does not exist in poll
   @return {:duplicate_rank_error} Vote with duplicate ranks
+  @return {:available_choices_error} Choice does not exist in poll
+  @return {:recaptcha_error} There was an error trying to verify reCAPTCHA
 
   """
   def create_vote(attrs \\ %{}) do
@@ -78,23 +80,18 @@ defmodule FunctionalVote.Votes do
       prevent_multiple_votes = poll.prevent_multiple_votes
 
       cond do
+        # Validate multiple votes first so that users don't try to fix their submission and then realize they can't submit anyways
+        validate_multiple_votes(prevent_multiple_votes, has_ip_address) == :multiple_votes_error ->
+          :multiple_votes_error # RETURN ENDPOINT
         validate_non_empty_choices(choices) == :empty_choices_error ->
-          # Received empty choices list
           :empty_choices_error # RETURN ENDPOINT
         validate_integer_ranks(choices) == :non_integer_rank_error ->
-          # Received a vote with a non-integer rank
           :non_integer_rank_error # RETURN ENDPOINT
         validate_duplicate_ranks(choices) == :duplicate_rank_error ->
-          # Received votes with duplicate ranks
           :duplicate_rank_error # RETURN ENDPOINT
         validate_choices(choices, available_choices) == :available_choices_error ->
-          # Received a choice that does not exist in this poll
           :available_choices_error # RETURN ENDPOINT
-        validate_multiple_votes(prevent_multiple_votes, has_ip_address) == :multiple_votes_error ->
-          # Multiple votes cannot be made for this poll
-          :multiple_votes_error # RETURN ENDPOINT
         validate_recaptcha(use_recaptcha, recaptcha_token) == :recaptcha_error ->
-          # reCAPTCHA verification returned an error, e.g. missing, expired, or wrong reCAPTCHA token
           :recaptcha_error # RETURN ENDPOINT
         true ->
           # No error
@@ -109,13 +106,20 @@ defmodule FunctionalVote.Votes do
                            "ip_address" => ip_address}
             %Votes{}
             |> Votes.changeset(choice_map)
-            |> Repo.insert!() # RETURN ENDPOINT
+            |> Repo.insert() # RETURN ENDPOINT
           end
       end
     else
       # Poll we are voting for does not exist
       IO.puts("[VoteCtx] poll_id #{poll_id} does not exist!")
       :id_error # RETURN ENDPOINT
+    end
+  end
+
+  defp validate_multiple_votes(prevent_multiple_votes, has_ip_address) do
+    if prevent_multiple_votes and has_ip_address do
+      IO.puts("[VoteCtx] Prevented multiple votes for #{has_ip_address}")
+      :multiple_votes_error
     end
   end
 
@@ -157,13 +161,6 @@ defmodule FunctionalVote.Votes do
       IO.puts("[VoteCtx] Available choices:")
       IO.inspect(available_choices)
       :available_choices_error
-    end
-  end
-
-  defp validate_multiple_votes(prevent_multiple_votes, has_ip_address) do
-    if prevent_multiple_votes and has_ip_address do
-      IO.puts("[VoteCtx] Prevented multiple votes for #{has_ip_address}")
-      :multiple_votes_error
     end
   end
 
