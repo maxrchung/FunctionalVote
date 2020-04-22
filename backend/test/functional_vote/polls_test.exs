@@ -12,6 +12,9 @@ defmodule FunctionalVote.PollsTest do
     @dup_choices_attrs %{"choices" => ["a", "b", "b"], "title" => "test"}
     @empty_choices_attrs %{"choices" => [], "title" => "test"}
     @no_choices_attrs %{"title" => "test"}
+    @max_title_attrs %{"choices" => ["a", "b", "c"], "title" => "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"}
+    @max_choice_attrs %{"choices" => ["12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901", "b", "c"], "title" => "test"}
+
 
     def poll_fixture(attrs \\ %{}) do
       {:ok, poll} = Polls.create_poll(attrs)
@@ -43,6 +46,14 @@ defmodule FunctionalVote.PollsTest do
 
     test "create_poll/1 with no choices returns no_choices_error" do
       assert :no_choices_error == Polls.create_poll(@no_choices_attrs)
+    end
+
+    test "create_poll/1 with max title returns max_title_error" do
+      assert :max_title_error == Polls.create_poll(@max_title_attrs)
+    end
+
+    test "create_poll/1 with max choice returns max_choice_error" do
+      assert :max_choice_error == Polls.create_poll(@max_choice_attrs)
     end
 
     test "get_poll!/1 returns the poll with given id" do

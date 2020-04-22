@@ -252,25 +252,25 @@ defmodule FunctionalVote.Polls do
       attrs["title"] === nil or String.trim(attrs["title"]) === "" ->
         :no_title_error # RETURN ENDPOINT
 
-      length(attrs["title"]) > 100 ->
-        :title_length_error # RETURN ENDPOINT
+      String.length(attrs["title"]) > 100 ->
+        :max_title_error # RETURN ENDPOINT
 
       attrs["choices"] === nil ->
         :no_choices_error # RETURN ENDPOINT
 
-      _ ->
+      true ->
         attrs = Map.update!(attrs, "choices", &Enum.filter(&1, fn choice -> String.trim(choice) !== "" end))
         cond do
           length(attrs["choices"]) === 0 ->
             :no_choices_error # RETURN ENDPOINT
 
-          attrs["choices"] === Enum.uniq(attrs["choices"]) ->
+          attrs["choices"] !== Enum.uniq(attrs["choices"]) ->
             :duplicate_choices_error # RETURN ENDPOINT
 
-          Enum.find(attrs["choices"], fn x -> length(x) > 100 end) !== nil ->
-            :choice_length_error
+          Enum.find(attrs["choices"], fn x -> String.length(x) > 100 end) !== nil ->
+            :max_choice_error # RETURN ENDPOINT
 
-          _ ->
+          true ->
             poll_id = StringGenerator.poll_id_of_length(8)
             IO.inspect(poll_id)
             attrs = Map.put_new(attrs, "poll_id", poll_id)
