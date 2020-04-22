@@ -264,6 +264,9 @@ defmodule FunctionalVote.Polls do
           length(attrs["choices"]) === 0 ->
             :no_choices_error # RETURN ENDPOINT
 
+          length(attrs["choices"]) > 100 ->
+            :max_choices_error # RETURN ENDPOINT
+
           attrs["choices"] !== Enum.uniq(attrs["choices"]) ->
             :duplicate_choices_error # RETURN ENDPOINT
 

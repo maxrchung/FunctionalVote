@@ -27,10 +27,12 @@ defmodule FunctionalVoteWeb.PollController do
         send_resp(conn, :unprocessable_entity, "Question cannot be greater than 100 characters")
       :no_choices_error ->
         send_resp(conn, :unprocessable_entity, "No choices provided")
+      :max_choices_error ->
+        send_resp(conn, :unprocessable_entity, "Cannot provide more than 100 choices")
+      :duplicate_choices_error ->
+        send_resp(conn, :unprocessable_entity, "Duplicate choices cannot be provided")
       :max_choice_error ->
         send_resp(conn, :unprocessable_entity, "Choice cannot be greater than 100 characters")
-      :duplicate_choices_error ->
-        send_resp(conn, :unprocessable_entity, "Duplicate choices provided")
       _ ->
         send_resp(conn, :internal_server_error, "")
     end
