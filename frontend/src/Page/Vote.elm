@@ -13,6 +13,7 @@ import Json.Encode as Encode
 import Page.Error
 import Shared
 import Task
+import Time exposing ( Posix, Zone )
 
 
 
@@ -36,19 +37,22 @@ type alias Poll =
   , orderedChoices : Dict.Dict Int String
   , unorderedChoices : List String
   , useRecaptcha : Bool
+  , created : String
   }
 
 type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> List String -> String -> Bool -> String -> LoadingState -> ( Model, Cmd Msg )
-init key apiAddress title choices pollId useRecaptcha env loadingState =
-  let cmd = if useRecaptcha then renderRecaptcha () else Cmd.none
+init : Navigation.Key -> String -> String -> List String -> String -> Bool -> Posix -> Zone -> String -> LoadingState -> ( Model, Cmd Msg )
+init key apiAddress title choices pollId useRecaptcha created timezone env loadingState =
+  let
+    cmd = if useRecaptcha then renderRecaptcha () else Cmd.none
+    humanTimeString = Shared.toHumanTimeString created timezone
   in
   ( { key = key
     , pollId = pollId
-    , poll = Poll title Dict.empty choices useRecaptcha
+    , poll = Poll title Dict.empty choices useRecaptcha humanTimeString
     , apiAddress = apiAddress
     , error = ""
     , showError = False
@@ -251,6 +255,27 @@ view model =
               [ div
                 [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.title ]
+              ]
+            , div [class "fv-code w-8 text-right" ] [ text "\"" ]
+            ]
+
+        , div [ class "fv-code" ] [ text "," ]
+
+        , div
+            [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8" ] []
+            , h2 [ class "fv-header" ] [ text "Created" ]
+            , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+            ]
+
+        , div
+            [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8"] [ text "\"" ]
+            , div
+              [ class "flex justify-center w-full"]
+              [ div
+                [ class "fv-text text-blue-100 text-left" ]
+                [ text model.poll.created ]
               ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
             ]

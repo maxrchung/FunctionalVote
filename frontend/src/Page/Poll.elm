@@ -12,6 +12,7 @@ import List.Extra
 import Page.Error
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
 import Shared
+import Time exposing ( Posix, Zone )
 import Transition
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
@@ -37,18 +38,20 @@ type alias Poll =
   { title : String
   , winner : String
   , tallies : List ( List ( String, Float ) )
+  , created : String
   }
 
 type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> LoadingState -> Model
-init key apiAddress title winner tallies pollId loadingState  =
+init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> Posix -> Zone -> LoadingState -> Model
+init key apiAddress title winner tallies pollId created timezone loadingState =
   let
     removedEmpty = removeEmpty tallies
     removedDuplicate = removeDuplicate removedEmpty
-    newPoll = Poll title winner ( reorderTallies removedDuplicate )
+    humanTimeString = Shared.toHumanTimeString created timezone
+    newPoll = Poll title winner ( reorderTallies removedDuplicate ) humanTimeString
     lastRound =
       case List.Extra.last newPoll.tallies of
           Nothing -> []
@@ -235,6 +238,27 @@ view model =
               [ div
                 [ class "fv-text text-blue-100 text-left" ]
                 [ text model.poll.title ]
+              ]
+            , div [class "fv-code w-8 text-right" ] [ text "\"" ]
+            ]
+
+        , div [ class "fv-code" ] [ text "," ]
+
+        , div
+            [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8" ] []
+            , h2 [ class "fv-header" ] [ text "Created" ]
+            , div [ class "fv-code w-8 text-right" ] [ text "=" ]
+            ]
+
+        , div
+            [ class "flex justify-between items-center" ]
+            [ div [ class "fv-code w-8"] [ text "\"" ]
+            , div
+              [ class "flex justify-center w-full"]
+              [ div
+                [ class "fv-text text-blue-100 text-left" ]
+                [ text model.poll.created ]
               ]
             , div [class "fv-code w-8 text-right" ] [ text "\"" ]
             ]

@@ -8,6 +8,7 @@ import Html exposing ( .. )
 import Html.Attributes exposing ( .. )
 import Html.Events exposing ( .. )
 import Http
+import Iso8601
 import Json.Decode as Decode
 import Page.Home as Home
 import Page.Vote as Vote
@@ -15,6 +16,7 @@ import Page.Poll as Poll
 import Page.Error as Error
 import Shared
 import Task
+import Time exposing ( Posix, Zone )
 import Url
 import Url.Parser as Parser exposing ( (</>) )
 
@@ -39,6 +41,7 @@ type alias Model =
   , apiAddress : String
   , page : Page
   , env : String
+  , timezone : Zone
   }
 
 type Page
@@ -56,15 +59,17 @@ type Route
 type alias VoteResponse =
   { title : String
   , choices : List String
-  , pollId: String
-  , useReCAPTCHA: Bool
+  , pollId : String
+  , useReCAPTCHA : Bool
+  , created : Posix
   }
 
 type alias PollResponse =
   { title : String
   , winner : String
   , tallies : List ( List ( String, Float ) )
-  , pollId: String
+  , pollId : String
+  , created : Posix
   }
 
 init : String -> Url.Url -> Navigation.Key -> ( Model, Cmd Msg )
@@ -75,8 +80,10 @@ init env url key =
         "https://FunctionalVote.com:4001"
       else
         "http://localhost:4000"
-    ( page, cmd ) = initPage NoPage url key apiAddress
-  in ( Model key apiAddress page env, cmd )
+  in
+  ( Model key apiAddress NoPage env Time.utc
+  , Task.perform (LoadTimezone url) Time.here
+  )
 
 initPage : Page -> Url.Url -> Navigation.Key -> String -> ( Page, Cmd Msg )
 initPage page url key apiAddress =
@@ -125,11 +132,12 @@ getVoteRequest apiAddress pollId =
 
 getVoteDecoder : Decode.Decoder VoteResponse
 getVoteDecoder =
-  Decode.map4 VoteResponse
-    ( Decode.at [ "data", "title" ] Decode.string )
-    ( Decode.at [ "data", "choices" ] <| Decode.list Decode.string )
-    ( Decode.at [ "data", "poll_id" ] Decode.string )
-    ( Decode.at [ "data", "use_recaptcha" ] Decode.bool )
+  Decode.map5 VoteResponse
+    ( Decode.at ["data", "title" ] Decode.string )
+    ( Decode.at ["data", "choices" ] <| Decode.list Decode.string )
+    ( Decode.at ["data", "poll_id" ] Decode.string )
+    ( Decode.at ["data", "use_recaptcha" ] Decode.bool )
+    ( Decode.at ["data", "created"] Iso8601.decoder )
 
 getPollRequest : String -> String -> Cmd Msg
 getPollRequest apiAddress pollId =
@@ -140,12 +148,12 @@ getPollRequest apiAddress pollId =
 
 getPollDecoder : Decode.Decoder PollResponse
 getPollDecoder =
-  Decode.map4 PollResponse
+  Decode.map5 PollResponse
     ( Decode.at ["data", "title" ] Decode.string )
     ( Decode.at ["data", "winner"] Decode.string )
     ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
     ( Decode.at ["data", "poll_id"] Decode.string )
-
+    ( Decode.at ["data", "created"] Iso8601.decoder )
 
 
 -- SUBSCRIPTIONS
@@ -160,7 +168,8 @@ subscriptions model =
 
 -- UPDATE
 type Msg
-  = UrlRequested Browser.UrlRequest
+  = LoadTimezone Url.Url Zone
+  | UrlRequested Browser.UrlRequest
   | UrlChanged Url.Url
   | HomeMsg Home.Msg
   | VoteMsg Vote.Msg
@@ -169,9 +178,13 @@ type Msg
   | GetPollResponse ( Result Http.Error PollResponse )
   | NoOp
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
+    LoadTimezone url timezone ->
+      let ( page, cmd ) = initPage model.page url model.key model.apiAddress
+      in ( { model | page = page, timezone = timezone }, cmd )
+
     UrlRequested urlRequest ->
       case urlRequest of
         Browser.Internal url ->
@@ -208,26 +221,25 @@ update msg model =
     GetVoteResponse result ->
       case result of
         Ok response ->
-          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA model.env Vote.Loaded
+
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress response.title response.choices response.pollId response.useReCAPTCHA response.created model.timezone model.env Vote.Loaded
           in ( { model | page = VotePage voteModel }, Cmd.batch [ updateViewport Nothing, Cmd.map VoteMsg cmd ] )
 
         Err _ ->
-          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False model.env Vote.Error
+          let ( voteModel, cmd ) = Vote.init model.key model.apiAddress "" [] "" False (Time.millisToPosix 0) Time.utc model.env Vote.Error
           in ( { model | page = VotePage voteModel }, Cmd.batch [ updateViewport Nothing, Cmd.map VoteMsg cmd ] )
 
     GetPollResponse result ->
       case result of
         Ok response ->
-          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId Poll.Loaded
+          let pollModel = Poll.init model.key model.apiAddress response.title response.winner response.tallies response.pollId response.created model.timezone Poll.Loaded
           in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
         Err _ ->
-          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" Poll.Error
+          let pollModel = Poll.init model.key model.apiAddress "" "" [] "" (Time.millisToPosix 0) Time.utc Poll.Error
           in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
     NoOp -> ( model, Cmd.none )
-
-
 
 -- VIEW
 view : Model -> Browser.Document Msg
