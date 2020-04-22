@@ -15,6 +15,11 @@ defmodule FunctionalVoteWeb.PollController do
   """
   def create(conn, poll_params) do
     IO.puts("[PollCtrl] Create poll")
+    # Add remote IP to poll_params for time out validation
+    # https://stackoverflow.com/a/45284462/13183186
+    ip_address = (conn.remote_ip |> :inet_parse.ntoa |> to_string())
+    poll_params = Map.put(poll_params, "ip_address", ip_address)
+
     case Polls.create_poll(poll_params) do
       {:ok, %Poll{} = poll} ->
         conn
@@ -33,6 +38,8 @@ defmodule FunctionalVoteWeb.PollController do
         send_resp(conn, :unprocessable_entity, "Duplicate choices cannot be provided")
       :max_choice_error ->
         send_resp(conn, :unprocessable_entity, "Choice cannot be greater than 100 characters")
+      :timeout_error ->
+        send_resp(conn, :unprocessable_entity, "Too many poll requests have been made, please try again later")
       _ ->
         send_resp(conn, :internal_server_error, "")
     end

@@ -278,13 +278,28 @@ defmodule FunctionalVote.Polls do
             IO.inspect(poll_id)
             attrs = Map.put_new(attrs, "poll_id", poll_id)
 
-            # Add default options if they are missing
-            attrs = if Map.has_key?(attrs, "prevent_multiple_votes"), do: attrs, else: Map.put(attrs, "prevent_multiple_votes", false)
-            attrs = if Map.has_key?(attrs, "use_recaptcha"), do: attrs, else: Map.put(attrs, "use_recaptcha", false)
+            # Add empty ip if it is missing
+            attrs = if Map.has_key?(attrs, "ip_address"), do: attrs, else: Map.put(attrs, "ip_address", "")
+            ip_address = attrs["ip_address"]
 
-            %Poll{}
-              |> Poll.changeset(attrs)
-              |> Repo.insert() # RETURN ENDPOINT
+            # Limit poll creations
+            query = from p in Poll,
+              where: p.ip_address == ^ip_address,
+              order_by: [desc: p.inserted_at],
+              select: p.inserted_at
+            # Default to Unix epoch if inserted_at cannot be found
+            last_inserted = Repo.one(query) || ~N[1970-01-01 00:00:00]
+            if NaiveDateTime.diff(NaiveDateTime.utc_now(), last_inserted, :millisecond) < 1000 do
+              :timeout_error
+            else
+              # Add default options if they are missing
+              attrs = if Map.has_key?(attrs, "prevent_multiple_votes"), do: attrs, else: Map.put(attrs, "prevent_multiple_votes", false)
+              attrs = if Map.has_key?(attrs, "use_recaptcha"), do: attrs, else: Map.put(attrs, "use_recaptcha", false)
+
+              %Poll{}
+                |> Poll.changeset(attrs)
+                |> Repo.insert() # RETURN ENDPOINT
+            end
         end
     end
   end
