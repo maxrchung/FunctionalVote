@@ -23,8 +23,8 @@ defmodule FunctionalVoteWeb.VoteController do
     case Votes.create_vote(vote_params) do
       :ok ->
         {_, winner} = vote_params["poll_id"]
-                         |> Votes.get_votes()
-                         |> Polls.instant_runoff(vote_params["poll_id"], true)
+                        |> Votes.get_votes()
+                        |> Polls.instant_runoff(vote_params["poll_id"], true)
         if (winner === :error) do
           send_resp(conn, :created, "Created poll but was unable to save winner to DB")
         else
@@ -33,6 +33,8 @@ defmodule FunctionalVoteWeb.VoteController do
 
       :id_error ->
         send_resp(conn, :unprocessable_entity, "Invalid poll ID")
+      :multiple_votes_error ->
+        send_resp(conn, :unprocessable_entity, "Multiple votes from the same IP address are not allowed for this poll")
       :empty_choices_error ->
         send_resp(conn, :unprocessable_entity, "Received no votes")
       :non_integer_rank_error ->
@@ -41,8 +43,6 @@ defmodule FunctionalVoteWeb.VoteController do
         send_resp(conn, :unprocessable_entity, "Received a choice that does not exist in this poll")
       :duplicate_rank_error ->
         send_resp(conn, :unprocessable_entity, "Received votes with duplicate ranks")
-      :multiple_votes_error ->
-        send_resp(conn, :unprocessable_entity, "Multiple votes from the same IP address not allowed for this poll")
       :recaptcha_error ->
         send_resp(conn, :unprocessable_entity, "reCAPTCHA verification failed")
       _ ->
