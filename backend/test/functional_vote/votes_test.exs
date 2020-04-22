@@ -14,13 +14,19 @@ defmodule FunctionalVote.VotesTest do
     setup_poll(attrs)
   end
 
+  def setup_multiple do
+    attrs = %{"choices" => ["a", "b", "c"], "title" => "test", "prevent_multiple_votes" => true}
+    setup_poll(attrs)
+  end
+
   def setup_poll(attrs) do
     {:ok, poll} = Polls.create_poll(attrs)
     %{poll_id: poll.poll_id,
       choices: poll.choices,
       title:   poll.title,
       winner:  poll.winner,
-      use_recaptcha: poll.use_recaptcha}
+      use_recaptcha: poll.use_recaptcha,
+      prevent_multiple_votes: poll.prevent_multiple_votes}
   end
 
   describe "votes" do
@@ -95,5 +101,17 @@ defmodule FunctionalVote.VotesTest do
       assert :ok = Votes.create_vote(attrs)
     end
 
+    test "prevent_multiple_votes false with multiple votes :ok", context do
+      attrs = %{"poll_id" => context.poll_id, "choices" => %{"a" => 1} }
+      assert :ok = Votes.create_vote(attrs)
+      assert :ok = Votes.create_vote(attrs)
+    end
+
+    test "prevent_multiple_votes true with multiple votes :multiple_votes_error", context do
+      poll = setup_multiple()
+      attrs = %{"poll_id" => poll.poll_id, "choices" => %{"a" => 1}}
+      assert :ok = Votes.create_vote(attrs)
+      assert :multiple_votes_error = Votes.create_vote(attrs)
+    end
   end
 end
