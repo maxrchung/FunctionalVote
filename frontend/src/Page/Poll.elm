@@ -12,6 +12,7 @@ import List.Extra
 import Page.Error
 import Scale exposing ( BandScale, ContinuousScale, defaultBandConfig )
 import Shared
+import Time exposing ( Posix, Zone )
 import Transition
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttributes
@@ -44,12 +45,13 @@ type LoadingState
   = Loaded
   | Error
 
-init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> String -> LoadingState -> Model
-init key apiAddress title winner tallies pollId created loadingState  =
+init : Navigation.Key -> String -> String -> String -> List ( List ( String, Float ) ) -> String -> Posix -> Zone -> LoadingState -> Model
+init key apiAddress title winner tallies pollId created timezone loadingState =
   let
     removedEmpty = removeEmpty tallies
     removedDuplicate = removeDuplicate removedEmpty
-    newPoll = Poll title winner ( reorderTallies removedDuplicate ) created
+    humanTimeString = Shared.toHumanTimeString created timezone
+    newPoll = Poll title winner ( reorderTallies removedDuplicate ) humanTimeString
     lastRound =
       case List.Extra.last newPoll.tallies of
           Nothing -> []
