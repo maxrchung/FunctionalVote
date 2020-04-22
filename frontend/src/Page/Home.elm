@@ -52,7 +52,7 @@ update msg model =
       let
         updatedChoices = Array.set index newChoice model.choices
         newChoices =
-          if index == Array.length model.choices - 1  then
+          if index == Array.length model.choices - 1 && Array.length model.choices < 100 then
             Array.push "" updatedChoices
           else
             updatedChoices
