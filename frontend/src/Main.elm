@@ -241,7 +241,6 @@ update msg model =
 
     NoOp -> ( model, Cmd.none )
 
-
 -- VIEW
 view : Model -> Browser.Document Msg
 view model =
