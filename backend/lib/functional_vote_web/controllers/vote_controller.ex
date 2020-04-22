@@ -43,6 +43,8 @@ defmodule FunctionalVoteWeb.VoteController do
         send_resp(conn, :unprocessable_entity, "Received a choice that does not exist in this poll")
       :duplicate_rank_error ->
         send_resp(conn, :unprocessable_entity, "Received votes with duplicate ranks")
+      :submission_timeout_error ->
+        send_resp(conn, :unprocessable_entity, "Too many vote submissions have been made, please try again later")
       :recaptcha_error ->
         send_resp(conn, :unprocessable_entity, "reCAPTCHA verification failed")
       _ ->
