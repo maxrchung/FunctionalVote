@@ -34,7 +34,7 @@ defmodule FunctionalVoteWeb.VoteController do
       :id_error ->
         send_resp(conn, :unprocessable_entity, "Invalid poll ID")
       :multiple_votes_error ->
-        send_resp(conn, :unprocessable_entity, "Multiple votes from the same IP address not allowed for this poll")
+        send_resp(conn, :unprocessable_entity, "Multiple votes from the same IP address are not allowed for this poll")
       :empty_choices_error ->
         send_resp(conn, :unprocessable_entity, "Received no votes")
       :non_integer_rank_error ->
