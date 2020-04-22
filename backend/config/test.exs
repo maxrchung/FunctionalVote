@@ -12,7 +12,8 @@ config :functional_vote, FunctionalVote.Repo,
 # you can enable the server option below.
 config :functional_vote, FunctionalVoteWeb.Endpoint,
   http: [port: 4002],
-  server: false
+  server: false,
+  submission_timeout: 0
 
 # Print only warnings and errors during test
 config :logger, level: :warn

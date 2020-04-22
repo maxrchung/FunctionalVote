@@ -15,7 +15,8 @@ config :functional_vote, FunctionalVoteWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "ioowjAWwecCZhkFS18Yem6paec+6AvYSDi8oqSAhdeZ8zN5abJYTU5NsdNrAZBkh",
   render_errors: [view: FunctionalVoteWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: FunctionalVote.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: FunctionalVote.PubSub, adapter: Phoenix.PubSub.PG2],
+  submission_timeout: 1000
 
 # Configures Elixir's Logger
 config :logger, :console,
