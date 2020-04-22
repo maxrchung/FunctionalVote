@@ -38,7 +38,7 @@ defmodule FunctionalVoteWeb.PollController do
         send_resp(conn, :unprocessable_entity, "Duplicate choices cannot be provided")
       :max_choice_error ->
         send_resp(conn, :unprocessable_entity, "Choice cannot be greater than 100 characters")
-      :timeout_error ->
+      :submission_timeout_error ->
         send_resp(conn, :unprocessable_entity, "Too many poll requests have been made, please try again later")
       _ ->
         send_resp(conn, :internal_server_error, "")
