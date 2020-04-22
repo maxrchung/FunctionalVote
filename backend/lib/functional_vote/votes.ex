@@ -64,8 +64,8 @@ defmodule FunctionalVote.Votes do
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
 
-      # Check for existing IP
-      ip_address = attrs["ip_address"]
+      # Check for existing IP and default to empty string
+      ip_address = attrs["ip_address"] || ""
       query = from v in "votes",
               where: v.poll_id == ^poll_id and v.ip_address == ^ip_address,
               select: v.user_id
