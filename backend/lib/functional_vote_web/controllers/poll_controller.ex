@@ -23,8 +23,12 @@ defmodule FunctionalVoteWeb.PollController do
         |> show(%{"poll_id" => poll.poll_id})
       :no_title_error ->
         send_resp(conn, :unprocessable_entity, "No question provided")
+      :title_length_error ->
+        send_resp(conn, :unprocessable_entity, "Question cannot be greater than 100 characters")
       :no_choices_error ->
         send_resp(conn, :unprocessable_entity, "No choices provided")
+      :choice_length_error ->
+        send_resp(conn, :unprocessable_entity, "Choice cannot be greater than 100 characters")
       :duplicate_choices_error ->
         send_resp(conn, :unprocessable_entity, "Duplicate choices provided")
       _ ->
