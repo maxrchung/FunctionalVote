@@ -229,7 +229,7 @@ view model =
       div []
         [ div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of choices. Not all choices need to have a rank. Smaller rank numbers have higher preference." ]
+            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of each choice. Not all choices need to have a rank. Smaller rank numbers have more preference." ]
             , div [ class "w-8" ] []
             ]
 
@@ -291,10 +291,8 @@ view model =
               , div [ class "w-full flex justify-center"]
                   [ let
                       sitekey =
-                        if model.env == "production" then
-                          "6Ld44ukUAAAAAGaOzaluZITl3zQE-6fbgZh2O2PC"
-                        else
-                          "6LeskukUAAAAACVQNLgOef9dSxPau59T04w4r9CA"
+                        if model.env == "production" then "6Ld44ukUAAAAAGaOzaluZITl3zQE-6fbgZh2O2PC"
+                        else "6LeskukUAAAAACVQNLgOef9dSxPau59T04w4r9CA"
                     in
                     div
                       [ attribute "data-sitekey" sitekey
@@ -420,14 +418,14 @@ renderOptions maxRank selectedRank =
 renderOption : String -> Int -> Html Msg
 renderOption selectedRank rank  =
   case String.toInt selectedRank of
-     Nothing ->
-      option [ value <| String.fromInt rank ] [ text <| String.fromInt rank ]
+     Nothing -> option [ value <| String.fromInt rank ] [ text <| rankValue rank ]
+
      Just selectedRankInt ->
       option
         [ value <| String.fromInt rank
         , selected ( selectedRankInt == rank )
         ]
-        [ text <| String.fromInt rank ]
+        [ text <| rankValue rank]
 
 unorderedCommaText : Bool -> Int -> Html a
 unorderedCommaText hasOrderedChoices index =
@@ -474,3 +472,17 @@ errorText error =
     text ""
   else
     text error
+
+rankValue : Int -> String
+rankValue rank =
+  String.fromInt rank ++
+    case modBy 100 rank of
+      11 -> "th"
+      12 -> "th"
+      13 -> "th"
+      _ ->
+        case modBy 10 rank of
+          1 -> "st"
+          2 -> "nd"
+          3 -> "rd"
+          _ -> "th"
