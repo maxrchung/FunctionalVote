@@ -174,7 +174,10 @@ view model =
                   ] []
               , label [ onClick ToggleMultipleVotes ] []
               , div [ class "fv-code w-8 text-center flex-shrink-0" ] [ text ",\"" ]
-              , div [ class "fv-text text-blue-100 w-auto"] [ text "Prevent multiple votes from the same IP address" ]
+              , div
+                  [ class "fv-text text-blue-100 cursor-pointer"
+                  , onClick ToggleMultipleVotes
+                  ] [ text "Prevent multiple votes from the same IP address" ]
               ]
           , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
           ]
@@ -190,7 +193,11 @@ view model =
                   ] []
               , label [ onClick ToggleRecaptcha ] []
               , div [ class "fv-code w-8 text-center flex-shrink-0" ] [ text ",\"" ]
-              , div [ class "fv-text text-blue-100"] [ text "Use reCAPTCHA verification" ]
+              , div
+                  [ class "fv-text text-blue-100 cursor-pointer"
+                  , onClick ToggleRecaptcha
+                  ]
+                  [ text "Use reCAPTCHA verification" ]
               ]
           , div [ class "fv-code w-8 text-right" ] [ text "\")" ]
           ]
