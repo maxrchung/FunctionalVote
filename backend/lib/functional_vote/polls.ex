@@ -3,6 +3,7 @@ defmodule FunctionalVote.Polls do
   The Polls context.
   """
 
+  require Logger
   import Ecto.Query, warn: false
   alias FunctionalVote.Repo
 
@@ -21,10 +22,9 @@ defmodule FunctionalVote.Polls do
     cs = Ecto.Changeset.change poll, winner: winner
     case Repo.update cs do
       {:ok, _cs} ->
-        IO.puts("[PollCtx] Writing winner to DB")
+        Logger.debug("[PollCtx] Writing winner to DB")
       {:error, changeset} ->
-        IO.puts("[PollCtx] Unable to write winner to DB:")
-        IO.inspect(changeset)
+        Logger.error("[PollCtx] Unable to write winner to DB: #{inspect(changeset)}")
     end
   end
 
@@ -34,7 +34,7 @@ defmodule FunctionalVote.Polls do
   @return winner
   """
   def read_winner(poll_id) do
-    IO.puts("[PollCtx] Reading winner from DB")
+    Logger.debug("[PollCtx] Reading winner from DB")
     query = from p in Poll,
             where: p.poll_id == ^poll_id,
             select: p.winner
@@ -47,7 +47,7 @@ defmodule FunctionalVote.Polls do
   @param talles_by_count
   """
   def write_round(poll_id, tallies_by_choice, round) do
-    IO.puts("[PollCtx] Writing round #{round} results to DB")
+    Logger.debug("[PollCtx] Writing round #{round} results to DB")
     Enum.each tallies_by_choice, fn {k, v} ->
       choice_map = %{poll_id: poll_id,
                     round: round,
@@ -64,7 +64,7 @@ defmodule FunctionalVote.Polls do
   @param poll_id
   """
   def clear_rounds(poll_id) do
-    IO.puts("[PollCtx] Clearing round results of poll id #{poll_id}")
+    Logger.debug("[PollCtx] Clearing round results of poll id #{poll_id}")
     query = from r in Results,
             where: r.poll_id == ^poll_id
     Repo.delete_all(query)
@@ -75,7 +75,7 @@ defmodule FunctionalVote.Polls do
   @param poll_id
   """
   def read_rounds(poll_id) do
-    IO.puts("[PollCtx] Reading round results of poll id #{poll_id}")
+    Logger.debug("[PollCtx] Reading round results of poll id #{poll_id}")
     query = from r in Results,
             where: r.poll_id == ^poll_id,
             select: {r.round, r.choice, r.votes}
@@ -108,8 +108,7 @@ defmodule FunctionalVote.Polls do
                          |> Enum.filter(fn choice -> choice not in eliminated end) # that are not eliminated
                          |> Enum.into(%{}, fn choice -> {choice, 0} end) # Add it to the map
     tallies_by_choice = Map.merge(tallies_by_choice, zero_tally_choices)
-    IO.puts("[PollCtx] Votes going into round #{round}:")
-    IO.inspect(tallies_by_choice)
+    Logger.debug("[IRV] Votes going into round #{round}: #{inspect(tallies_by_choice)}")
     if (round == 0) do
       # Clear previous results for this poll_id as we are rerunning the algorithm
       clear_rounds(poll_id)
@@ -122,10 +121,10 @@ defmodule FunctionalVote.Polls do
                 |> Enum.max()
     winner = tallies_by_count[max_count] # Array of choice(s) with the most votes
     if (max_count <= num_users / 2) do
-      IO.puts("[PollCtx] No majority, needed #{div(num_users, 2) + 1}")
+      Logger.debug("[IRV] No majority, needed #{div(num_users, 2) + 1}")
       if (num_choices == 2) do
         winner = tallies_by_count[Map.keys(tallies_by_count) |> Enum.max()] |> Enum.random()
-        IO.puts("[PollCtx] Result is a tie, randomized winner to be #{winner}")
+        Logger.debug("[IRV] Result is a tie, randomized winner to be #{winner}")
         write_winner(poll_id, winner)
         {tallies_by_choice, winner} # BASE CASE ENDPOINT
       else
@@ -133,7 +132,7 @@ defmodule FunctionalVote.Polls do
         round = round + 1 # Round 1 = Tallies after first elimination
         loser = tallies_by_count[Map.keys(tallies_by_count) |> Enum.min()] |> Enum.random()
         eliminated = eliminated ++ [loser]
-        IO.puts("[PollCtx] Eliminated #{loser} in round #{round}")
+        Logger.debug("[IRV] Eliminated #{loser} in round #{round}")
         # Remove all votes cast for this choice
         votes = for {k, v} <- votes,
                 into: %{},
@@ -145,7 +144,7 @@ defmodule FunctionalVote.Polls do
         {tallies_by_choice, winner} # RETURN ENDPOINT
       end
     else
-      IO.puts("[PollCtx] Majority reached with #{winner} having #{max_count} votes")
+      Logger.debug("[IRV] Majority reached with #{winner} having #{max_count} votes")
       winner = List.first(winner)
       write_winner(poll_id, winner)
       {tallies_by_choice, winner} # BASE CASE ENDPOINT
@@ -165,7 +164,7 @@ defmodule FunctionalVote.Polls do
       winner = read_winner(poll_id)
       if winner == nil do
         winner = get_poll_choices(poll_id) |> Enum.random()
-        IO.puts("[PollCtx] New poll, randomized winner to be #{winner}")
+        Logger.debug("[IRV] New poll, randomized winner to be #{winner}")
         write_winner(poll_id, winner)
         irv_tallies = []
         {irv_tallies, winner} # RETURN ENDPOINT
@@ -174,16 +173,14 @@ defmodule FunctionalVote.Polls do
         {irv_tallies, winner} # RETURN ENDPOINT
       end
     else
-      IO.puts("[PollCtx] Starting IRV algorithm with the following votes:")
-      IO.inspect(votes)
+      Logger.debug("[IRV] Starting IRV algorithm with the following votes: #{inspect(votes)}")
       raw_tallies = Map.values(votes)
                     |> List.zip()
                     |> List.first()
                     |> Tuple.to_list()
                     |> Enum.frequencies()
       tallies_by_count = Enum.group_by(raw_tallies, fn {_, value} -> value end, fn {key, _} -> key end)
-      IO.puts("[PollCtx] Raw tallies by count:")
-      IO.inspect(tallies_by_count)
+      Logger.debug("[IRV] Raw tallies by count: #{inspect(tallies_by_count)}")
         {_, winner} = instant_runoff_recurse(votes, poll_id, 0)
         irv_tallies = read_rounds(poll_id)
         {irv_tallies, winner} # RETURN ENDPOINT
@@ -223,7 +220,7 @@ defmodule FunctionalVote.Polls do
   Raises `Ecto.NoResultsError` if the Poll does not exist.
   """
   def get_poll_data!(poll_id) do
-    IO.puts("[PollCtx] Get poll data")
+    Logger.debug("[PollCtx] Get poll data")
     poll = Repo.get_by!(Poll, poll_id: poll_id)
     votes = Votes.get_votes(poll_id)
     {irv_tallies, winner} = instant_runoff(votes, poll_id)
@@ -249,8 +246,6 @@ defmodule FunctionalVote.Polls do
 
   """
   def create_poll(attrs \\ %{}) do
-    IO.puts("[PollCtx] Create poll")
-
     cond do
       attrs["title"] === nil or String.trim(attrs["title"]) === "" ->
         :no_title_error # RETURN ENDPOINT
@@ -278,7 +273,6 @@ defmodule FunctionalVote.Polls do
 
           true ->
             poll_id = StringGenerator.poll_id_of_length(8)
-            IO.inspect(poll_id)
             attrs = Map.put_new(attrs, "poll_id", poll_id)
 
             # Add empty ip if it is missing
@@ -300,6 +294,8 @@ defmodule FunctionalVote.Polls do
               # Add default options if they are missing
               attrs = if Map.has_key?(attrs, "prevent_multiple_votes"), do: attrs, else: Map.put(attrs, "prevent_multiple_votes", false)
               attrs = if Map.has_key?(attrs, "use_recaptcha"), do: attrs, else: Map.put(attrs, "use_recaptcha", false)
+
+              Logger.info("#{ip_address} created poll #{poll_id}: #{inspect(attrs)}")
 
               %Poll{}
                 |> Poll.changeset(attrs)

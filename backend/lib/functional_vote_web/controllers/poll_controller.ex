@@ -1,6 +1,7 @@
 defmodule FunctionalVoteWeb.PollController do
   use FunctionalVoteWeb, :controller
 
+  require Logger
   alias FunctionalVote.Polls
   alias FunctionalVote.Polls.Poll
 
@@ -14,7 +15,7 @@ defmodule FunctionalVoteWeb.PollController do
   @return: Poll information as JSON
   """
   def create(conn, poll_params) do
-    IO.puts("[PollCtrl] Create poll")
+    Logger.debug("[PollCtrl] Create poll")
     # Add remote IP to poll_params for time out validation
     # https://stackoverflow.com/a/45284462/13183186
     ip_address = (conn.remote_ip |> :inet_parse.ntoa |> to_string())
@@ -53,7 +54,7 @@ defmodule FunctionalVoteWeb.PollController do
   @return: Poll information as JSON
   """
   def show(conn, %{"poll_id" => poll_id}) do
-    IO.puts("[PollCtrl] Get poll data")
+    Logger.debug("[PollCtrl] Get poll data")
     poll = Polls.get_poll_data!(poll_id)
     render(conn, "show.json", poll: poll)
   end

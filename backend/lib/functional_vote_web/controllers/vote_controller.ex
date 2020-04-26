@@ -1,6 +1,7 @@
 defmodule FunctionalVoteWeb.VoteController do
   use FunctionalVoteWeb, :controller
 
+  require Logger
   alias FunctionalVote.Votes
   alias FunctionalVote.Polls
 
@@ -14,7 +15,7 @@ defmodule FunctionalVoteWeb.VoteController do
   @return: No body, just a 201 Created status
   """
   def create(conn, vote_params) do
-    IO.puts("[VoteCtrl] Submit vote")
+    Logger.debug("[VoteCtrl] Submit vote")
     # Add remote IP to vote_params for multiple vote validation
     # https://stackoverflow.com/a/45284462/13183186
     ip_address = (conn.remote_ip |> :inet_parse.ntoa |> to_string())

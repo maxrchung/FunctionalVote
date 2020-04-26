@@ -2,7 +2,8 @@ defmodule FunctionalVote.Votes do
   @moduledoc """
   The Votes context.
   """
-
+  
+  require Logger
   import Ecto.Query, warn: false
   alias FunctionalVote.Repo
 
@@ -28,8 +29,7 @@ defmodule FunctionalVote.Votes do
             where: v.poll_id == ^poll_id,
             select: max(v.user_id)
     max_user_id = Repo.one(query) || -1  # -1 indicates no voters
-    IO.puts("[VotesCtx] Got #{length(votes_list)} votes from #{max_user_id + 1} voters")
-    # IO.inspect(votes_list)
+    Logger.debug("[VotesCtx] Got #{length(votes_list)} votes from #{max_user_id + 1} voters for poll #{poll_id}: #{inspect(votes_list)}")
     # Convert into list of %{0 => ["a", "b", "c"], 1 => ["c", "b", "a"]}
     if (max_user_id !== -1) do
       _votes_by_user = Enum.group_by(votes_list, &elem(&1, 0), &Tuple.to_list(&1) |> List.last()) # RETURN ENDPOINT
@@ -56,13 +56,12 @@ defmodule FunctionalVote.Votes do
     poll_id = attrs["poll_id"]
     if Polls.poll_exists?(poll_id) do
       available_choices = Polls.get_poll_choices(poll_id)
-      IO.puts("[VoteCtx] Create vote in poll_id: #{poll_id}")
       # Determine user_id to use: max(user_id) + 1 in the table for this this poll_id
       query = from v in "votes",
               where: v.poll_id == ^poll_id,
               select: max(v.user_id) + 1
       user_id = Repo.one(query) || 0  # Use 0 if nil is returned (i.e. no votes found)
-      IO.puts("[VoteCtx] Determined user_id: #{user_id}")
+      Logger.debug("[VoteCtx] Determined user_id for poll #{poll_id}: #{user_id}")
       # Parse out "choices" and insert an entry for each choice and rank
       choices = attrs["choices"]
 
@@ -97,7 +96,8 @@ defmodule FunctionalVote.Votes do
           :recaptcha_error # RETURN ENDPOINT
         true ->
           # No error
-          IO.puts("[VoteCtx] Got #{map_size(choices)} choices")
+          Logger.debug("[VoteCtx] Got #{map_size(choices)} choices")
+          Logger.info("#{ip_address} voted in poll #{poll_id}: #{inspect(choices)}")
           Enum.each choices, fn {k, v} ->
             # Maintain backwards compatibility if others want to submit ranks as ints represented as strings
             v = if is_integer(v), do: v, else: String.to_integer(v)
@@ -113,22 +113,21 @@ defmodule FunctionalVote.Votes do
       end
     else
       # Poll we are voting for does not exist
-      IO.puts("[VoteCtx] poll_id #{poll_id} does not exist!")
+      Logger.debug("[VoteCtx] poll_id #{poll_id} does not exist!")
       :id_error # RETURN ENDPOINT
     end
   end
 
   defp validate_multiple_votes(prevent_multiple_votes, has_ip_address) do
     if prevent_multiple_votes and has_ip_address do
-      IO.puts("[VoteCtx] Prevented multiple votes for #{has_ip_address}")
+      Logger.debug("[VoteCtx] Prevented multiple votes for #{has_ip_address}")
       :multiple_votes_error
     end
   end
 
   defp validate_non_empty_choices(choices) do
     if (choices == nil or map_size(choices) == 0) do
-      IO.puts("[VoteCtx] Received an empty vote")
-      IO.inspect(choices)
+      Logger.debug("[VoteCtx] Received an empty vote")
       :empty_choices_error
     end
   end
@@ -142,26 +141,22 @@ defmodule FunctionalVote.Votes do
       end)
     rescue
       ArgumentError ->
-        IO.puts("[VoteCtx] Received a vote with a non-integer rank")
-        IO.inspect(Map.values(choices))
+        Logger.debug("[VoteCtx] Received a vote with a non-integer rank: #{inspect(Map.values(choices))}")
         :non_integer_rank_error
     end
   end
 
   defp validate_duplicate_ranks(choices) do
     if Map.values(choices) !== Enum.uniq(Map.values(choices)) do
-      IO.puts("[VoteCtx] Received votes with duplicate ranks:")
-      IO.inspect(choices)
+      Logger.debug("[VoteCtx] Received votes with duplicate ranks: #{inspect(choices)}")
       :duplicate_rank_error
     end
   end
 
   defp validate_choices(choices, available_choices) do
     if Map.keys(choices) -- available_choices !== [] do
-      IO.puts("[VoteCtx] Received a choice that does not exist in this poll:")
-      IO.inspect(Map.keys(choices))
-      IO.puts("[VoteCtx] Available choices:")
-      IO.inspect(available_choices)
+      Logger.debug("[VoteCtx] Received a choice that does not exist in this poll: #{inspect(Map.keys(choices))}")
+      Logger.debug("[VoteCtx] Available choices: #{inspect(available_choices)}")
       :available_choices_error
     end
   end
@@ -186,7 +181,7 @@ defmodule FunctionalVote.Votes do
       case Recaptcha.verify(recaptcha_token) do
         {:ok, _response} -> :ok
         {:error, _errors} ->
-          IO.puts("[VoteCtx] Failed reCAPTCHA verification")
+          Logger.debug("[VoteCtx] Failed reCAPTCHA verification")
           :recaptcha_error
       end
     end
