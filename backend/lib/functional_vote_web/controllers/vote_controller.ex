@@ -49,6 +49,7 @@ defmodule FunctionalVoteWeb.VoteController do
       :recaptcha_error ->
         send_resp(conn, :unprocessable_entity, "reCAPTCHA verification failed")
       _ ->
+        Logger.error("#{ip_address} encountered a 500 when voting with vote_params: #{inspect(vote_params)}")
         send_resp(conn, :internal_server_error, "")
     end
   end
