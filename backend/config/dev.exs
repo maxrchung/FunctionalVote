@@ -65,7 +65,7 @@ config :functional_vote, FunctionalVoteWeb.Endpoint,
     ]
   ]
 
-config :logger, level: :info
+config :logger, compile_time_purge_matching: [[application: :remote_ip]]
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
