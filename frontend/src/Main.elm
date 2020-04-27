@@ -91,8 +91,17 @@ initPage page url key apiAddress =
     Just route ->
       case route of
         HomeRoute fragment ->
-            let model = Home.init key apiAddress
-            in ( HomePage model , updateViewport fragment )
+          let
+            model = Home.init key apiAddress
+            newPage = HomePage model
+          in
+          case page of
+            HomePage _ ->
+              case fragment of
+                Just _ -> ( page, updateViewport fragment )
+                Nothing -> ( newPage, updateViewport fragment )
+
+            _ -> ( newPage, updateViewport fragment )
 
         VoteRoute pollId -> ( page, getVoteRequest apiAddress pollId )
 
@@ -113,7 +122,6 @@ updateViewport fragment =
 
     -- Set viewport to top of page if no fragment id is provided
     Nothing -> Task.attempt ( \_ -> NoOp ) ( Dom.setViewport 0 0 )
-
 
 routeParser : Parser.Parser ( Route -> a ) a
 routeParser =
@@ -154,6 +162,7 @@ getPollDecoder =
     ( Decode.at ["data", "tallies"] <| Decode.list <| Decode.keyValuePairs Decode.float )
     ( Decode.at ["data", "poll_id"] Decode.string )
     ( Decode.at ["data", "created"] Iso8601.decoder )
+
 
 
 -- SUBSCRIPTIONS
@@ -240,6 +249,8 @@ update msg model =
           in ( { model | page = PollPage pollModel }, updateViewport Nothing )
 
     NoOp -> ( model, Cmd.none )
+
+
 
 -- VIEW
 view : Model -> Browser.Document Msg
