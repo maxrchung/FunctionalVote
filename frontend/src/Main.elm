@@ -279,7 +279,7 @@ view model =
 renderBody : Model -> List (Html Msg)
 renderBody model =
   [ div [ class "pt-16" ]
-      -- Navbar needs to have a set z-value otherwise input placeholders and checkboxes appear over it
+      -- Navbar needs to have a high z-value otherwise input placeholders and checkboxes appear over it
       [ div [ class "fixed w-full top-0 z-50 bg-blue-900 shadow-lg" ]
           [ div [ class "flex justify-between items-center max-w-screen-sm h-16 mx-auto px-4" ]
               [ a
