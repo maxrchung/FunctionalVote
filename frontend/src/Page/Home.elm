@@ -121,7 +121,7 @@ view model =
         ]
 
     , div [ class "flex justify-between" ]
-        [ h1 [ class "fv-code opacity-25" ] [ text "poll" ]
+        [ h1 [ class "fv-code" ] [ text "poll" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
 
@@ -228,7 +228,7 @@ view model =
           ]
 
       , div [ class "flex justify-between" ]
-          [ div [ class "fv-code opacity-25" ] [ text "examples" ]
+          [ div [ class "fv-code" ] [ text "examples" ]
           , div [ class "fv-code" ] [ text "=" ]
           ]
 
@@ -266,11 +266,11 @@ view model =
 
       , div [ class "fv-break" ] [ text "--" ]
 
-      , div [ class "flex justify-between items-center" ]
+      , div [ class "flex justify-between items-center mb-6" ]
           [ div [ class "fv-code w-8" ] [ text "{-" ]
 
           , h2
-              [ class "fv-header mb-1"
+              [ class "fv-header"
               , id "ranked-choice"
               ] [ text "Why Ranked-Choice?" ]
 
@@ -306,7 +306,7 @@ view model =
 
               , div [ class "fv-break" ] [ text "--" ]
 
-              , h2 [ class "fv-header mb-1" ] [ text "Why Functional Vote?" ]
+              , h2 [ class "fv-header mb-6" ] [ text "Why Functional Vote?" ]
 
               , p [ class "fv-text" ]
                   [ text "Functional Vote was started by us ("

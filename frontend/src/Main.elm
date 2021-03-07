@@ -1,3 +1,6 @@
+-- This file is the main entry point to https://functionalvote.com and shows our
+-- use of Elm architecture, SPA routing, and Tailwind CSS.
+
 module Main exposing ( .. )
 
 import Browser
@@ -275,20 +278,6 @@ view model =
 
 renderBody : Model -> List (Html Msg)
 renderBody model =
-  let
-    content =
-      case model.page of
-        HomePage homeModel ->
-          Html.map HomeMsg ( Home.view homeModel )
-        VotePage voteModel ->
-          Html.map VoteMsg ( Vote.view voteModel )
-        PollPage pollModel ->
-          Html.map PollMsg ( Poll.view pollModel )
-        ErrorPage ->
-          Error.view
-        NoPage ->
-          div [] []
-  in
   [ div [ class "pt-16" ]
       -- Navbar needs to have a high z-value otherwise input placeholders and checkboxes appear over it
       [ div [ class "fixed w-full top-0 z-50 bg-blue-900 shadow-lg" ]
@@ -324,6 +313,19 @@ renderBody model =
                   ]
               ]
           ]
-        , div [ class "container max-w-screen-sm mx-auto p-4" ] [ content ]
+        , let
+            content =
+              case model.page of
+                HomePage homeModel ->
+                  Html.map HomeMsg ( Home.view homeModel )
+                VotePage voteModel ->
+                  Html.map VoteMsg ( Vote.view voteModel )
+                PollPage pollModel ->
+                  Html.map PollMsg ( Poll.view pollModel )
+                ErrorPage ->
+                  Error.view
+                NoPage ->
+                  div [] []
+          in div [ class "container max-w-screen-sm mx-auto p-4" ] [ content ]
       ]
   ]
