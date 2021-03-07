@@ -18,7 +18,7 @@ toHumanTimeString time timezone =
     , DateFormat.text " "
     , DateFormat.hourNumber
     , DateFormat.text ":"
-    , DateFormat.minuteNumber
+    , DateFormat.minuteFixed
     , DateFormat.text " "
     , DateFormat.amPmUppercase
     ]
