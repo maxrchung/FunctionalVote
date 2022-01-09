@@ -6,10 +6,6 @@ defmodule FunctionalVote.Application do
   use Application
 
   def start(_type, _args) do
-    # https://github.com/avdi/dotenv_elixir#using-environment-variables-in-configuration
-    Dotenv.load
-    Mix.Task.run("loadconfig")
-
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
