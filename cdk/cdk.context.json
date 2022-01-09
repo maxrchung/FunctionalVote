@@ -1,0 +1,56 @@
+{
+  "vpc-provider:account=342191180882:filter.tag:Name=cloud-vpc:region=us-west-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0267d0a8cbfe69987",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0737529d3c319eeee",
+            "cidr": "10.0.0.0/18",
+            "availabilityZone": "us-west-1b",
+            "routeTableId": "rtb-0a67e71439785c3ae"
+          },
+          {
+            "subnetId": "subnet-01def880251fd8a43",
+            "cidr": "10.0.64.0/18",
+            "availabilityZone": "us-west-1c",
+            "routeTableId": "rtb-05afb7e36969c8a62"
+          }
+        ]
+      },
+      {
+        "name": "Isolated",
+        "type": "Isolated",
+        "subnets": [
+          {
+            "subnetId": "subnet-032a4cb23de2c7d14",
+            "cidr": "10.0.128.0/18",
+            "availabilityZone": "us-west-1b",
+            "routeTableId": "rtb-034d878c00838c7fb"
+          },
+          {
+            "subnetId": "subnet-072c5e0dd4bee266e",
+            "cidr": "10.0.192.0/18",
+            "availabilityZone": "us-west-1c",
+            "routeTableId": "rtb-075d63302689da415"
+          }
+        ]
+      }
+    ]
+  },
+  "load-balancer-listener:account=342191180882:listenerProtocol=HTTPS:loadBalancerTags.0.key=balancer-identifier:loadBalancerTags.0.value=cloud-balancer:loadBalancerType=application:region=us-west-1": {
+    "listenerArn": "arn:aws:elasticloadbalancing:us-west-1:342191180882:listener/app/cloud-application-load-balancer/e17fec11e8c61534/a2d66ec2534ee565",
+    "listenerPort": 443,
+    "securityGroupIds": [
+      "sg-038dadd54569fbeeb"
+    ]
+  },
+  "security-group:account=342191180882:region=us-west-1:securityGroupId=sg-038dadd54569fbeeb": {
+    "securityGroupId": "sg-038dadd54569fbeeb",
+    "allowAllOutbound": false
+  }
+}
