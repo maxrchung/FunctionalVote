@@ -47,6 +47,11 @@ export class CdkStack extends cdk.Stack {
     const domain = amplifyApp.addDomain('maxrchung.com')
     domain.mapSubDomain(branch, 'functionalvote');
 
+    // Redirect traffic to index.html to have correct SPA routing
+    // https://docs.aws.amazon.com/amplify/latest/userguide/redirects.html
+    // https://github.com/aws-amplify/amplify-console/issues/59
+    amplifyApp.addCustomRule(amplify.CustomRule.SINGLE_PAGE_APPLICATION_REDIRECT);
+
     const taskDefinition = new ecs.TaskDefinition(this, 'functional-vote-task', {
       family: 'functional-vote-task',
       compatibility: ecs.Compatibility.FARGATE,
