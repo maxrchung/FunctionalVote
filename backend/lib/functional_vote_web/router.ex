@@ -21,7 +21,7 @@ defmodule FunctionalVoteWeb.Router do
     post "/poll", PollController, :create
     get "/poll/:poll_id", PollController, :show
     post "/vote", VoteController, :create
-
+    get "/", HealthCheckController, :index
   end
 
   # Other scopes may use custom stacks.
