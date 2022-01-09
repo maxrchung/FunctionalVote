@@ -45,7 +45,8 @@ defmodule FunctionalVote.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:cors_plug, "~> 2.0"},
       {:recaptcha, "~> 3.0"},
-      {:remote_ip, "~> 0.2.0"}
+      {:remote_ip, "~> 0.2.0"},
+      {:dotenv, "~> 3.0.0"}
     ]
   end
 

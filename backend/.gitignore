@@ -1,3 +1,5 @@
+.env
+
 *.beam
 .elixir_ls/
 
