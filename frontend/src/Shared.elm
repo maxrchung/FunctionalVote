@@ -18,7 +18,7 @@ toHumanTimeString time timezone =
     , DateFormat.text " "
     , DateFormat.hourNumber
     , DateFormat.text ":"
-    , DateFormat.minuteNumber
+    , DateFormat.minuteFixed
     , DateFormat.text " "
     , DateFormat.amPmUppercase
     ]
@@ -44,7 +44,7 @@ renderShareLinks url helpText title message =
 
 
     , div [ class "flex justify-between" ]
-        [ div [ class "fv-code opacity-25" ] [ text "links" ]
+        [ div [ class "fv-code" ] [ text "links" ]
         , div [ class "fv-code" ] [ text "=" ]
         ]
 

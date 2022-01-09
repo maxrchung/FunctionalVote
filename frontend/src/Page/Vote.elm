@@ -234,7 +234,7 @@ view model =
             ]
 
         , div [ class "flex justify-between" ]
-            [ h1 [ class "fv-code opacity-25" ] [ text "vote" ]
+            [ h1 [ class "fv-code" ] [ text "vote" ]
             , div [ class "fv-code" ] [ text "=" ]
             ]
 
