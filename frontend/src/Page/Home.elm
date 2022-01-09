@@ -114,9 +114,9 @@ view model =
     [ div [ class "flex justify-between items-center" ]
         [ div [ class "fv-code w-8" ] [ text "--" ]
         , p [ class "fv-text w-full" ]
-            [ text "Welcome to Functional Vote! This website lets you create and share free online polls that use "
+            [ text "Welcome to Functional Vote! This website lets you create polls that use "
             , a [ href "#ranked-choice" ] [ text "ranked-choice voting" ]
-            , text ". Create a new poll by entering a question, providing choices, and selecting security options." ]
+            , text ". Create a new poll by filling out the form." ]
         , div [ class "w-8" ] []
         ]
 
@@ -223,7 +223,7 @@ view model =
 
       , div [ class "flex justify-between items-center" ]
           [ div [ class "fv-code w-8" ] [ text "--" ]
-          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls to see how our voting process works. Click a question and vote for your favorite preferences." ]
+          , p [ class "fv-text w-full" ] [ text "Check out a few of our example polls by clicking a question." ]
           , div [ class "w-8" ] []
           ]
 
@@ -281,17 +281,17 @@ view model =
           [ div [ class "w-8" ] []
 
           , div [ class "w-full" ]
-              [ p [ class "fv-text mb-6" ] [ text "In a traditional single vote system, voters may only select one out of many options. Ranked-choice voting, instead, allows voters to rank multiple options in order of preference. If a voter's first preferred option does not gain enough collective votes to pass a threshold, that voter's second choice is counted instead, then third, and so forth." ]
+              [ p [ class "fv-text mb-6" ] [ text "In a traditional voting system, a voter only selects one choice. Ranked-choice voting, instead, allows a voter to rank all the choices to their preference. If a voter's first choice doesn't get enough votes to pass a threshold, then the voter's second choice is counted instead, then third, and so forth." ]
 
-              , p [ class "fv-text mb-6" ] [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their preferred options rather than for popular choices." ]
+              , p [ class "fv-text mb-6" ] [ text "Ranked-choice voting is typically fairer than traditional voting because preferential ranking is more flexible than casting a single vote in stone. Voters are incentivized to vote for their most preferred options rather than select a popular choice." ]
 
-              , p [ class "fv-text mb-6" ] [ text "There are many resources online that explain ranked-choice voting in greater detail. We particularly like "
+              , p [ class "fv-text mb-6" ] [ text "There are many resources online that go over ranked-choice voting. We particularly like a video by "
                   , a
                       [ href "https://www.youtube.com/user/CGPGrey"
                       , target "_blank"
                       ]
                       [ text "CGP Grey" ]
-                  , text "'s video on this topic since that's how we were first introduced to the concept:"
+                  , text " since that's how we were first introduced to the concept:"
                   ]
 
               , div [ class "embed-responsive embed-responsive-16by9"]

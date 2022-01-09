@@ -229,7 +229,7 @@ view model =
       div []
         [ div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting ranks to the left of each choice. Not all choices need to have a rank. Smaller rank numbers have more preference." ]
+            , p [ class "fv-text w-full" ] [ text "Submit a new vote by selecting a rank to the left of each choice. Note that smaller ranks get more preference and not all choices need to have a rank." ]
             , div [ class "w-8" ] []
             ]
 
@@ -326,7 +326,7 @@ view model =
 
         , div [ class "flex justify-between items-center mb-2" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "View the poll results page to see the current standings." ]
+            , p [ class "fv-text w-full" ] [ text "Go to the results page by clicking the button." ]
             , div [ class "w-8" ] []
             ]
 
@@ -342,7 +342,7 @@ view model =
 
         , Shared.renderShareLinks
             ( "https://functionalvote.com/vote/" ++ model.pollId )
-            "Share this vote submission page by copying the link or sharing through social media."
+            "Share this voting page by copying the links or clicking the buttons on the right."
             model.poll.title
             "Vote in my poll: "
         ]

@@ -213,7 +213,7 @@ view model =
       div []
         [ div [ class "flex justify-between items-center" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "View the poll results and see how the winner is determined. In case of ties, a winner is randomly decided." ]
+            , p [ class "fv-text w-full" ] [ text "View the results and use the timeline widget to see how we narrowed down each round. In the case of ties, we randomly decide a winner." ]
             , div [ class "w-8" ] []
             ]
 
@@ -284,7 +284,7 @@ view model =
 
         , div [ class "flex justify-between items-center mb-2" ]
             [ div [ class "fv-code w-8" ] [ text "--" ]
-            , p [ class "fv-text w-full" ] [ text "View the vote submission page to submit another vote." ]
+            , p [ class "fv-text w-full" ] [ text "Go to the submission page by clicking the button." ]
             , div [ class "w-8" ] []
             ]
 
@@ -300,7 +300,7 @@ view model =
 
         , Shared.renderShareLinks
             ( "https://functionalvote.com/poll/" ++ model.pollId )
-            "Share this poll results page by copying the link or sharing through social media."
+            "Share this results page by copying the links or clicking the buttons on the right."
             model.poll.title
             "View my poll results: "
         ]

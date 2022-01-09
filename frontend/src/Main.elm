@@ -281,7 +281,7 @@ renderBody model =
   [ div [ class "pt-16" ]
       -- Navbar needs to have a high z-value otherwise input placeholders and checkboxes appear over it
       [ div [ class "fixed w-full top-0 z-50 bg-blue-900 shadow-lg" ]
-          [ div [ class "flex justify-between items-center max-w-screen-sm h-16 mx-auto px-4" ]
+          [ div [ class "flex justify-between items-center max-w-screen-md h-16 mx-auto px-4" ]
               [ a
                   [ class "fv-nav-btn"
                   , href "/"
@@ -326,6 +326,6 @@ renderBody model =
                   Error.view
                 NoPage ->
                   div [] []
-          in div [ class "container max-w-screen-sm mx-auto p-4" ] [ content ]
+          in div [ class "container max-w-screen-md mx-auto p-4" ] [ content ]
       ]
   ]
