@@ -4,24 +4,14 @@
 # remember to add this file to your .gitignore.
 use Mix.Config
 
-database_url =
-  System.get_env("DATABASE_URL") ||
-    raise """
-    environment variable DATABASE_URL is missing.
-    For example: ecto://USER:PASS@HOST/DATABASE
-    """
+database_url = System.get_env("DATABASE_URL") || "ecto://USER:PASS@HOST/DATABASE"
 
 config :functional_vote, FunctionalVote.Repo,
   # ssl: true,
   url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
-secret_key_base =
-  System.get_env("SECRET_KEY_BASE") ||
-    raise """
-    environment variable SECRET_KEY_BASE is missing.
-    You can generate one by calling: mix phx.gen.secret
-    """
+secret_key_base = System.get_env("SECRET_KEY_BASE") || "mix phx.gen.secret"
 
 config :functional_vote, FunctionalVoteWeb.Endpoint,
   http: [
@@ -32,10 +22,10 @@ config :functional_vote, FunctionalVoteWeb.Endpoint,
 
 # prod uses reCAPTCHA environment variables
 recaptcha_public_key =
-	System.get_env("RECAPTCHA_PUBLIC_KEY") || raise "environment variable RECAPTCHA_PUBLIC_KEY is missing"
+	System.get_env("RECAPTCHA_PUBLIC_KEY") || "RECAPTCHA_PUBLIC_KEY"
 
 recaptcha_secret =
-	System.get_env("RECAPTCHA_PRIVATE_KEY") || raise "environment variable RECAPTCHA_PRIVATE_KEY is missing"
+	System.get_env("RECAPTCHA_PRIVATE_KEY") || "RECAPTCHA_PRIVATE_KEY"
 
 config :recaptcha,
     public_key: recaptcha_public_key,
