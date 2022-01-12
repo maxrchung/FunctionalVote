@@ -23,11 +23,7 @@
   "dependencies": {
     "@aws-cdk/aws-amplify": "1.138.1",
     "@aws-cdk/aws-codebuild": "1.138.1",
-    "@aws-cdk/aws-ec2": "1.138.1",
-    "@aws-cdk/aws-ecs": "1.138.1",
-    "@aws-cdk/aws-elasticloadbalancingv2": "1.138.1",
     "@aws-cdk/core": "1.138.1",
-    "@aws-cdk/aws-logs": "1.138.1",
     "source-map-support": "^0.5.16"
   }
 }
