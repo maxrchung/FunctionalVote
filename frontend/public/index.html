@@ -1,42 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Functional Vote</title>
 
-    <meta charset="utf-8">
-    <meta name="description" content="Create and share free online polls that use ranked-choice voting. Made with Elm and Elixir.">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="theme-color" content="#4299E1">
+    <meta charset="utf-8" />
+    <meta name="description" content="Create and share free online polls that use ranked-choice voting. Made with Elm and Elixir." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="theme-color" content="#4299E1" />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Sans&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans&display=swap" rel="stylesheet" />
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162843584-1"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-162843584-1');
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', 'UA-162843584-1')
     </script>
-</head>
-<body>
-    <noscript>
-        You need to enable JavaScript to run this app.
-    </noscript>
+  </head>
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
 
-    <div id="root">
-        Welcome to Functional Vote! This website lets you create polls that use ranked-choice voting.
-    </div>
+    <div id="root"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 
     <!-- Docs suggest to use async and defer for this reCAPTCHA script snippet, however we need to ensure that this script gets loaded before vote page first draw happens -->
     <script src="https://www.google.com/recaptcha/api.js"></script>
-</body>
+  </body>
 </html>
