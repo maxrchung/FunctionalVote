@@ -80,7 +80,7 @@ init env url key =
   let
     apiAddress =
       if env == "production" then
-        "https://functionalvote.api.maxrchung.com"
+        "https://functionalvote-server.maxrchung.com"
       else
         "http://localhost:4000"
   in
