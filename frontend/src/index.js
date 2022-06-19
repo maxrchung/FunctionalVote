@@ -8,6 +8,8 @@ const app = Elm.Main.init({
 })
 app.ports.renderRecaptcha.subscribe(() => {
   requestAnimationFrame(() => {
+    console.log('NODE_ENV', process.env.NODE_ENV)
+    console.log('RECAPTCHA_PUBLIC_KEY', process.env.RECAPTCHA_PUBLIC_KEY)
     grecaptcha.render('recaptcha', {
       // Seems like in production we need the recaptcha
       ...(process.env.NODE_ENV === 'production' && { sitekey: process.env.RECAPTCHA_PUBLIC_KEY }),
