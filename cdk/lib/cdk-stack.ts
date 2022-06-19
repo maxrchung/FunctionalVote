@@ -30,7 +30,8 @@ export class CdkStack extends cdk.Stack {
             paths: ['node_modules/**/*']
           }
         }
-      })
+      }),
+      environmentVariables: { RECAPTCHA_PUBLIC_KEY: ssm.StringParameter.valueForStringParameter(this, 'functional-vote-recaptcha-public-key') }
     })
     const branch = amplifyApp.addBranch('master')
     const domain = amplifyApp.addDomain('maxrchung.com')
