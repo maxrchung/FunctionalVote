@@ -2,7 +2,7 @@ defmodule FunctionalVote.Votes do
   @moduledoc """
   The Votes context.
   """
-  
+
   require Logger
   import Ecto.Query, warn: false
   alias FunctionalVote.Repo
@@ -180,8 +180,8 @@ defmodule FunctionalVote.Votes do
     if use_recaptcha do
       case Recaptcha.verify(recaptcha_token) do
         {:ok, _response} -> :ok
-        {:error, _errors} ->
-          Logger.debug("[VoteCtx] Failed reCAPTCHA verification")
+        {:error, errors} ->
+          Logger.error("[VoteCtx] Failed reCAPTCHA verification: #{inspect errors}")
           :recaptcha_error
       end
     end
