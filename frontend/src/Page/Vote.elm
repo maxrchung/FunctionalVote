@@ -341,7 +341,7 @@ view model =
             ]
 
         , Shared.renderShareLinks
-            ( "https://functionalvote.com/vote/" ++ model.pollId )
+            ( "https://functionalvote.maxrchung.com/vote/" ++ model.pollId )
             "Share this voting page by copying the links or clicking the buttons on the right."
             model.poll.title
             "Vote in my poll: "

@@ -1,36 +1,36 @@
-'use strict';
+'use strict'
 
-const autoprefixer = require('autoprefixer');
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const workboxPlugin = require('workbox-webpack-plugin');
-const paths = require('../config/paths');
-const getClientEnvironment = require('./env');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const safePostCssParser = require('postcss-safe-parser');
-const CompressionPlugin = require('compression-webpack-plugin');
-const SitemapPlugin = require('sitemap-webpack-plugin').default;
-const RobotstxtPlugin = require('robotstxt-webpack-plugin');
+const autoprefixer = require('autoprefixer')
+const path = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const ManifestPlugin = require('webpack-manifest-plugin')
+const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
+const CopyPlugin = require('copy-webpack-plugin')
+const workboxPlugin = require('workbox-webpack-plugin')
+const paths = require('../config/paths')
+const getClientEnvironment = require('./env')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const safePostCssParser = require('postcss-safe-parser')
+const CompressionPlugin = require('compression-webpack-plugin')
+const SitemapPlugin = require('sitemap-webpack-plugin').default
+const RobotstxtPlugin = require('robotstxt-webpack-plugin')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
-const publicPath = paths.servedPath;
+const publicPath = paths.servedPath
 // Source maps are resource heavy and can cause out of memory issue for large source files.
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
+const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false'
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-const publicUrl = publicPath.slice(0, -1);
+const publicUrl = publicPath.slice(0, -1)
 // Get environment variables to inject into our app.
-const env = getClientEnvironment(publicUrl);
+const env = getClientEnvironment(publicUrl)
 
-const useDebugger = process.env.ELM_DEBUGGER === 'true';
+const useDebugger = process.env.ELM_DEBUGGER === 'true'
 
 const purgecss = require('@fullhuman/postcss-purgecss')
 
@@ -57,8 +57,7 @@ module.exports = {
     // We inferred the "public path" (such as / or /my-project) from homepage.
     publicPath: publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: info =>
-      path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
+    devtoolModuleFilenameTemplate: (info) => path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
   },
   optimization: {
     minimizer: [
@@ -80,24 +79,7 @@ module.exports = {
             keep_fargs: false,
             unsafe_comps: true,
             unsafe: true,
-            pure_funcs: [
-              'A2',
-              'A3',
-              'A4',
-              'A5',
-              'A6',
-              'A7',
-              'A8',
-              'A9',
-              'F2',
-              'F3',
-              'F4',
-              'F5',
-              'F6',
-              'F7',
-              'F8',
-              'F9'
-            ]
+            pure_funcs: ['A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9']
           },
           mangle: {
             safari10: true
@@ -271,7 +253,7 @@ module.exports = {
                 }),
                 purgecss({
                   content: ['./src/**/*.elm', './src/main.css'],
-                  defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || []
+                  defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || []
                 })
               ]
             }
@@ -280,16 +262,7 @@ module.exports = {
       },
 
       {
-        exclude: [
-          /\.html$/,
-          /\.js$/,
-          /\.elm$/,
-          /\.css$/,
-          /\.scss$/,
-          /\.sass$/,
-          /\.json$/,
-          /\.svg$/
-        ],
+        exclude: [/\.html$/, /\.js$/, /\.elm$/, /\.css$/, /\.scss$/, /\.sass$/, /\.json$/, /\.svg$/],
         loader: require.resolve('url-loader'),
         options: {
           limit: 10000,
@@ -353,26 +326,14 @@ module.exports = {
     new CopyPlugin([{ from: './public/', to: './' }]),
     // Apply gzip compression so NGINX can serve the static compressed files
     new CompressionPlugin({
-        cache: true,
-        // Try and compress all files, probably better for NGINX serving this
-        minRatio: 1
+      cache: true,
+      // Try and compress all files, probably better for NGINX serving this
+      minRatio: 1
     }),
-    new SitemapPlugin("https://functionalvote.com", [
-      "/",
-      "/vote/bjDm9VD",
-      "/vote/TlR007Q",
-      "/vote/oFDFtDwq",
-      "/vote/Q2tobIMV",
-      "/vote/DVmeUPww",
-      "/poll/bjDm9VD",
-      "/poll/TlR007Q",
-      "/poll/oFDFtDwq",
-      "/poll/Q2tobIMV",
-      "/poll/DVmeUPww"
-    ]),
+    new SitemapPlugin('https://functionalvote.maxrchung.com', ['/', '/vote/bjDm9VD', '/vote/TlR007Q', '/vote/oFDFtDwq', '/vote/Q2tobIMV', '/vote/DVmeUPww', '/poll/bjDm9VD', '/poll/TlR007Q', '/poll/oFDFtDwq', '/poll/Q2tobIMV', '/poll/DVmeUPww']),
     new RobotstxtPlugin({
-        sitemap: "https://functionalvote.com/sitemap.xml",
-        host: "https://functionalvote.com"
+      sitemap: 'https://functionalvote.maxrchung.com/sitemap.xml',
+      host: 'https://functionalvote.maxrchung.com'
     }),
     // Generate a service worker script that will precache, and keep up to date,
     // the HTML & assets that are part of the Webpack build.
@@ -395,4 +356,4 @@ module.exports = {
   // Turn off performance processing because we utilize
   // our own hints via the FileSizeReporter
   performance: false
-};
+}

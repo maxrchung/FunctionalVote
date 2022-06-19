@@ -1,4 +1,4 @@
--- This file is the main entry point to https://functionalvote.com and shows our
+-- This file is the main entry point to https://functionalvote.maxrchung.com and shows our
 -- use of Elm architecture, SPA routing, and Tailwind CSS.
 
 module Main exposing ( .. )
