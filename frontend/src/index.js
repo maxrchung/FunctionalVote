@@ -11,8 +11,8 @@ app.ports.renderRecaptcha.subscribe(() => {
     console.log('NODE_ENV', process.env.NODE_ENV)
     console.log('RECAPTCHA_PUBLIC_KEY', process.env.RECAPTCHA_PUBLIC_KEY)
     grecaptcha.render('recaptcha', {
-      // Seems like in production we need the recaptcha
-      ...(process.env.NODE_ENV === 'production' && { sitekey: process.env.RECAPTCHA_PUBLIC_KEY }),
+      // Set recaptcha keys explicitly, not sure if we can keep this in environment variables since this is bundled to browser
+      sitekey: process.env.NODE_ENV === 'production' ? '6Ld44ukUAAAAAGaOzaluZITl3zQE-6fbgZh2O2PC' : '6LeskukUAAAAACVQNLgOef9dSxPau59T04w4r9CA',
       callback: (val) => {
         app.ports.submitRecaptcha.send(val)
       }
