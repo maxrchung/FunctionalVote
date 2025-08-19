@@ -9,7 +9,8 @@ database_url = System.get_env("DATABASE_URL") || "ecto://USER:PASS@HOST/DATABASE
 config :functional_vote, FunctionalVote.Repo,
   # ssl: true,
   url: database_url,
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  socket_options: [:inet6]
 
 secret_key_base = System.get_env("SECRET_KEY_BASE") || "mix phx.gen.secret"
 
